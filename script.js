@@ -1,0 +1,798 @@
+// This script handles the scene navigation logic and per‑scene animations
+// for the interactive phishing awareness experience. Each scene has its
+// own initializer to keep concerns separated and to only run logic when
+// the scene is visible.
+
+document.addEventListener('DOMContentLoaded', () => {
+  // Determine which scene to display based on the query parameter
+  const scenes = Array.from(document.querySelectorAll('.scene'));
+  const params = new URLSearchParams(window.location.search);
+  const sceneParam = params.get('scene');
+  let sceneIndex = 0;
+  if (sceneParam) {
+    const idx = parseInt(sceneParam, 10);
+    if (!isNaN(idx) && idx >= 1 && idx <= scenes.length) {
+      sceneIndex = idx - 1;
+    }
+  }
+  scenes.forEach((scene, idx) => {
+    scene.classList.toggle('active', idx === sceneIndex);
+  });
+  // Initialize the visible scene
+  switch (sceneIndex) {
+    case 0:
+      initScene1();
+      break;
+    case 1:
+      initScene2();
+      break;
+    case 2:
+      initScene3();
+      break;
+    case 3:
+      initScene4();
+      break;
+    case 4:
+      initScene5();
+      break;
+    case 5:
+      initScene6();
+      break;
+    case 6:
+      initScene7();
+      break;
+    case 7:
+      initScene8();
+      break;
+    case 8:
+      initScene9();
+      break;
+    default:
+      break;
+  }
+
+  // Set up navigation buttons across all scenes. Buttons with the classes
+  // `.prev-scene-btn` or `.next-scene-btn` contain a data-target attribute
+  // indicating the scene index to navigate to. When clicked, we update the
+  // query parameter and reload the page. This allows Interacty to embed
+  // different scenes via ?scene=X.
+  const navButtons = document.querySelectorAll('.prev-scene-btn, .next-scene-btn');
+  navButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.getAttribute('data-target');
+      if (target) {
+        const url = new URL(window.location.href);
+        url.searchParams.set('scene', target);
+        window.location.href = url.toString();
+      }
+    });
+  });
+});
+
+/*
+ * Helper: typewriter effect. Takes an element and a string and gradually
+ * writes the characters to the element. Returns a Promise that resolves
+ * when the typing is complete. A slightly longer default speed gives
+ * readers time to digest training content. Use this for all text animations
+ * except static cards and email content.
+ */
+function typewriter(el, text, speed = 35) {
+  return new Promise(resolve => {
+    if (!el) { resolve(); return; }
+    let i = 0;
+    el.textContent = '';
+    function tick() {
+      if (i < text.length) {
+        el.textContent += text.charAt(i);
+        i++;
+        setTimeout(tick, speed);
+      } else {
+        resolve();
+      }
+    }
+    tick();
+  });
+}
+
+/* Simple sleep helper returning a promise */
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+/* Scene 1: The Hook */
+function initScene1() {
+  // New cinematic intro implementation
+  const lineEls = [
+    document.getElementById('line1'),
+    document.getElementById('line2'),
+    document.getElementById('line3'),
+    document.getElementById('line4'),
+    document.getElementById('line5'),
+    document.getElementById('line6'),
+  ];
+  const emailPopup = document.getElementById('emailPopup');
+  const cursorEl = document.getElementById('fakeCursor');
+  const flashOverlay = document.getElementById('flashOverlay');
+  const domainWarning = document.getElementById('domainWarning');
+  const navBtn = document.querySelector('#scene1 .next-scene-btn');
+  const bg = document.querySelector('#scene1 .intro-bg');
+
+  // New: cinematic logo element
+  const introLogo = document.getElementById('introLogo');
+
+  // Elements for new interactive intro
+  const welcomeOverlay = document.getElementById('welcomeOverlay');
+  const ctaPopup = document.getElementById('ctaPopup');
+
+  // Hide narrative and prepare state
+  lineEls.forEach(el => { el.textContent = ''; el.style.display = 'none'; });
+  const narrationContainer = document.querySelector('#scene1 .narration');
+  if (narrationContainer) narrationContainer.style.display = 'none';
+  // Reset element styles
+  emailPopup.style.opacity = 0;
+  emailPopup.style.transform = 'translate(-50%, -50%) scale(0.7)';
+  cursorEl.style.opacity = 0;
+  flashOverlay.style.opacity = 0;
+  domainWarning.style.opacity = 0;
+  navBtn.style.opacity = 0;
+  ctaPopup.style.opacity = 0;
+  if (welcomeOverlay) {
+    welcomeOverlay.style.opacity = 0;
+    welcomeOverlay.style.pointerEvents = 'none';
+  }
+  // Prepare logo
+  if (introLogo) {
+    introLogo.style.opacity = '1';
+    introLogo.style.transform = 'translate(-50%, -50%) scale(0)';
+    introLogo.style.display = 'block';
+  }
+
+  // Function to show the call‑to‑action near the email popup
+  function showCTA() {
+    // Position the CTA popup above the email popup
+    const containerRect = document.querySelector('.app-container').getBoundingClientRect();
+    const popupRect = emailPopup.getBoundingClientRect();
+    const ctaWidth = popupRect.width * 0.6;
+    ctaPopup.style.width = `${ctaWidth}px`;
+    ctaPopup.style.left = `${popupRect.left - containerRect.left + popupRect.width / 2}px`;
+    // Position above the popup
+    ctaPopup.style.top = `${popupRect.top - containerRect.top - 40}px`;
+    ctaPopup.style.transform = 'translateX(-50%)';
+    ctaPopup.style.opacity = 1;
+  }
+  // Function to hide CTA
+  function hideCTA() {
+    ctaPopup.style.opacity = 0;
+  }
+
+  // Flash overlay and show domain warning (same as before)
+  function flashAndWarn() {
+    // Flash a red overlay when the email is clicked
+    anime({
+      targets: flashOverlay,
+      opacity: [0, 0.8, 0],
+      duration: 800,
+      easing: 'easeInOutCubic'
+    });
+    // Speed up the background spin briefly to heighten tension
+    if (bg) {
+      bg.classList.add('fast-spin');
+      setTimeout(() => {
+        bg.classList.remove('fast-spin');
+      }, 1400);
+    }
+    // Ensure the warning card is centred before animating it in.  Without
+    // explicitly resetting its transform and position here, Anime.js may
+    // override our translate offsets resulting in an off‑centre card.
+    domainWarning.style.left = '50%';
+    domainWarning.style.top = '50%';
+    domainWarning.style.transform = 'translate(-50%, -50%)';
+    // Fade in the domain warning card
+    anime({
+      targets: domainWarning,
+      opacity: [0, 1],
+      duration: 800,
+      easing: 'easeOutQuad'
+    });
+    // Dim the email popup behind the warning to draw focus
+    anime({
+      targets: emailPopup,
+      opacity: [1, 0.5],
+      duration: 800,
+      easing: 'easeInOutQuad'
+    });
+    // After the warning appears, fade in the navigation button
+    setTimeout(() => {
+      anime({ targets: navBtn, opacity: [0, 1], duration: 800, easing: 'easeInOutQuad' });
+    }, 1200);
+  }
+
+  // Handle click on the email preview
+  function handleEmailClick() {
+    // Remove click handler to prevent double triggers
+    emailPopup.removeEventListener('click', handleEmailClick);
+    hideCTA();
+    // Hide cursor
+    anime({ targets: cursorEl, opacity: [1, 0], duration: 500, easing: 'easeOutQuad' });
+    // Briefly scale email to indicate click then proceed
+    anime({
+      targets: emailPopup,
+      scale: [1, 1.05, 1],
+      duration: 600,
+      easing: 'easeOutQuad',
+      complete: () => {
+        flashAndWarn();
+      }
+    });
+  }
+
+  // Animate the email appearance and pointer motion
+  function animateEmailAndCursor() {
+    anime({
+      targets: emailPopup,
+      opacity: [0, 1],
+      scale: [0.7, 1],
+      duration: 1600,
+      easing: 'easeOutBack'
+    });
+    // After email appears, move cursor slowly to call attention
+    setTimeout(() => {
+      const containerRect = document.querySelector('.app-container').getBoundingClientRect();
+      const popupRect = emailPopup.getBoundingClientRect();
+      const startX = 30;
+      const startY = containerRect.height - 50;
+      const endX = popupRect.left - containerRect.left + popupRect.width * 0.9;
+      const endY = popupRect.top - containerRect.top + popupRect.height * 0.8;
+      cursorEl.style.left = `${startX}px`;
+      cursorEl.style.top = `${startY}px`;
+      cursorEl.style.opacity = 1;
+      anime({
+        targets: cursorEl,
+        left: endX,
+        top: endY,
+        duration: 2000,
+        easing: 'easeInOutQuad',
+        complete: () => {
+          // Show CTA instructing user to click
+          showCTA();
+          // Attach click handler to email
+          emailPopup.addEventListener('click', handleEmailClick);
+          // Auto-trigger click after 12 seconds if no interaction
+          setTimeout(() => {
+            if (domainWarning.style.opacity === '0' || domainWarning.style.opacity === '') {
+              handleEmailClick();
+            }
+          }, 12000);
+        }
+      });
+    }, 1800);
+  }
+
+  // Show welcome overlay and wait for dismissal
+  function showWelcome() {
+    if (!welcomeOverlay) {
+      startEmailSequence();
+      return;
+    }
+    welcomeOverlay.style.pointerEvents = 'auto';
+    // Immediately clear the overlay text to prevent a brief flash of static text
+    const headingEl = welcomeOverlay.querySelector('h1');
+    const subtitleEl = welcomeOverlay.querySelector('.skip-text');
+    const originalHeading = headingEl ? headingEl.textContent : '';
+    const originalSubtitle = subtitleEl ? subtitleEl.textContent : '';
+    if (headingEl) headingEl.textContent = '';
+    if (subtitleEl) subtitleEl.textContent = '';
+    // Fade the overlay in, then type its contents
+    anime({
+      targets: welcomeOverlay,
+      opacity: [0, 1],
+      duration: 600,
+      easing: 'easeOutQuad',
+      complete: async () => {
+        await typewriter(headingEl, originalHeading, 40);
+        await typewriter(subtitleEl, originalSubtitle, 40);
+      }
+    });
+    let overlayDismissed = false;
+    function dismiss() {
+      if (overlayDismissed) return;
+      overlayDismissed = true;
+      welcomeOverlay.style.pointerEvents = 'none';
+      anime({
+        targets: welcomeOverlay,
+        opacity: [1, 0],
+        duration: 600,
+        easing: 'easeInOutQuad',
+        complete: () => {
+          startEmailSequence();
+        }
+      });
+    }
+    welcomeOverlay.addEventListener('click', dismiss);
+    // Auto dismiss after 10 seconds
+    setTimeout(dismiss, 10000);
+  }
+
+  function startEmailSequence() {
+    animateEmailAndCursor();
+  }
+
+  // After logo spin, show welcome overlay
+  if (introLogo) {
+    anime({
+      targets: introLogo,
+      opacity: [0, 1, 0],
+      scale: [0, 1.2, 1],
+      rotateY: [0, 720],
+      duration: 2600,
+      easing: 'easeInOutCubic',
+      complete: () => {
+        introLogo.style.display = 'none';
+        showWelcome();
+      }
+    });
+  } else {
+    showWelcome();
+  }
+}
+
+/* Scene 2: What is Phishing? */
+function initScene2() {
+  // Grab email rows and message display elements
+  const emails = document.querySelectorAll('#scene2 .outlook-email');
+  const subjectEl = document.getElementById('message-subject');
+  const fromEl = document.getElementById('message-from');
+  const toEl = document.getElementById('message-to');
+  const dateEl = document.getElementById('message-date');
+  const bodyEl = document.getElementById('message-body');
+  const attachmentsEl = document.getElementById('attachments');
+  const externalBar = document.getElementById('external-bar');
+  const actionsEl = document.getElementById('message-actions');
+  // Define the message content for each email (index order)
+  const messages = [
+    {
+      // Single suspicious password update email
+      from: 'IT Security <security@kitopi.com>',
+      to: 'You <you@kitopi.com>',
+      subject: 'Important: Update your password',
+      date: 'Mon 10:15 AM',
+      body:
+        'Dear Employee,\n\nWe have detected unusual activity on your account. To maintain security, you must reset your password immediately.\n\nPlease click the link below to update your password:\n\nhttps://kitopi-reset.com/update\n\nIf you think you received this message in error, please report it to the security team using the flag icon above.\n\nBest regards,\n\nIT Security Team',
+      domainOk: false,
+      attachments: []
+    }
+  ];
+  // Animate each email row into view and set up click handlers
+  emails.forEach((email, idx) => {
+    // animate row in
+    setTimeout(() => {
+      email.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+      email.style.opacity = '1';
+      email.style.transform = 'translateY(0)';
+      // Show CTA instructing user to open email after animation
+      if (idx === 0) {
+        // Position and show callout near the email row
+        const emailCta = document.getElementById('emailCta2');
+        const containerRect = document.querySelector('#scene2 .outlook-list').getBoundingClientRect();
+        const rowRect = email.getBoundingClientRect();
+        emailCta.style.left = `${rowRect.left - containerRect.left + rowRect.width * 0.5}px`;
+        emailCta.style.top = `${rowRect.top - containerRect.top - 30}px`;
+        emailCta.style.transform = 'translateX(-50%)';
+        emailCta.style.opacity = 1;
+      }
+    }, 200);
+    email.addEventListener('click', () => {
+      // Remove active class from all rows
+      emails.forEach(el => el.classList.remove('active'));
+      email.classList.add('active');
+      // Hide email callout once selected
+      const emailCta = document.getElementById('emailCta2');
+      if (emailCta) emailCta.style.opacity = 0;
+      // Populate message details from the single message
+      const msg = messages[0];
+      subjectEl.textContent = msg.subject;
+      fromEl.textContent = `From: ${msg.from}`;
+      toEl.textContent = `To: ${msg.to}`;
+      dateEl.textContent = msg.date;
+      bodyEl.innerHTML = msg.body.replace(/https:\/\/(\S+)/g, '<a href="$1" class="phish-link">$1</a>');
+      // external bar visible for domain mismatch
+      externalBar.style.display = msg.domainOk ? 'none' : 'flex';
+      attachmentsEl.innerHTML = '';
+      // Show actions
+      actionsEl.style.display = 'flex';
+      // Show report callout near report icon
+      const reportCta = document.getElementById('reportCta');
+      const reportBtn = actionsEl.querySelector('.report-btn');
+      const containerRect2 = actionsEl.getBoundingClientRect();
+      const btnRect = reportBtn.getBoundingClientRect();
+      reportCta.style.left = `${btnRect.left - containerRect2.left + btnRect.width / 2}px`;
+      reportCta.style.top = `${btnRect.top - containerRect2.top - 40}px`;
+      reportCta.style.transform = 'translateX(-50%)';
+      reportCta.style.opacity = 1;
+    });
+  });
+
+  // Hide actions initially
+  actionsEl.style.display = 'none';
+  // Hide nav until user finishes scenario
+  const navContainer = document.querySelector('#scene2 .nav-buttons');
+  navContainer.style.opacity = 0;
+
+  // Event listener for report button
+  const reportBtn = document.querySelector('#scene2 .report-btn');
+  reportBtn.addEventListener('click', () => {
+    // Hide report callout
+    const reportCta = document.getElementById('reportCta');
+    if (reportCta) reportCta.style.opacity = 0;
+    // Show success overlay
+    const successOverlay = document.getElementById('successOverlay');
+    successOverlay.style.pointerEvents = 'auto';
+    anime({
+      targets: successOverlay,
+      opacity: [0, 1],
+      duration: 600,
+      easing: 'easeOutQuad',
+      complete: () => {
+        // Hide after delay
+        setTimeout(() => {
+          anime({
+            targets: successOverlay,
+            opacity: [1, 0],
+            duration: 600,
+            easing: 'easeInQuad',
+            complete: () => {
+              successOverlay.style.pointerEvents = 'none';
+              // Show nav
+              anime({ targets: navContainer, opacity: [0, 1], duration: 600, easing: 'easeOutQuad' });
+            }
+          });
+        }, 1500);
+      }
+    });
+  });
+
+  // Event listener for phishing link click
+  // We delegate to message body
+  bodyEl.addEventListener('click', (e) => {
+    if (e.target.classList.contains('phish-link')) {
+      e.preventDefault();
+      // Hide report callout
+      const reportCta = document.getElementById('reportCta');
+      if (reportCta) reportCta.style.opacity = 0;
+      // Show danger overlay
+      const dangerOverlay = document.getElementById('dangerOverlay');
+      dangerOverlay.style.pointerEvents = 'auto';
+      anime({
+        targets: dangerOverlay,
+        opacity: [0, 1],
+        duration: 600,
+        easing: 'easeOutQuad',
+        complete: () => {
+          setTimeout(() => {
+            anime({
+              targets: dangerOverlay,
+              opacity: [1, 0],
+              duration: 600,
+              easing: 'easeInQuad',
+              complete: () => {
+                dangerOverlay.style.pointerEvents = 'none';
+                // Show nav
+                anime({ targets: navContainer, opacity: [0, 1], duration: 600, easing: 'easeOutQuad' });
+              }
+            });
+          }, 1800);
+        }
+      });
+    }
+  });
+}
+
+/* Scene 3: Social Engineering */
+function initScene3() {
+  // Automatically cycle through social engineering examples. We avoid
+  // user‑controlled sliders here to ensure a guided demonstration.
+  const data = [
+    {
+      icon: 'fa-phone-volume',
+      title: 'Caller ID spoof',
+      text: 'Attackers impersonate trusted contacts by spoofing caller IDs.'
+    },
+    {
+      icon: 'fa-comments',
+      title: 'Fake IT chat',
+      text: 'Pretend support chats ask for credentials or share malicious links.'
+    },
+    {
+      icon: 'fa-truck',
+      title: 'Delivery badge zoom',
+      text: 'Scammers pose as couriers to gain physical access or deliver malware.'
+    }
+  ];
+  const slideEl = document.getElementById('se-slide');
+  const indicatorsContainer = document.getElementById('se-indicators');
+  // Create indicator dots
+  indicatorsContainer.innerHTML = '';
+  data.forEach((_, idx) => {
+    const bullet = document.createElement('div');
+    bullet.classList.add('bullet');
+    if (idx === 0) bullet.classList.add('active');
+    indicatorsContainer.appendChild(bullet);
+  });
+  const bullets = indicatorsContainer.querySelectorAll('.bullet');
+  let current = 0;
+  async function showSlide(index) {
+    const item = data[index];
+    // Update indicator state
+    bullets.forEach((b, i) => {
+      b.classList.toggle('active', i === index);
+    });
+    // Fade out current content
+    await anime({
+      targets: slideEl,
+      opacity: [1, 0],
+      duration: 300,
+      easing: 'easeInQuad'
+    }).finished;
+    // Update icon and clear title/text
+    const iconContainer = slideEl.querySelector('.se-icon');
+    iconContainer.innerHTML = `<i class="fas ${item.icon}"></i>`;
+    const titleEl = slideEl.querySelector('.se-title');
+    const textEl = slideEl.querySelector('.se-text');
+    const titleText = item.title;
+    const bodyText = item.text;
+    titleEl.textContent = '';
+    textEl.textContent = '';
+    // Fade the slide back in while typing
+    anime({
+      targets: slideEl,
+      opacity: [0, 1],
+      duration: 500,
+      easing: 'easeOutQuad'
+    });
+    await typewriter(titleEl, titleText, 35);
+    await typewriter(textEl, bodyText, 30);
+  }
+  // Hide the slide initially to prevent a flash before the first fade/typing
+  slideEl.style.opacity = '0';
+  // Show the first slide and type its content
+  showSlide(0);
+  // Start cycling through slides every 8 seconds to allow typing to finish
+  setInterval(() => {
+    current = (current + 1) % data.length;
+    showSlide(current);
+  }, 8000);
+}
+
+/* Scene 4: Red Flags */
+function initScene4() {
+  // Animate each red flag sequentially. Each item slides in and its text
+  // is typed using the typewriter helper. This new implementation
+  // targets .flag-item and .flag-text instead of email lines.
+  const items = Array.from(document.querySelectorAll('#scene4 .flag-item'));
+  // Animate each red flag sequentially using timeouts. Each item slides in and
+  // then types its text. Using timeouts avoids issues with anime promises
+  // sometimes not resolving on static pages.
+  items.forEach((item, idx) => {
+    const textEl = item.querySelector('.flag-text');
+    const original = textEl ? textEl.textContent.trim() : '';
+    if (textEl) textEl.textContent = '';
+    const delay = idx * 1600; // delay between items
+    setTimeout(() => {
+      // slide in the item
+      anime({
+        targets: item,
+        opacity: [0, 1],
+        translateX: [-20, 0],
+        duration: 600,
+        easing: 'easeOutQuad'
+      });
+      // type the text after a brief moment so the slide is visible
+      setTimeout(() => {
+        typewriter(textEl, original, 35);
+      }, 300);
+    }, delay);
+  });
+}
+
+/* Scene 5: What to Do When It Feels Off */
+function initScene5() {
+  // Scene 5 demonstrates what to do when you encounter a suspicious link.
+  // We hide the real cursor and animate a fake cursor to hover over the link,
+  // display the tooltip, then cascade in the recommended actions.
+  const scene5 = document.getElementById('scene5');
+  const customCursor = scene5.querySelector('.custom-cursor');
+  const tooltip = document.getElementById('action-tooltip');
+  const understoodBtn = document.getElementById('understoodBtn');
+  const linkEl = scene5.querySelector('.suspicious-link');
+  const actionCards = scene5.querySelectorAll('.action-card');
+  // Position fake cursor initially at bottom left of the mouse area
+  const mouseArea = scene5.querySelector('.mouse-area');
+  const areaRect = mouseArea.getBoundingClientRect();
+  customCursor.style.left = '20px';
+  customCursor.style.top = `${areaRect.height - 40}px`;
+  // Compute target coordinates relative to the mouse area when layout is ready
+  requestAnimationFrame(() => {
+    const linkRect = linkEl.getBoundingClientRect();
+    const areaRect2 = mouseArea.getBoundingClientRect();
+    const targetX = linkRect.left - areaRect2.left + linkRect.width / 2;
+    const targetY = linkRect.top - areaRect2.top + linkRect.height / 2;
+    // Move cursor slowly to the link, giving the viewer time to read the instructions
+    anime({
+      targets: customCursor,
+      left: targetX,
+      top: targetY,
+      // Move more slowly so viewers can follow the pointer across the screen
+      duration: 2500,
+      easing: 'easeInOutQuad',
+      // Wait longer before starting to move so the instruction text can be read
+      delay: 2000,
+      complete: () => {
+        // After the cursor arrives, wait a bit before revealing the tooltip
+        setTimeout(() => {
+          anime({ targets: customCursor, opacity: [1, 0], duration: 500, easing: 'easeOutQuad' });
+          tooltip.style.opacity = '1';
+          tooltip.style.visibility = 'visible';
+        }, 1000);
+      }
+    });
+  });
+  // When Understood button is clicked, hide tooltip and cursor and show action cards with typing
+  if (understoodBtn) {
+    understoodBtn.addEventListener('click', () => {
+      // Hide tooltip
+      tooltip.style.opacity = '0';
+      tooltip.style.visibility = 'hidden';
+      // Fade out fake cursor
+      anime({ targets: customCursor, opacity: [1, 0], duration: 500, easing: 'easeOutQuad' });
+      // Cascade action cards with typewriter effect on labels
+      actionCards.forEach((card, idx) => {
+        const labelEl = card.querySelector('.card-text');
+        const originalText = labelEl ? labelEl.textContent.trim() : '';
+        if (labelEl) labelEl.textContent = '';
+        setTimeout(() => {
+          // animate card appearance
+          card.style.animation = `floatIn 0.8s forwards`;
+          // type the label once animation begins
+          typewriter(labelEl, originalText, 35);
+        }, idx * 700 + 300);
+      });
+    });
+  }
+}
+
+/* Scene 6: BEC Scenario */
+function initScene6() {
+  const card = document.getElementById('bec-card');
+  const buttons = card.querySelectorAll('.flip-btn');
+  // No automatic flipping – user must click the button to view headers.
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      card.classList.toggle('flipped');
+    });
+  });
+}
+
+/* Scene 7: Social Engineering Examples */
+function initScene7() {
+  const tiles = document.querySelectorAll('#scene7 .tile');
+  const modal = document.getElementById('tile-modal');
+  const modalTitle = document.getElementById('modal-title');
+  const modalDesc = document.getElementById('modal-desc');
+  const modalRisk = document.getElementById('modal-risk');
+  const closeModal = document.querySelector('.close-modal');
+  // Define risk scores for each type
+  const riskMap = {
+    'Wire Fraud': 'High risk (85%)',
+    'Fake IT Support': 'Medium risk (65%)',
+    'Malware Link': 'High risk (80%)',
+    'HR Impersonation': 'Medium risk (70%)'
+  };
+  // Fade in the instruction note using typewriter
+  const noteEl = document.querySelector('#scene7 .scene7-note');
+  if (noteEl) {
+    // Ensure the note is visible before typing; initially it may be hidden via CSS
+    noteEl.style.opacity = '1';
+    const text = noteEl.textContent.trim();
+    noteEl.textContent = '';
+    typewriter(noteEl, text, 35);
+  }
+  tiles.forEach((tile, idx) => {
+    // Animate tile float in
+    tile.style.animation = `floatIn 0.8s forwards`;
+    tile.style.animationDelay = `${idx * 0.2 + 0.6}s`;
+    // Type the label text after the tile has started to appear
+    const labelEl = tile.querySelector('span');
+    const original = labelEl ? labelEl.textContent.trim() : '';
+    if (labelEl) labelEl.textContent = '';
+    setTimeout(() => {
+      typewriter(labelEl, original, 35);
+    }, (idx * 0.2 + 0.6) * 1000 + 400);
+    // Click handler remains so users can explore on their own
+    tile.addEventListener('click', () => {
+      const title = original;
+      const info = tile.getAttribute('data-info');
+      modalTitle.textContent = title;
+      modalDesc.textContent = info;
+      modalRisk.textContent = riskMap[title] || 'Risk not assessed';
+      modal.style.display = 'flex';
+    });
+  });
+  closeModal.addEventListener('click', () => {
+    modal.style.display = 'none';
+  });
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      modal.style.display = 'none';
+    }
+  });
+}
+
+/* Scene 8: Final Tips */
+function initScene8() {
+  // Animate each tip item in the final checklist. Each tip slides in and
+  // the text is typed; once finished, the checkmark is marked as checked.
+  const items = document.querySelectorAll('#scene8 .tip-item');
+  items.forEach((item, idx) => {
+    const textEl = item.querySelector('.tip-text');
+    const checkEl = item.querySelector('.checkmark');
+    const original = textEl ? textEl.textContent.trim() : '';
+    if (textEl) textEl.textContent = '';
+    setTimeout(() => {
+      // Animate the container into view
+      anime({
+        targets: item,
+        opacity: [0, 1],
+        translateX: [-20, 0],
+        duration: 600,
+        easing: 'easeOutQuad'
+      });
+      // Type the tip text
+      typewriter(textEl, original, 35).then(() => {
+        if (checkEl) checkEl.classList.add('checked');
+      });
+    }, 600 + idx * 2000);
+  });
+}
+
+/* Scene 9: Closing Scene */
+function initScene9() {
+  // Animate mask to shield crossfade with a slight delay to allow viewers to notice the mask first
+  const maskSvg = document.getElementById('maskSvg');
+  const shieldSvg = document.getElementById('shieldSvg');
+  if (maskSvg && shieldSvg) {
+    // Keep the mask visible for 4 seconds before morphing to the shield
+    anime({
+      targets: maskSvg,
+      opacity: [1, 0],
+      scale: [1, 0.5],
+      duration: 1800,
+      easing: 'easeInOutQuad',
+      delay: 4000
+    });
+    anime({
+      targets: shieldSvg,
+      opacity: [0, 1],
+      scale: [0.5, 1],
+      duration: 1800,
+      easing: 'easeInOutQuad',
+      delay: 4000
+    });
+  }
+  // Animate CTA buttons sequentially: fade them in and type their labels after the morph
+  const buttons = document.querySelectorAll('#scene9 .cta-btn');
+  buttons.forEach((btn, idx) => {
+    const textEl = btn.querySelector('.cta-text');
+    const original = textEl ? textEl.textContent.trim() : '';
+    if (textEl) textEl.textContent = '';
+    setTimeout(() => {
+      anime({
+        targets: btn,
+        opacity: [0, 1],
+        translateY: [20, 0],
+        duration: 800,
+        easing: 'easeOutQuad'
+      });
+      typewriter(textEl, original, 35);
+    }, 6000 + idx * 1400);
+  });
+}

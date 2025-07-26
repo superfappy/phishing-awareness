@@ -1,0 +1,1420 @@
+/*
+  Global styles and variables for the interactive phishing awareness scenes.
+  Colours and fonts are defined at the root level for easy theming.
+*/
+
+:root {
+  /* Core Kitopi palette: teal primary with soft accents. */
+  --color-primary: #007782;
+  /* Kitopi teal, used for backgrounds */
+  --color-accent1: #96C78C;
+  /* Soft green accent for buttons and highlights */
+  --color-accent2: #B98ACF;
+  /* Muted purple accent for secondary highlights */
+  --color-light: #E4EBE8;
+  /* Near‑white hue for text and light cards */
+  --color-dark: #012D2F;
+  /* Rich dark teal for high contrast text */
+  /* Additional semantic colours */
+  --color-success: #28a745;
+  --color-danger: #e74c3c;
+  --font-body: 'Montserrat', sans-serif;
+}
+
+/* When hide-cursor is applied to body, remove the default cursor from the app
+   and all descendant elements. This ensures the custom cursor is the only
+   visible pointer. */
+.hide-cursor * {
+  cursor: none !important;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* Fill the viewport with our primary colour so the experience feels unified. */
+  background-color: var(--color-primary);
+  font-family: var(--font-body);
+  color: var(--color-light);
+  overflow: hidden;
+}
+
+.app-container {
+  position: relative;
+  width: 600px;
+  height: 600px;
+  /* Use our primary colour as the base of the container and soften the edges. */
+  background-color: var(--color-primary);
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+}
+
+/* Scenes */
+.scene {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+  display: none;
+}
+
+.scene.active {
+  display: block;
+}
+
+.scene-title {
+  margin-top: 0;
+  margin-bottom: 12px;
+  font-size: 26px;
+  font-weight: 800;
+  /* Titles are set in a light hue for contrast against the dark container. */
+  color: var(--color-light);
+  text-transform: uppercase;
+}
+
+/* Scene 1: The Hook */
+/*
+  The first scene introduces a dramatic narrative that sets the stage for the
+  training. We create an abstract, shifting background using gradients and
+  animate individual story lines to appear one after the other. A fake email
+  card invites interaction; when clicked it flashes red and reveals a domain
+  mismatch warning.
+*/
+#scene1 {
+  overflow: hidden;
+  /* Provide perspective for 3D animations within scene1 */
+  perspective: 1000px;
+}
+
+/* Animated abstract background using a radial gradient that subtly shifts
+   over time. */
+#scene1 .intro-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 30% 30%, var(--color-primary), var(--color-accent1), var(--color-accent2));
+  background-size: 200% 200%;
+  animation: moveGradient 20s linear infinite;
+  z-index: 0;
+  overflow: hidden;
+}
+
+/* Add swirling conic gradient overlay for a more cinematic background effect */
+#scene1 .intro-bg::before {
+  content: '';
+  position: absolute;
+  top: -25%;
+  left: -25%;
+  width: 150%;
+  height: 150%;
+  background: conic-gradient(from 180deg, var(--color-accent2), var(--color-primary), var(--color-accent1), var(--color-primary), var(--color-accent2));
+  animation: rotateConic 30s linear infinite;
+  filter: blur(100px);
+  opacity: 0.4;
+}
+
+/* Cinematic logo animation. The Kitopi logo appears, spins and fades
+   out before the narrative begins. Initially scaled down and
+   invisible; JS will handle the animation. */
+#scene1 .intro-logo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 96px;
+  height: 96px;
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0;
+  z-index: 4;
+  pointer-events: none;
+}
+
+/* When a fast spin is requested (during recall), reduce the duration of the swirl to create
+   a dramatic rewind effect. Using !important ensures the override takes precedence. */
+#scene1 .intro-bg.fast-spin::before {
+  animation-duration: 8s !important;
+}
+
+@keyframes rotateConic {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes moveGradient {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Revised scene 1 layout: cinematic narrative with animated email preview */
+
+/* Position narration near the top center. Lines will be filled via JS typewriter. */
+#scene1 .narration {
+  /* Hide the on‑screen narration: voice‑over will replace on‑screen text. */
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 85%;
+  color: var(--color-dark);
+  z-index: 2;
+  display: none;
+}
+
+#scene1 .story-line {
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 1.5;
+  margin: 6px 0;
+  min-height: 24px;
+  /* reserve space so lines don't jump */
+  letter-spacing: 0.4px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+/* Email preview card that slides into view. */
+#scene1 .email-popup {
+  position: absolute;
+  /* Center the email preview and give it presence */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  /* Use a light card colour so content stands out on the dark backdrop */
+  background: var(--color-light);
+  border-left: 4px solid var(--color-accent1);
+  border-radius: 14px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  padding: 24px 28px;
+  opacity: 0;
+  z-index: 2;
+  /* Allow interaction once the email appears; pointer events controlled via JS */
+  pointer-events: auto;
+}
+
+#scene1 .email-popup .email-body {
+  font-size: 14px;
+  color: var(--color-dark);
+}
+
+#scene1 .email-popup .email-header {
+  font-size: 14px;
+  color: var(--color-dark);
+  margin-bottom: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+#scene1 .email-popup .email-subject {
+  font-weight: 600;
+  color: var(--color-primary);
+  margin-top: 4px;
+  font-size: 18px;
+}
+
+#scene1 .email-popup .email-body {
+  font-size: 14px;
+  color: var(--color-dark);
+  opacity: 0.9;
+}
+
+/* Pointer indicator that animates towards the email preview. */
+#scene1 .fake-cursor {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-right: 3px solid var(--color-primary);
+  border-bottom: 3px solid var(--color-primary);
+  transform: rotate(45deg);
+  opacity: 0;
+  z-index: 3;
+}
+
+/* Red flash overlay triggered when clicking the email preview. */
+#scene1 .flash-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(204, 0, 0, 0.6);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* Domain mismatch warning card displayed after click. */
+#scene1 .domain-warning {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 85%;
+  max-width: 400px;
+  background: var(--color-light);
+  border: 2px solid var(--color-danger);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  padding: 24px 28px;
+  text-align: center;
+  color: var(--color-dark);
+  opacity: 0;
+  z-index: 5;
+  pointer-events: none;
+}
+
+#scene1 .domain-warning h4 {
+  margin: 0 0 8px;
+  color: var(--color-danger);
+  font-size: 20px;
+  font-weight: 700;
+}
+
+#scene1 .domain-warning .expected {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+#scene1 .domain-warning .actual {
+  color: #e74c3c;
+  font-weight: 600;
+}
+
+/* Extra tip line under domain mismatch */
+#scene1 .domain-warning .domain-tip {
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--color-dark);
+  opacity: 0.8;
+}
+
+/* Call-to-action popup instructing the viewer to interact */
+.cta-popup {
+  position: absolute;
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.7);
+  color: #ffffff;
+  border-radius: 8px;
+  font-size: 14px;
+  z-index: 6;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+  white-space: nowrap;
+}
+
+/* Welcome overlay displayed at the start */
+.welcome-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(4px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  z-index: 7;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.welcome-overlay h1 {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--color-primary);
+  margin-bottom: 12px;
+}
+
+.welcome-overlay .skip-text {
+  font-size: 16px;
+  color: var(--color-dark);
+  opacity: 0.7;
+}
+
+/* Feedback overlays for scene 2 outcomes */
+.feedback-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+  backdrop-filter: blur(4px);
+}
+
+.feedback-overlay.success {
+  background: rgba(56, 161, 105, 0.85);
+  color: #ffffff;
+}
+
+.feedback-overlay.danger {
+  background: rgba(213, 63, 63, 0.85);
+  color: #ffffff;
+}
+
+.feedback-content {
+  text-align: center;
+}
+
+.feedback-content h2 {
+  font-size: 28px;
+  margin-bottom: 8px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.feedback-content p {
+  font-size: 16px;
+  margin: 0;
+  color: #ffffff;
+}
+
+
+
+
+
+/* Navigation buttons used across scenes. */
+.nav-buttons {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  display: flex;
+  gap: 8px;
+  z-index: 3;
+}
+
+.nav-buttons button {
+  width: 40px;
+  height: 40px;
+  background: var(--color-accent1);
+  border: none;
+  border-radius: 50%;
+  color: #ffffff;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  transition: background 0.2s;
+}
+
+/* Ensure chevron icons within navigation buttons are visible */
+.nav-buttons button i {
+  font-size: 14px;
+  color: #ffffff;
+}
+
+/* When using plain unicode arrows for navigation, ensure consistent sizing and colour */
+.nav-buttons .nav-icon {
+  font-size: 16px;
+  color: #ffffff;
+  line-height: 1;
+}
+
+.nav-buttons button:hover {
+  background: var(--color-primary);
+}
+
+/* Scene 2: What is Phishing? */
+/*
+  Scene 2 adopts an Outlook‑like interface. We provide a structured layout with
+  a header (title and search), a scrollable list of messages, and a detailed
+  view. Each email row animates into place on load. When selected, a row
+  highlights and the details populate on the right. Domain‑mismatched
+  emails trigger a subtle warning bar.
+*/
+#scene2 .outlook-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+#scene2 .outlook-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: var(--color-light);
+  border-bottom: 1px solid #e0e6e5;
+}
+
+#scene2 .outlook-header h2 {
+  margin: 0;
+  font-size: 20px;
+  color: var(--color-primary);
+}
+
+#scene2 .search-bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+#scene2 .search-bar input {
+  width: 200px;
+  padding: 6px 8px;
+  border: 1px solid #ccdcdc;
+  border-radius: 4px;
+  background: #f5f9fa;
+  color: var(--color-dark);
+  font-size: 14px;
+  outline: none;
+}
+
+#scene2 .search-bar i {
+  position: absolute;
+  right: 8px;
+  color: var(--color-primary);
+  font-size: 14px;
+}
+
+#scene2 .outlook-body {
+  flex: 1;
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+}
+
+#scene2 .outlook-list {
+  width: 38%;
+  border-right: 1px solid #e0e6e5;
+  overflow-y: auto;
+  background: #ffffff;
+  padding: 8px;
+}
+
+#scene2 .outlook-email {
+  position: relative;
+  padding: 12px 36px 12px 12px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+  color: var(--color-dark);
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+#scene2 .outlook-email:hover {
+  background: #f0f7f5;
+}
+
+#scene2 .outlook-email.active {
+  background: #e6f5f2;
+  border-left: 3px solid var(--color-primary);
+}
+
+#scene2 .outlook-email .email-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+#scene2 .outlook-email .email-subject {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-primary);
+  margin-bottom: 2px;
+}
+
+#scene2 .outlook-email .email-snippet {
+  font-size: 12px;
+  color: var(--color-dark);
+  opacity: 0.8;
+}
+
+/* Small indicators displayed alongside each email row to mimic Outlook action icons.
+   We use coloured dots for readability. */
+#scene2 .outlook-email .email-icons {
+  position: absolute;
+  top: 12px;
+  right: 8px;
+  display: flex;
+  gap: 4px;
+  z-index: 2;
+}
+
+/* Base dot style for read/unread indicator */
+#scene2 .outlook-email .email-icons .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-accent2);
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+/* Variants for flagged or pinned emails */
+#scene2 .outlook-email .email-icons .dot.flagged {
+  background: #e74c3c;
+}
+
+#scene2 .outlook-email .email-icons .dot.pinned {
+  background: var(--color-accent1);
+}
+
+/* Increase opacity on hover for better visibility */
+#scene2 .outlook-email:hover .email-icons .dot {
+  opacity: 1;
+}
+
+#scene2 .outlook-message {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+  background: #f9fcfb;
+  position: relative;
+}
+
+#scene2 .external-bar {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  background: #fdebec;
+  color: #c0392b;
+  padding: 6px 12px;
+  border: 1px solid #f5b7b1;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  font-size: 12px;
+}
+
+#scene2 .external-bar i {
+  color: #c0392b;
+}
+
+#scene2 .message-header h3 {
+  margin: 0 0 4px 0;
+  font-size: 18px;
+  color: var(--color-primary);
+}
+
+#scene2 .message-header p {
+  margin: 2px 0;
+  font-size: 13px;
+  color: var(--color-dark);
+}
+
+#scene2 .message-body {
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--color-dark);
+  margin-top: 12px;
+  white-space: pre-wrap;
+}
+
+/* Style the suspicious link in the phishing email */
+#scene2 .outlook-message a.phish-link {
+  color: var(--color-accent2);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+#scene2 .attachments {
+  margin-top: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+#scene2 .attachment-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #ffffff;
+  border: 1px solid #e0e6e5;
+  border-radius: 6px;
+  padding: 6px 8px;
+  font-size: 12px;
+  color: var(--color-dark);
+}
+
+#scene2 .attachment-item i {
+  color: var(--color-primary);
+  font-size: 14px;
+}
+
+#scene2 .message-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 4px;
+  flex-wrap: wrap;
+}
+
+/* Action buttons appear as outlined circles with icons only */
+#scene2 .message-actions button {
+  width: 28px;
+  height: 28px;
+  background: #ffffff;
+  border: 1px solid var(--color-primary);
+  border-radius: 50%;
+  color: var(--color-primary);
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, color 0.2s;
+  padding: 0;
+}
+
+#scene2 .message-actions button:hover {
+  background: var(--color-primary);
+  color: #ffffff;
+}
+
+/* Specialized styling for the report button using the secondary accent colour */
+#scene2 .message-actions .report-btn {
+  border-color: var(--color-accent2);
+}
+
+#scene2 .message-actions .report-btn:hover {
+  background: var(--color-accent2);
+  color: #ffffff;
+}
+
+/* Ensure report icon fits nicely inside its circle */
+#scene2 .message-actions button img {
+  width: 16px;
+  height: 16px;
+}
+
+/* Ensure Font Awesome icons inside action buttons inherit the correct colour */
+#scene2 .message-actions button i {
+  font-size: 14px;
+  line-height: 1;
+  color: inherit;
+}
+
+/* Unicode icons inside the action buttons should mirror the icon styling */
+#scene2 .message-actions .action-icon {
+  font-size: 14px;
+  line-height: 1;
+  color: inherit;
+}
+
+/* Use accent2 colour for the report icon to differentiate */
+#scene2 .message-actions .report-btn i {
+  color: var(--color-accent2);
+}
+
+#scene2 .nav-buttons {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  display: flex;
+  gap: 8px;
+}
+
+/* Simple animation used for list items; reused across multiple scenes. */
+@keyframes floatIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Scene 3: Social Engineering */
+/* Scene 3: Social Engineering Techniques */
+/*
+  The third scene cycles through three common social engineering techniques.
+  Instead of relying on a swiper slider (which can leave empty spaces), we
+  create a custom container that automatically transitions between
+  examples. Each example fills the space with a gradient background and
+  large icon. Small indicator dots show the current example.
+*/
+
+/* Layout of the container occupying the majority of the slide. We only
+   enable flex layout when the scene is active so that other scenes stay hidden. */
+.scene.active#scene3 {
+  display: flex;
+  flex-direction: column;
+}
+
+#scene3 .se-container {
+  flex: 1;
+  position: relative;
+  margin-top: 16px;
+  background: linear-gradient(135deg, var(--color-accent1), var(--color-accent2));
+  border-radius: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  padding: 20px;
+}
+
+/* The slide itself contains the icon and text; it's full width so we can fade
+   the entire element during transitions. */
+#scene3 .se-slide {
+  text-align: center;
+  color: #ffffff;
+  width: 100%;
+}
+
+/* Large icon representing the technique */
+#scene3 .se-icon {
+  font-size: 56px;
+  margin-bottom: 20px;
+  color: #ffffff;
+}
+
+/* Ensure the icon itself inherits the correct colour */
+#scene3 .se-icon i {
+  color: #ffffff;
+}
+
+/* Title and description styles */
+#scene3 .se-title {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+#scene3 .se-text {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.4;
+  max-width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Indicator dots at the bottom of the container */
+#scene3 .se-indicators {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+}
+
+#scene3 .se-indicators .bullet {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.4);
+}
+
+#scene3 .se-indicators .bullet.active {
+  background: #ffffff;
+}
+
+/* Scene 4: Red Flags */
+/* Redesigned flags card: create a vertical timeline with coloured bullets for each point.
+   This replaces the previous scanning card and thin fonts with a cleaner layout. */
+/* Redesigned flags card: timeline with individual item styling. Each line has a coloured
+   bullet and tinted background to visually separate flagged and non‑flagged items.
+   A faint vertical line ties the items together. */
+.flags-card {
+  position: relative;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  padding: 32px;
+  height: 80%;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.flag-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  width: 100%;
+}
+
+/* Vertical timeline line */
+.flag-list::before {
+  content: '';
+  position: absolute;
+  left: 16px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.flag-item {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  margin-left: 36px;
+  margin-bottom: 20px;
+  font-size: 20px;
+  font-weight: 600;
+  border-radius: 10px;
+  padding: 12px 16px;
+  opacity: 0;
+  transform: translateX(-20px);
+  /* Provide a subtle backdrop for readability */
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.flag-item:last-child {
+  margin-bottom: 0;
+}
+
+/* Bullet indicating each point */
+.flag-bullet {
+  position: absolute;
+  left: -30px;
+  top: 16px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--color-accent1);
+  box-shadow: 0 0 0 4px rgba(150, 199, 140, 0.25);
+}
+
+.flag-item.flagged .flag-bullet {
+  background: var(--color-accent2);
+  box-shadow: 0 0 0 4px rgba(231, 76, 60, 0.25);
+}
+
+/* Colour the item text and background based on flagged state */
+.flag-item.flagged {
+  color: var(--color-accent2);
+  background: rgba(231, 76, 60, 0.1);
+}
+
+.flag-item:not(.flagged) {
+  color: var(--color-accent1);
+  background: rgba(150, 199, 140, 0.1);
+}
+
+.flag-text {
+  display: inline-block;
+  font-weight: 700;
+}
+
+/* Scene 5: What to Do When It Feels Off */
+/* We only set cursor styles here. The flex layout will be applied
+   when the scene becomes active via `.scene.active#scene5` below. */
+/* Hide the default cursor when scene 5 is active. We apply the rule to
+   the entire scene and all descendant elements for consistency. */
+/* For scene 5, we keep the default cursor visible so users can click. */
+
+/* When Scene 5 is visible we lay out its children vertically */
+.scene.active#scene5 {
+  display: flex;
+  flex-direction: column;
+}
+
+.mouse-area {
+  position: relative;
+  /* Provide a soft tinted backdrop so the instructional area blends into the dark app */
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  padding: 28px;
+  flex: 1;
+  overflow: hidden;
+}
+
+.custom-cursor {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--color-accent2);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  transition: transform 0.05s ease-out;
+  z-index: 100;
+}
+
+.step-instruction {
+  margin-bottom: 20px;
+  font-size: 16px;
+  color: var(--color-light);
+  font-weight: 500;
+}
+
+.suspicious-link {
+  color: var(--color-accent2);
+  text-decoration: underline;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.tooltip-box {
+  position: absolute;
+  top: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 85%;
+  background: var(--color-light);
+  border: 2px solid var(--color-accent2);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.4s;
+  font-size: 14px;
+  line-height: 1.5;
+  z-index: 50;
+}
+
+.tooltip-box ul {
+  padding-left: 20px;
+  margin: 0;
+}
+
+.tooltip-heading {
+  margin-top: 0;
+  margin-bottom: 12px;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-accent2);
+}
+
+.tooltip-box li {
+  margin-bottom: 4px;
+  color: var(--color-dark);
+}
+
+/* Understood button within the tooltip */
+.understood-btn {
+  background: var(--color-accent1);
+  color: var(--color-dark);
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: background 0.2s ease;
+}
+
+.understood-btn:hover {
+  background: var(--color-accent2);
+}
+
+.action-cards {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.action-card {
+  width: 100%;
+  background: var(--color-accent1);
+  color: var(--color-dark);
+  border-radius: 12px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  transform: translateY(40px);
+}
+
+.action-card i {
+  font-size: 24px;
+  color: var(--color-primary);
+}
+
+@keyframes floatIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Scene 6: BEC Scenario */
+.bec-container {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.bec-card {
+  width: 90%;
+  max-width: 420px;
+  height: 280px;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.8s;
+}
+
+.bec-card.flipped {
+  transform: rotateY(180deg);
+}
+
+.card-face {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 12px;
+  background: var(--color-light);
+  border: 2px solid var(--color-accent2);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  color: var(--color-dark);
+}
+
+.card-front {
+  z-index: 2;
+}
+
+.card-back {
+  transform: rotateY(180deg);
+}
+
+.card-back .explain {
+  display: block;
+  font-size: 12px;
+  color: var(--color-dark);
+  opacity: 0.8;
+  margin-top: 6px;
+}
+
+.flip-btn {
+  align-self: flex-end;
+  padding: 10px 14px;
+  background: var(--color-accent2);
+  color: var(--color-dark);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.warning-msg {
+  color: var(--color-danger);
+  font-weight: 700;
+  margin-top: 12px;
+}
+
+/* Scene 7: Social Engineering Examples */
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 12px;
+  margin-top: 16px;
+}
+
+.tile {
+  /* Give each tile a subtle gradient using our accent colours */
+  background: linear-gradient(135deg, var(--color-accent2), var(--color-accent1));
+  color: var(--color-primary);
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s, box-shadow 0.3s;
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.tile i {
+  display: none;
+}
+
+.tile span {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.tile:hover {
+  transform: translateY(-4px) rotateX(6deg) rotateY(-6deg);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.tile-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* Instruction note for scene 7 */
+.scene7-note {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--color-light);
+  text-align: center;
+  margin: 8px 0 12px;
+  opacity: 0;
+}
+
+.modal-content {
+  background: var(--color-light);
+  border-radius: 16px;
+  padding: 28px;
+  width: 80%;
+  max-width: 360px;
+  position: relative;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+  /* Use dark text inside modal so content contrasts against the light background */
+  color: var(--color-dark);
+}
+
+.close-modal {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  font-size: 24px;
+  cursor: pointer;
+  color: var(--color-primary);
+}
+
+#modal-title {
+  margin-top: 0;
+  color: var(--color-accent2);
+}
+
+#modal-desc,
+#modal-risk {
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+#modal-risk {
+  font-weight: 700;
+  color: var(--color-danger);
+}
+
+/* Scene 8: Final Tips */
+/* Redesigned checklist styles */
+.checklist {
+  list-style: none;
+  padding-left: 0;
+  margin-top: 32px;
+  max-width: 480px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.tip-item {
+  display: flex;
+  /* Align to the top of the checkmark so that text does not shift vertically when typed */
+  align-items: flex-start;
+  margin-bottom: 24px;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--color-light);
+  opacity: 0;
+  transform: translateX(-20px);
+}
+
+.tip-item:last-child {
+  margin-bottom: 0;
+}
+
+.checkmark {
+  width: 28px;
+  height: 28px;
+  border: 2px solid var(--color-accent2);
+  border-radius: 6px;
+  margin-right: 16px;
+  position: relative;
+  /* Slight top margin so the tick aligns with the first line of text */
+  margin-top: 4px;
+}
+
+.checkmark::after {
+  content: '';
+  position: absolute;
+  left: 6px;
+  top: 2px;
+  width: 8px;
+  height: 14px;
+  border: solid var(--color-accent1);
+  border-width: 0 3px 3px 0;
+  transform: rotate(45deg);
+  opacity: 0;
+}
+
+.checkmark.checked::after {
+  opacity: 1;
+}
+
+.tip-text {
+  flex: 1;
+}
+
+/* Scene 9: Closing Scene */
+.closing-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  /* Use a translucent overlay so the morph and buttons stand out against the teal backdrop */
+  background: rgba(0, 0, 0, 0.1);
+}
+
+/* Morph wrapper for mask-to-shield animation */
+.morph-wrapper {
+  position: relative;
+  width: 180px;
+  height: 180px;
+  margin-bottom: 20px;
+}
+
+.morph-icon {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform-origin: 50% 50%;
+}
+
+#maskSvg {
+  opacity: 1;
+}
+
+#shieldSvg {
+  opacity: 0;
+  transform: scale(0.5);
+}
+
+.avatar {
+  width: 160px;
+  height: 160px;
+  margin-bottom: 20px;
+}
+
+.closing-logo {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  width: 80px;
+  animation: pulseLogo 3s infinite;
+  opacity: 0.9;
+  /* Invert the teal logo to white so it contrasts against the dark backdrop */
+  filter: invert(1) brightness(2);
+}
+
+@keyframes pulseLogo {
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.cta-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cta-btn {
+  background: var(--color-accent1);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.cta-btn i {
+  color: var(--color-dark);
+  font-size: 18px;
+}
+
+@keyframes ctaAppear {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
