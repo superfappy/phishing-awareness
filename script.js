@@ -121,7 +121,6 @@ const audioFiles = {
 Object.values(audioFiles).forEach(a => {
   a.loop = false;
   a.preload = 'auto';
-  a.load();
 });
 
 // Stop any currently playing audio and reset its playback position.
