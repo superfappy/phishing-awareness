@@ -348,6 +348,159 @@ function initScene2() {
   const attachmentsEl = document.getElementById('attachments');
   const externalBar = document.getElementById('external-bar');
   const actionsEl = document.getElementById('message-actions');
+
+  // Decision overlay elements for interactive choice. The overlay remains
+  // hidden until an email is opened. When shown, it prompts the viewer
+  // to decide what action to take on the suspicious message.
+  const decisionOverlay = document.getElementById('decisionOverlay');
+  const optionOpen = document.getElementById('decision-open');
+  const optionReport = document.getElementById('decision-report');
+  // Grab overlays and nav for later use
+  const successOverlay = document.getElementById('successOverlay');
+  const dangerOverlay = document.getElementById('dangerOverlay');
+  const navContainer = document.querySelector('#scene2 .nav-buttons');
+  const reportCallout = document.getElementById('reportCta');
+
+  // Helper to show the decision overlay with a layered animation.
+  // The overlay fades in while the card scales up and each option
+  // slides into place. This encourages the learner to pause and consider
+  // their choice without immediately hinting at the correct answer.
+  function showDecision() {
+    if (!decisionOverlay) return;
+    decisionOverlay.style.display = 'flex';
+    decisionOverlay.style.pointerEvents = 'auto';
+    // Prepare the card and options for animation
+    const card = decisionOverlay.querySelector('.decision-card');
+    const options = decisionOverlay.querySelectorAll('.decision-option');
+    // Reset transforms and opacity to allow repeated show/hide
+    decisionOverlay.style.opacity = 0;
+    if (card) card.style.transform = 'scale(0.9)';
+    options.forEach(opt => {
+      opt.style.opacity = 0;
+      opt.style.transform = 'translateY(20px)';
+    });
+    // Animate overlay fade
+    anime({
+      targets: decisionOverlay,
+      opacity: [0, 1],
+      duration: 400,
+      easing: 'easeOutQuad'
+    });
+    // Animate card scaling
+    if (card) {
+      anime({
+        targets: card,
+        scale: [0.9, 1],
+        duration: 500,
+        delay: 200,
+        easing: 'easeOutBack'
+      });
+    }
+    // Animate each option with a stagger
+    anime({
+      targets: options,
+      opacity: [0, 1],
+      translateY: [20, 0],
+      delay: anime.stagger(100, { start: 300 }),
+      duration: 400,
+      easing: 'easeOutQuad'
+    });
+  }
+  // Helper to hide the decision overlay and optionally run a callback.
+  function hideDecision(callback) {
+    if (!decisionOverlay) {
+      if (callback) callback();
+      return;
+    }
+    anime({
+      targets: decisionOverlay,
+      opacity: [1, 0],
+      duration: 500,
+      easing: 'easeInQuad',
+      complete: () => {
+        decisionOverlay.style.display = 'none';
+        decisionOverlay.style.pointerEvents = 'none';
+        if (callback) callback();
+      }
+    });
+  }
+
+  // Handle choice selection using direct event listeners on each option.
+  // When the user selects an option, fade out the decision overlay and
+  // display a corresponding feedback overlay, then reveal navigation.
+  if (optionOpen) {
+    optionOpen.addEventListener('click', (e) => {
+      e.stopPropagation();
+      hideDecision(() => {
+        if (reportCallout) reportCallout.style.opacity = 0;
+        // Show danger overlay for incorrect choice
+        dangerOverlay.style.pointerEvents = 'auto';
+        anime({
+          targets: dangerOverlay,
+          opacity: [0, 1],
+          duration: 600,
+          easing: 'easeOutQuad',
+          complete: () => {
+            setTimeout(() => {
+              anime({
+                targets: dangerOverlay,
+                opacity: [1, 0],
+                duration: 600,
+                easing: 'easeInQuad',
+                complete: () => {
+                  dangerOverlay.style.pointerEvents = 'none';
+                  anime({ targets: navContainer, opacity: [0, 1], duration: 600, easing: 'easeOutQuad' });
+                }
+              });
+            }, 1800);
+          }
+        });
+      });
+    });
+  }
+  if (optionReport) {
+    optionReport.addEventListener('click', (e) => {
+      e.stopPropagation();
+      // When the user chooses to report, hide the decision prompt then
+      // highlight the report button to draw attention. After the
+      // highlight animation, automatically show success feedback and
+      // navigation to progress the scenario. This flow mirrors a real
+      // training scenario where the learner first decides to report
+      // phishing and then takes the appropriate action.
+      hideDecision(async () => {
+        // Show the callout instructing the learner to use the report icon
+        if (reportCallout) reportCallout.style.opacity = 1;
+        // Highlight the report button and wait for the animation to complete
+        await highlightReportButton();
+        // Fade out the callout after highlighting
+        if (reportCallout) {
+          anime({ targets: reportCallout, opacity: [1, 0], duration: 400, easing: 'easeOutQuad' });
+        }
+        // Show success overlay and reveal navigation
+        successOverlay.style.pointerEvents = 'auto';
+        anime({
+          targets: successOverlay,
+          opacity: [0, 1],
+          duration: 600,
+          easing: 'easeOutQuad',
+          complete: () => {
+            setTimeout(() => {
+              anime({
+                targets: successOverlay,
+                opacity: [1, 0],
+                duration: 600,
+                easing: 'easeInQuad',
+                complete: () => {
+                  successOverlay.style.pointerEvents = 'none';
+                  anime({ targets: navContainer, opacity: [0, 1], duration: 600, easing: 'easeOutQuad' });
+                }
+              });
+            }, 1500);
+          }
+        });
+      });
+    });
+  }
   // Define the message content for each email (index order)
   const messages = [
     {
@@ -400,56 +553,92 @@ function initScene2() {
       attachmentsEl.innerHTML = '';
       // Show actions
       actionsEl.style.display = 'flex';
-      // Show report callout near report icon
-      const reportCta = document.getElementById('reportCta');
+      // Position the report callout but keep it hidden; our decision overlay
+      // will guide the user instead of highlighting the report button directly.
       const reportBtn = actionsEl.querySelector('.report-btn');
-      const containerRect2 = actionsEl.getBoundingClientRect();
-      const btnRect = reportBtn.getBoundingClientRect();
-      reportCta.style.left = `${btnRect.left - containerRect2.left + btnRect.width / 2}px`;
-      reportCta.style.top = `${btnRect.top - containerRect2.top - 40}px`;
-      reportCta.style.transform = 'translateX(-50%)';
-      reportCta.style.opacity = 1;
+      if (reportCallout && reportBtn) {
+        const containerRect2 = actionsEl.getBoundingClientRect();
+        const btnRect = reportBtn.getBoundingClientRect();
+        reportCallout.style.left = `${btnRect.left - containerRect2.left + btnRect.width / 2}px`;
+        reportCallout.style.top = `${btnRect.top - containerRect2.top - 40}px`;
+        reportCallout.style.transform = 'translateX(-50%)';
+        reportCallout.style.opacity = 0;
+      }
+      // Show decision overlay shortly after displaying the message
+      setTimeout(() => {
+        showDecision();
+      }, 400);
     });
   });
 
   // Hide actions initially
   actionsEl.style.display = 'none';
   // Hide nav until user finishes scenario
-  const navContainer = document.querySelector('#scene2 .nav-buttons');
   navContainer.style.opacity = 0;
 
-  // Event listener for report button
-  const reportBtn = document.querySelector('#scene2 .report-btn');
-  reportBtn.addEventListener('click', () => {
-    // Hide report callout
-    const reportCta = document.getElementById('reportCta');
-    if (reportCta) reportCta.style.opacity = 0;
-    // Show success overlay
-    const successOverlay = document.getElementById('successOverlay');
-    successOverlay.style.pointerEvents = 'auto';
-    anime({
-      targets: successOverlay,
-      opacity: [0, 1],
-      duration: 600,
-      easing: 'easeOutQuad',
-      complete: () => {
-        // Hide after delay
-        setTimeout(() => {
-          anime({
-            targets: successOverlay,
-            opacity: [1, 0],
-            duration: 600,
-            easing: 'easeInQuad',
-            complete: () => {
-              successOverlay.style.pointerEvents = 'none';
-              // Show nav
-              anime({ targets: navContainer, opacity: [0, 1], duration: 600, easing: 'easeOutQuad' });
-            }
-          });
-        }, 1500);
+  // Report dropdown handling. We toggle the contextual menu when the user clicks
+  // the report button, and hide it when clicking outside. Selecting a menu
+  // option triggers the success overlay if it corresponds to a reporting
+  // action (e.g., junk, phishing, not junk).
+  const reportDropdown = document.querySelector('#scene2 .report-dropdown');
+  if (reportDropdown) {
+    const reportBtn = reportDropdown.querySelector('.report-btn');
+    const reportMenu = reportDropdown.querySelector('.report-menu');
+    // Toggle menu visibility on button click
+    reportBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      // Hide report callout if present
+      const reportCta = document.getElementById('reportCta');
+      if (reportCta) reportCta.style.opacity = 0;
+      // Toggle display
+      const isOpen = reportMenu.style.display === 'block';
+      reportMenu.style.display = isOpen ? 'none' : 'block';
+      reportBtn.setAttribute('aria-expanded', !isOpen);
+    });
+    // Handle menu item selection
+    reportMenu.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const li = e.target.closest('li');
+      if (!li) return;
+      const action = li.getAttribute('data-action');
+      // Close the menu
+      reportMenu.style.display = 'none';
+      reportBtn.setAttribute('aria-expanded', 'false');
+      // If the chosen option is one of the reporting categories, show success overlay
+      if (action === 'junk' || action === 'phishing' || action === 'notjunk') {
+        const successOverlay = document.getElementById('successOverlay');
+        successOverlay.style.pointerEvents = 'auto';
+        anime({
+          targets: successOverlay,
+          opacity: [0, 1],
+          duration: 600,
+          easing: 'easeOutQuad',
+          complete: () => {
+            setTimeout(() => {
+              anime({
+                targets: successOverlay,
+                opacity: [1, 0],
+                duration: 600,
+                easing: 'easeInQuad',
+                complete: () => {
+                  successOverlay.style.pointerEvents = 'none';
+                  // Reveal navigation
+                  anime({ targets: navContainer, opacity: [0, 1], duration: 600, easing: 'easeOutQuad' });
+                }
+              });
+            }, 1500);
+          }
+        });
       }
     });
-  });
+    // Close the menu when clicking outside
+    document.addEventListener('click', () => {
+      if (reportMenu.style.display === 'block') {
+        reportMenu.style.display = 'none';
+        reportBtn.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }
 
   // Event listener for phishing link click
   // We delegate to message body
@@ -485,6 +674,33 @@ function initScene2() {
       });
     }
   });
+
+  /**
+   * Highlight the report button with a green flashing outline. This helper
+   * creates (if necessary) an overlay element positioned over the report
+   * button. Using Anime.js, it animates the overlay’s opacity through a
+   * series of pulses to draw the learner’s attention. The function
+   * returns a promise that resolves when the animation completes.
+   */
+  function highlightReportButton() {
+    return new Promise(resolve => {
+      const reportBtn = document.querySelector('#scene2 .report-dropdown .report-btn');
+      if (!reportBtn) {
+        resolve();
+        return;
+      }
+      // Add a CSS class to trigger a flashing animation defined in the
+      // stylesheet. The animation will run once and then remove the
+      // class to reset the button.  This avoids manual manipulation of
+      // overlay elements and ensures consistent timing.
+      reportBtn.classList.add('highlighting');
+      // Remove the highlighting class after the animation completes.
+      setTimeout(() => {
+        reportBtn.classList.remove('highlighting');
+        resolve();
+      }, 1400);
+    });
+  }
 }
 
 /* Scene 3: Social Engineering */
