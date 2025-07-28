@@ -197,6 +197,14 @@ function initScene1() {
     introLogo.style.display = 'block';
   }
 
+  // Begin playing the welcoming narration immediately when the scene starts.
+  // Calling playAudio here ensures the audio begins as soon as scene1
+  // loads, rather than waiting for the welcome overlay animation to
+  // complete.  Autoplay policies may still require a user interaction
+  // before sound plays; if so, the narration will start once the first
+  // interaction occurs.
+  playAudio('welcoming');
+
   // Function to show the call‑to‑action near the email popup
   function showCTA() {
     // Position the CTA popup above the email popup
@@ -332,12 +340,6 @@ function initScene1() {
     const originalSubtitle = subtitleEl ? subtitleEl.textContent : '';
     if (headingEl) headingEl.textContent = '';
     if (subtitleEl) subtitleEl.textContent = '';
-    // Trigger the welcoming narration immediately when the overlay starts
-    // to appear. Autoplay restrictions may still prevent playback until a
-    // user interacts with the page, but invoking here ensures the
-    // audio starts as early as possible.  The narration accompanies
-    // the typewriter animation of the heading and subtitle.
-    playAudio('welcoming');
     // Fade the overlay in, then type its contents
     anime({
       targets: welcomeOverlay,
@@ -345,7 +347,8 @@ function initScene1() {
       duration: 600,
       easing: 'easeOutQuad',
       complete: async () => {
-        // Start the typewriter animations once the overlay is fully visible
+        // Once the overlay is fully visible, start typing the heading and subtitle.
+        // The welcoming narration is started at scene load (in initScene1), so we only handle typing here.
         await typewriter(headingEl, originalHeading, 40);
         await typewriter(subtitleEl, originalSubtitle, 40);
       }
