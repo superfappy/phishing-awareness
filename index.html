@@ -40,7 +40,7 @@
       <!-- Email preview that slides into view -->
       <div class="email-popup" id="emailPopup">
         <div class="email-header">
-          <span class="email-from">From: HR Department &lt;hr@kitopi.cc&gt;</span>
+          <span class="email-from">From: HR Department &lt;hr@kitopi.com&gt;</span>
           <span class="email-subject">Your role is affected – urgent update</span>
         </div>
         <div class="email-body">Dear Team,
@@ -116,7 +116,37 @@
                 <button title="Reply"><span class="action-icon">↩</span></button>
                 <button title="Reply all"><span class="action-icon">⤺</span></button>
                 <button title="Forward"><span class="action-icon">↪</span></button>
-                <button class="report-btn" title="Report"><span class="action-icon">⚑</span></button>
+                <!-- Outlook‑style report dropdown. We include an image icon and a chevron to
+                     mirror the official Outlook button. When clicked, a context menu
+                     appears with multiple reporting options. -->
+                <div class="report-dropdown">
+                  <button class="report-btn" title="Report Message" aria-expanded="false">
+                    <img src="https://ipagave.azurewebsites.net/Images/ReportMessage64.png" alt="Report" class="report-icon" />
+                    <i class="fas fa-chevron-down report-chevron"></i>
+                  </button>
+                  <ul class="report-menu">
+                    <li data-action="junk">
+                      <img src="https://aka.ms/ipagave/images/Junk16.png" alt="Junk" />
+                      <span>Junk</span>
+                    </li>
+                    <li data-action="phishing">
+                      <img src="https://aka.ms/ipagave/images/Phishing16.png" alt="Phishing" />
+                      <span>Phishing</span>
+                    </li>
+                    <li data-action="notjunk">
+                      <img src="https://aka.ms/ipagave/images/NotJunk16.png" alt="Not Junk" />
+                      <span>Not Junk</span>
+                    </li>
+                    <li data-action="options">
+                      <img src="https://aka.ms/ipagave/images/Options16.png" alt="Options" />
+                      <span>Options...</span>
+                    </li>
+                    <li data-action="help">
+                      <img src="https://aka.ms/ipagave/images/Help16.png" alt="Help" />
+                      <span>Help</span>
+                    </li>
+                  </ul>
+                </div>
               </div>
             </div>
             <div class="message-body" id="message-body">
@@ -142,6 +172,30 @@
         <div class="feedback-content">
           <h2>Oh no!</h2>
           <p>Your credentials have been compromised.</p>
+        </div>
+      </div>
+
+      <!-- Decision overlay: prompts the viewer to decide what action to take.
+           This overlay appears after the message details are revealed. Two
+           options are presented without explicitly labelling one as correct
+           to encourage the learner to think critically. -->
+      <div class="decision-overlay" id="decisionOverlay">
+        <div class="decision-card">
+          <h3 class="decision-question">What would you do next?</h3>
+          <div class="decision-options">
+            <div class="decision-option" id="decision-open">
+              <!-- Neutral phrasing hints at following the email instructions without
+                   explicitly encouraging the behaviour. -->
+              <i class="fas fa-link"></i>
+              <p>Use the link to reset password</p>
+            </div>
+            <div class="decision-option" id="decision-report">
+              <!-- Present the alternative action of reporting the email.  This phrasing
+                   remains neutral and does not overtly hint that it is the safer choice. -->
+              <i class="fas fa-flag"></i>
+              <p>Report this email as phishing</p>
+            </div>
+          </div>
         </div>
       </div>
       <div class="nav-buttons">
@@ -349,6 +403,10 @@
   </div>
   <!-- Append a version query to bust browser cache when the script updates -->
   <!-- Increment the cache‑busting version when script updates to ensure browsers load the latest changes -->
-  <script src="script.js?v=3"></script>
+  <!-- Increment the cache‑busting version when script updates to ensure browsers load the latest changes -->
+  <!-- Include version query to bust cache whenever script changes -->
+  <!-- Increment the version parameter whenever script.js changes so the browser
+       fetches the latest code rather than a cached copy. -->
+  <script src="script.js?v=7"></script>
 </body>
 </html>
