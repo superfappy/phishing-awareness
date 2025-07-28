@@ -121,7 +121,6 @@ const audioFiles = {
 Object.values(audioFiles).forEach(a => {
   a.loop = false;
   a.preload = 'auto';
-  a.autoplay = true;
   a.load();
 });
 
