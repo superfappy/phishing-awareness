@@ -332,6 +332,12 @@ function initScene1() {
     const originalSubtitle = subtitleEl ? subtitleEl.textContent : '';
     if (headingEl) headingEl.textContent = '';
     if (subtitleEl) subtitleEl.textContent = '';
+    // Trigger the welcoming narration immediately when the overlay starts
+    // to appear. Autoplay restrictions may still prevent playback until a
+    // user interacts with the page, but invoking here ensures the
+    // audio starts as early as possible.  The narration accompanies
+    // the typewriter animation of the heading and subtitle.
+    playAudio('welcoming');
     // Fade the overlay in, then type its contents
     anime({
       targets: welcomeOverlay,
@@ -339,8 +345,7 @@ function initScene1() {
       duration: 600,
       easing: 'easeOutQuad',
       complete: async () => {
-        // Trigger the welcoming narration when typing begins
-        playAudio('welcoming');
+        // Start the typewriter animations once the overlay is fully visible
         await typewriter(headingEl, originalHeading, 40);
         await typewriter(subtitleEl, originalSubtitle, 40);
       }
