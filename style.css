@@ -736,12 +736,249 @@ body {
   color: var(--color-accent2);
 }
 
+/* Decision overlay styles for scene 2. This modal occupies the entire
+   scene and gently darkens the background. The card centres the
+   question and options, using neutral colours from the palette. */
+#scene2 .decision-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: none; /* hidden by default; JS will set display flex */
+  align-items: center;
+  justify-content: center;
+  background: rgba(1, 45, 47, 0.85); /* semi‑transparent dark tint */
+  /* Ensure the decision overlay sits above the message pane and other overlays.
+     Using a high z-index prevents it from being hidden behind message content. */
+  z-index: 100;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+#scene2 .decision-card {
+  background: var(--color-light);
+  color: var(--color-dark);
+  padding: 24px 32px;
+  border-radius: 12px;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+  width: 80%;
+  max-width: 420px;
+  text-align: center;
+  /* Elevate the card above the overlay to ensure pointer events register
+     correctly; position relative to allow z‑index */
+  position: relative;
+  z-index: 101;
+}
+
+#scene2 .decision-question {
+  margin-top: 0;
+  margin-bottom: 16px;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+#scene2 .decision-options {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+#scene2 .decision-option {
+  flex: 1;
+  min-width: 140px;
+  background: #f5f9fa;
+  border: 2px solid var(--color-primary);
+  border-radius: 8px;
+  padding: 16px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: background 0.3s, color 0.3s, transform 0.2s;
+}
+
+#scene2 .decision-option i {
+  font-size: 24px;
+  margin-bottom: 8px;
+  color: var(--color-primary);
+  transition: color 0.3s;
+}
+
+#scene2 .decision-option p {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-dark);
+  transition: color 0.3s;
+}
+
+#scene2 .decision-option:hover {
+  background: var(--color-primary);
+  transform: translateY(-2px);
+}
+
+#scene2 .decision-option:hover i,
+#scene2 .decision-option:hover p {
+  color: #ffffff;
+}
+
 #scene2 .nav-buttons {
   position: absolute;
   bottom: 16px;
   right: 16px;
   display: flex;
   gap: 8px;
+}
+
+/* Outlook‑style report dropdown styling within the message actions of scene 2 */
+#scene2 .report-dropdown {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* Highlight overlay for the report button.  When triggered, this element
+   sits above the report button and animates its opacity to create a
+   flashing effect. It uses the success colour for the border and
+   matches the button's border radius for a seamless outline. */
+#scene2 .report-dropdown .report-highlight {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 2px solid var(--color-success);
+  border-radius: 4px;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Keyframes for flashing the report button border.  The border expands
+   and fades twice to draw attention when the learner selects the
+   reporting option. */
+@keyframes flash-border {
+  0%, 100% {
+    box-shadow: 0 0 0 0 var(--color-success);
+  }
+  20% {
+    box-shadow: 0 0 0 6px var(--color-success);
+  }
+  40% {
+    box-shadow: 0 0 0 0 var(--color-success);
+  }
+  60% {
+    box-shadow: 0 0 0 6px var(--color-success);
+  }
+  80% {
+    box-shadow: 0 0 0 0 var(--color-success);
+  }
+}
+
+/* Flashing animation for the report button background.  The button
+   alternates between its normal white background and the success
+   colour, with a contrasting text colour, to draw the learner’s eye.
+   The sequence repeats twice within the duration. */
+@keyframes flash-bg {
+  0%, 100% {
+    background-color: #ffffff;
+    color: var(--color-accent2);
+    box-shadow: none;
+  }
+  20%, 60% {
+    background-color: var(--color-success);
+    color: #ffffff;
+    box-shadow: 0 0 0 6px var(--color-success);
+  }
+  40%, 80% {
+    background-color: #ffffff;
+    color: var(--color-accent2);
+    box-shadow: none;
+  }
+}
+
+/* Apply the flashing animation to the report button when the
+   `highlighting` class is added.  The animation runs once and then
+   automatically clears, leaving the button in its normal state. */
+#scene2 .report-dropdown .report-btn.highlighting {
+  animation: flash-bg 1.4s ease-out;
+}
+
+#scene2 .report-dropdown .report-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 28px;
+  /* A slightly wider button accommodates the icon and chevron */
+  padding: 0 8px;
+  background: #ffffff;
+  border: 1px solid var(--color-accent2);
+  /* Use a small radius to match Outlook's square button. A slight rounding
+     softens the edges without creating a pill shape. */
+  border-radius: 4px;
+  color: var(--color-accent2);
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+#scene2 .report-dropdown .report-btn:hover {
+  background: var(--color-accent2);
+  color: #ffffff;
+}
+
+#scene2 .report-dropdown .report-btn img.report-icon {
+  width: 16px;
+  height: 16px;
+  margin-right: 4px;
+}
+
+#scene2 .report-dropdown .report-btn i.report-chevron {
+  font-size: 12px;
+  margin-left: 4px;
+  color: inherit;
+}
+
+#scene2 .report-dropdown .report-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  background: #ffffff;
+  border: 1px solid #e0e6e5;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  list-style: none;
+  padding: 4px 0;
+  margin: 0;
+  min-width: 160px;
+  display: none;
+  z-index: 300;
+}
+
+#scene2 .report-dropdown .report-menu li {
+  display: flex;
+  align-items: center;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--color-dark);
+  white-space: nowrap;
+  transition: background 0.2s, color 0.2s;
+}
+
+#scene2 .report-dropdown .report-menu li:hover {
+  background: var(--color-accent1);
+  color: #ffffff;
+}
+
+#scene2 .report-dropdown .report-menu li img {
+  width: 16px;
+  height: 16px;
+  margin-right: 8px;
 }
 
 /* Simple animation used for list items; reused across multiple scenes. */
