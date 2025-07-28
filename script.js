@@ -99,6 +99,56 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+/*
+ * Audio setup: load voice-over files used throughout the scenes.  Each
+ * file corresponds to a narration for a specific slide or action. We
+ * preload the audio to avoid playback delays and disable looping to
+ * ensure each clip plays only once per trigger.
+ */
+const audioFiles = {
+  welcoming: new Audio('Audio/Welcoming.wav'),
+  slide1: new Audio('Audio/slide1.wav'),
+  slideOutlook: new Audio('Audio/slide_outlook.wav'),
+  cardsDetails: new Audio('Audio/cards_details.wav'),
+  redFlags: new Audio('Audio/red_flags.wav'),
+  hoverOver: new Audio('Audio/hover_over.wav'),
+  BEC: new Audio('Audio/BEC.wav'),
+  socialEngineering: new Audio('Audio/social_engineering.wav'),
+  finalTips: new Audio('Audio/final_tips.wav'),
+  ending: new Audio('Audio/ending.wav'),
+};
+// Configure audio objects
+Object.values(audioFiles).forEach(a => {
+  a.loop = false;
+  a.preload = 'auto';
+});
+
+// Stop any currently playing audio and reset its playback position.
+function stopAllAudio() {
+  Object.values(audioFiles).forEach(a => {
+    if (!a.paused) {
+      a.pause();
+    }
+    a.currentTime = 0;
+  });
+}
+
+// Play a specific audio clip by name.  This helper stops any existing
+// narration before starting the requested clip. If the name is
+// undefined or the file does not exist, nothing happens.
+function playAudio(name) {
+  stopAllAudio();
+  const a = audioFiles[name];
+  if (a) {
+    try {
+      a.currentTime = 0;
+      a.play();
+    } catch (err) {
+      // Silently ignore playback errors (e.g., autoplay restrictions)
+    }
+  }
+}
+
 /* Scene 1: The Hook */
 function initScene1() {
   // New cinematic intro implementation
@@ -289,15 +339,23 @@ function initScene1() {
       duration: 600,
       easing: 'easeOutQuad',
       complete: async () => {
+        // Trigger the welcoming narration when typing begins
+        playAudio('welcoming');
         await typewriter(headingEl, originalHeading, 40);
         await typewriter(subtitleEl, originalSubtitle, 40);
       }
     });
     let overlayDismissed = false;
-    function dismiss() {
+    // Dismiss the overlay.  When triggered by a user click, the slide1
+    // narration plays.  Automatic dismissal does not trigger audio.
+    function dismiss(byClick = false) {
       if (overlayDismissed) return;
       overlayDismissed = true;
       welcomeOverlay.style.pointerEvents = 'none';
+      if (byClick) {
+        // Play the narration for slide 1 only on user interaction
+        playAudio('slide1');
+      }
       anime({
         targets: welcomeOverlay,
         opacity: [1, 0],
@@ -308,9 +366,9 @@ function initScene1() {
         }
       });
     }
-    welcomeOverlay.addEventListener('click', dismiss);
-    // Auto dismiss after 10 seconds
-    setTimeout(dismiss, 10000);
+    welcomeOverlay.addEventListener('click', () => dismiss(true));
+    // Auto dismiss after 10 seconds (no audio played)
+    setTimeout(() => dismiss(false), 10000);
   }
 
   function startEmailSequence() {
@@ -338,6 +396,12 @@ function initScene1() {
 
 /* Scene 2: What is Phishing? */
 function initScene2() {
+  // Play the narration for the Outlook slide when scene 2 begins.  This
+  // ensures the learner hears an explanation of the inbox interface
+  // before interacting. The helper stops any currently playing audio
+  // before starting the new clip.
+  playAudio('slideOutlook');
+
   // Grab email rows and message display elements
   const emails = document.querySelectorAll('#scene2 .outlook-email');
   const subjectEl = document.getElementById('message-subject');
@@ -705,6 +769,10 @@ function initScene2() {
 
 /* Scene 3: Social Engineering */
 function initScene3() {
+  // Play the narration that describes the card details when this scene starts.
+  // This audio explains how social engineering works before the slideshow begins.
+  playAudio('cardsDetails');
+
   // Automatically cycle through social engineering examples. We avoid
   // user‑controlled sliders here to ensure a guided demonstration.
   const data = [
@@ -781,6 +849,10 @@ function initScene3() {
 
 /* Scene 4: Red Flags */
 function initScene4() {
+  // Play the narration describing common red flags.  This audio sets up
+  // the context for the sequential animations below.
+  playAudio('redFlags');
+
   // Animate each red flag sequentially. Each item slides in and its text
   // is typed using the typewriter helper. This new implementation
   // targets .flag-item and .flag-text instead of email lines.
@@ -812,6 +884,10 @@ function initScene4() {
 
 /* Scene 5: What to Do When It Feels Off */
 function initScene5() {
+  // Play the narration explaining what to do when something feels off.  It
+  // accompanies the animated demonstration of hovering over a suspicious link.
+  playAudio('hoverOver');
+
   // Scene 5 demonstrates what to do when you encounter a suspicious link.
   // We hide the real cursor and animate a fake cursor to hover over the link,
   // display the tooltip, then cascade in the recommended actions.
@@ -878,6 +954,11 @@ function initScene5() {
 
 /* Scene 6: BEC Scenario */
 function initScene6() {
+  // Play the narration for the BEC (Business Email Compromise) scenario when
+  // this scene begins.  This helps frame the content as the learner
+  // interacts with the flip card.
+  playAudio('BEC');
+
   const card = document.getElementById('bec-card');
   const buttons = card.querySelectorAll('.flip-btn');
   // No automatic flipping – user must click the button to view headers.
@@ -890,6 +971,10 @@ function initScene6() {
 
 /* Scene 7: Social Engineering Examples */
 function initScene7() {
+  // Play the narration for the social engineering module.  This audio
+  // introduces the different examples that appear in the grid below.
+  playAudio('socialEngineering');
+
   const tiles = document.querySelectorAll('#scene7 .tile');
   const modal = document.getElementById('tile-modal');
   const modalTitle = document.getElementById('modal-title');
@@ -945,6 +1030,10 @@ function initScene7() {
 
 /* Scene 8: Final Tips */
 function initScene8() {
+  // Play the narration for the final tips when this scene begins.  The
+  // accompanying audio reinforces the key takeaways as each tip appears.
+  playAudio('finalTips');
+
   // Animate each tip item in the final checklist. Each tip slides in and
   // the text is typed; once finished, the checkmark is marked as checked.
   const items = document.querySelectorAll('#scene8 .tip-item');
@@ -972,6 +1061,10 @@ function initScene8() {
 
 /* Scene 9: Closing Scene */
 function initScene9() {
+  // Play the ending narration as the closing scene begins.  This final
+  // audio thanks the learner and provides closing remarks.
+  playAudio('ending');
+
   // Animate mask to shield crossfade with a slight delay to allow viewers to notice the mask first
   const maskSvg = document.getElementById('maskSvg');
   const shieldSvg = document.getElementById('shieldSvg');
