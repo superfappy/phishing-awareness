@@ -4,6 +4,8 @@
 // the scene is visible.
 
 document.addEventListener('DOMContentLoaded', () => {
+    initPreloader();
+    initParticles();
   // Determine which scene to display based on the query parameter
   const scenes = Array.from(document.querySelectorAll('.scene'));
   const params = new URLSearchParams(window.location.search);
@@ -47,7 +49,11 @@ document.addEventListener('DOMContentLoaded', () => {
     case 8:
       initScene9();
       break;
-    default:
+    
+    case 9:
+        initScene10();
+        break;
+default:
       break;
   }
 
@@ -151,6 +157,7 @@ function playAudio(name) {
 
 /* Scene 1: The Hook */
 function initScene1() {
+  animateSceneIn('scene1');
   // New cinematic intro implementation
   const lineEls = [
     document.getElementById('line1'),
@@ -404,6 +411,7 @@ function initScene1() {
 
 /* Scene 2: What is Phishing? */
 function initScene2() {
+  animateSceneIn('scene2');
   // Play the narration for the Outlook slide when scene 2 begins.  This
   // ensures the learner hears an explanation of the inbox interface.
   playAudio('slideOutlook');
@@ -908,6 +916,7 @@ function initScene2() {
 
 /* Scene 3: Social Engineering */
 function initScene3() {
+  animateSceneIn('scene3');
   // Play the narration that describes the card details when this scene starts.
   // This audio explains how social engineering works before the slideshow begins.
   playAudio('cardsDetails');
@@ -988,6 +997,7 @@ function initScene3() {
 
 /* Scene 4: Red Flags */
 function initScene4() {
+  animateSceneIn('scene4');
   // Play the narration describing common red flags.  This audio sets up
   // the context for the sequential animations below.
   playAudio('redFlags');
@@ -1023,6 +1033,7 @@ function initScene4() {
 
 /* Scene 5: What to Do When It Feels Off */
 function initScene5() {
+  animateSceneIn('scene5');
   // Play the narration explaining what to do when something feels off.  It
   // accompanies the animated demonstration of hovering over a suspicious link.
   playAudio('hoverOver');
@@ -1093,6 +1104,7 @@ function initScene5() {
 
 /* Scene 6: BEC Scenario */
 function initScene6() {
+  animateSceneIn('scene6');
   // Play the narration for the BEC (Business Email Compromise) scenario when
   // this scene begins.  This helps frame the content as the learner
   // interacts with the flip card.
@@ -1110,6 +1122,7 @@ function initScene6() {
 
 /* Scene 7: Social Engineering Examples */
 function initScene7() {
+  animateSceneIn('scene7');
   // Play the narration for the social engineering module.  This audio
   // introduces the different examples that appear in the grid below.
   playAudio('socialEngineering');
@@ -1169,6 +1182,7 @@ function initScene7() {
 
 /* Scene 8: Final Tips */
 function initScene8() {
+  animateSceneIn('scene8');
   // Play the narration for the final tips when this scene begins.  The
   // accompanying audio reinforces the key takeaways as each tip appears.
   playAudio('finalTips');
@@ -1200,6 +1214,7 @@ function initScene8() {
 
 /* Scene 9: Closing Scene */
 function initScene9() {
+  animateSceneIn('scene9');
   // Play the ending narration as the closing scene begins.  This final
   // audio thanks the learner and provides closing remarks.
   playAudio('ending');
@@ -1244,3 +1259,88 @@ function initScene9() {
     }, 6000 + idx * 1400);
   });
 }
+// initScene10 function
+function initScene10() {
+  showNav();
+  animateSceneIn('scene10');
+  const scene = document.getElementById('scene10');
+  if (!scene) return;
+  const cards = scene.querySelectorAll('.email-card');
+  const trash = scene.querySelector('.trash');
+  const success = document.getElementById('challengeSuccess');
+
+  cards.forEach(card => {
+    card.addEventListener('dragstart', (e) => {
+      e.dataTransfer.setData('type', card.dataset.type);
+      setTimeout(() => card.classList.add('dragging'), 0);
+    });
+    card.addEventListener('dragend', () => card.classList.remove('dragging'));
+  });
+
+  trash.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    trash.classList.add('hover');
+  });
+  trash.addEventListener('dragleave', () => {
+    trash.classList.remove('hover');
+  });
+  trash.addEventListener('drop', (e) => {
+    e.preventDefault();
+    const type = e.dataTransfer.getData('type');
+    trash.classList.remove('hover');
+    if (type === 'suspicious') {
+      const card = scene.querySelector(".email-card[data-type='suspicious']");
+      gsap.to(card, { x: trash.offsetLeft - card.offsetLeft, y: trash.offsetTop - card.offsetTop, scale: 0.2, opacity: 0, duration: 0.8, ease: 'back.in', onComplete: () => {
+        card.style.display = 'none';
+        if (success) {
+          success.style.display = 'flex';
+          gsap.from(success, { opacity: 0, scale: 0.8, duration: 0.6 });
+        }
+      }});
+    } else {
+      const card = scene.querySelector(".email-card[data-type='legit']");
+      if (card) gsap.to(card, { x: 0, y: 0, rotation: 0, duration: 0.3, ease: 'elastic.out' });
+    }
+  });
+}
+
+// initPreloader
+function animateSceneIn(sceneId) {
+  const scene = document.getElementById(sceneId);
+  if (scene) {
+    gsap.from(scene, { duration: 0.8, opacity: 0, x: '50%', rotationY: -30, ease: 'power2.out' });
+  }
+}
+function initPreloader() {
+  const preloader = document.getElementById('preloader');
+  if (!preloader) return;
+  const progressFill = preloader.querySelector('.progress-fill');
+  let progress = 0;
+  const interval = setInterval(() => {
+    progress += 1;
+    if (progressFill) progressFill.style.width = progress + '%';
+    if (progress >= 100) {
+      clearInterval(interval);
+      gsap.to(preloader, { opacity: 0, duration: 0.6, onComplete: () => preloader.remove() });
+    }
+  }, 20);
+}
+
+// initParticles
+function initParticles() {
+  if (window.tsParticles) {
+    tsParticles.load('tsparticles', {
+      background: { color: { value: 'transparent' } },
+      particles: {
+        number: { value: 60, density: { enable: true, value_area: 800 } },
+        color: { value: ['#026873', '#A54ACB'] },
+        opacity: { value: 0.3 },
+        size: { value: { min: 1, max: 4 } },
+        move: { enable: true, speed: 0.4 },
+        shape: { type: 'circle' },
+        line_linked: { enable: false }
+      }
+    });
+  }
+}
+
