@@ -81,6 +81,53 @@ body {
   text-transform: uppercase;
 }
 
+/* Common style for Lottie containers on each scene. These containers hold
+   vector animations loaded via lottie-web. Position them in the top right
+   corner of each slide so they complement the heading without obscuring
+   primary content. */
+.lottie-container {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 120px;
+  height: 120px;
+  z-index: 10;
+  pointer-events: none;
+  /* Apply colour tint on the entire Lottie container so nested SVG
+     elements adopt the teal palette.  By using a CSS filter here
+     instead of targeting the SVG directly, we ensure the filter
+     applies consistently regardless of how lottie-web structures
+     the injected markup. */
+  filter: hue-rotate(-50deg) saturate(1.4) brightness(0.85);
+}
+
+/* Tint all SVGs within Lottie containers to harmonise the icons with
+   Kitopi’s teal palette. A hue rotation brings purples toward green,
+   while increased saturation and slight brightness darken the tones for
+   improved legibility on the dark background. */
+.lottie-container svg {
+  /* The container applies the filter; additional filtering on SVG is
+     unnecessary.  We leave this rule here in case nested SVGs are
+     targeted by other styles. */
+  filter: none;
+}
+
+/* Slightly larger Lottie container for the closing scene to balance the
+   composition with larger elements like the morphing icons. */
+#scene9 .lottie-container {
+  width: 140px;
+  height: 140px;
+}
+
+/* Adjust the position of the scene2 animation so it floats outside the top
+   border of the Outlook card rather than overlapping the search bar.  The
+   translation places the centre of the animation slightly above and to
+   the right of the card corner. */
+/* Custom positioning for the Outlook scene has been removed.  By default,
+   the scene2 animation will appear in the top right corner within the
+   card, providing a subtle accent without obscuring essential UI.  If
+   further adjustments are necessary, they can be defined here. */
+
 /* Scene 1: The Hook */
 /*
   The first scene introduces a dramatic narrative that sets the stage for the
@@ -979,6 +1026,112 @@ body {
   width: 16px;
   height: 16px;
   margin-right: 8px;
+}
+
+/* Automated phishing reporting demo styles for scene 2 */
+
+/* Absolute pointer used in the demo. It follows a scripted path to illustrate clicks and hovers. */
+#scene2 .pointer {
+  position: absolute;
+  width: 36px;
+  height: 56px;
+  z-index: 500;
+  pointer-events: none;
+  /* Initially hidden; JS will fade it in when the demo runs. */
+  opacity: 0;
+  transform-origin: top left;
+}
+
+/* Ensure the pointer icon is visible against both light and dark backgrounds.
+   We invert the colour and add a subtle drop shadow to give it contrast on
+   the white reading pane and the teal slide background. */
+#scene2 .pointer img {
+  width: 100%;
+  height: 100%;
+  /* Invert turns the white pointer glyph black; the drop shadow adds subtle depth. */
+  filter: invert(1) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+/* Tooltip that appears when hovering over a suspicious link in the message body. */
+#scene2 .link-tooltip {
+  position: absolute;
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: rgba(1, 45, 47, 0.95);
+  color: #ffffff;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 450;
+}
+
+/* Within the tooltip, highlight the dangerous part of the domain in red. */
+#scene2 .link-tooltip .danger-domain {
+  color: var(--color-danger);
+  font-weight: 600;
+}
+
+/* Overlay covering the entire scene during celebration or safe messaging. Uses a slight blur on the backdrop. */
+#scene2 .celebrate-overlay,
+#scene2 .safe-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(2px);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 550;
+}
+
+/* Celebration overlay uses a semi-transparent dark backdrop to draw attention to the GIF. */
+#scene2 .celebrate-overlay {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+#scene2 .celebrate-overlay img {
+  width: 140px;
+  height: 140px;
+}
+
+/* Safe overlay uses a translucent green tint to convey success. */
+#scene2 .safe-overlay {
+  background: rgba(40, 167, 69, 0.85);
+  color: #ffffff;
+}
+
+#scene2 .safe-overlay .safe-content {
+  text-align: center;
+  padding: 20px;
+}
+
+#scene2 .safe-overlay h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+#scene2 .safe-overlay p {
+  margin-top: 6px;
+  font-size: 16px;
+}
+
+/* Highlight spans inside the phishing email body. A light red background and subtle border draws attention. */
+#scene2 .phish-highlight {
+  background: rgba(231, 76, 60, 0.25);
+  border-radius: 4px;
+  padding: 0 2px;
+}
+
+/* Class used to highlight suspicious domain in the link tooltip. This is identical to .danger-domain for clarity. */
+#scene2 .danger-domain {
+  color: var(--color-danger);
+  font-weight: 700;
 }
 
 /* Simple animation used for list items; reused across multiple scenes. */
