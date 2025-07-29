@@ -6,19 +6,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Phishing Remedial Awareness</title>
   <!-- Base styles -->
-  <link rel="stylesheet" href="style.css" />
+  <!-- Cache bust the stylesheet so that updated colours/themes are always fetched. -->
+  <link rel="stylesheet" href="style.css?v=2" />
   <!-- Import Montserrat fonts for a modern professional look -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet" />
+  <!-- Import Poppins fonts for a fresh modern look -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet" />
   <!-- External libraries for animation and slider -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" />
   <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
-  <!-- GSAP for professional animations -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-  <!-- Lottie for vector animations -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.11.0/lottie.min.js"></script>
+  <!-- GSAP for advanced timeline‑based animations -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.2/dist/gsap.min.js"></script>
   <!-- Font Awesome for icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-yHn6pxzC9P3jqSbMnX/KSDMe6M9YHXPbfZNhNEZ3H/0cx43gXUdkIdFXLGVyx6M+7GR6og55fU+bM3Bxu3sM2Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
@@ -26,17 +26,8 @@
   <div id="app" class="app-container">
     <!-- Scene 1: Narrative intro with dramatic animation -->
     <div class="scene" id="scene1">
-      <!-- Dynamic background shapes for cinematic ambience -->
-      <div class="bg-shapes">
-        <div class="bg-shape shape1"></div>
-        <div class="bg-shape shape2"></div>
-        <div class="bg-shape shape3"></div>
-      </div>
       <!-- Dynamic abstract background -->
       <div class="intro-bg"></div>
-
-      <!-- Lottie animation for scene1 (e.g., introduction/padlock) -->
-      <div class="lottie-container" id="lottie-scene1"></div>
 
       <!-- Spinning Kitopi logo for cinematic intro -->
       <!-- The logo starts small and spins before fading out to reveal the story.  -->
@@ -86,14 +77,6 @@
 
     <!-- Scene 2: Outlook‑style inbox with phishing examples -->
     <div class="scene" id="scene2">
-      <!-- Dynamic background shapes for scene 2 -->
-      <div class="bg-shapes">
-        <div class="bg-shape shape1"></div>
-        <div class="bg-shape shape2"></div>
-        <div class="bg-shape shape3"></div>
-      </div>
-      <!-- Lottie animation for scene2 (phishing awareness) -->
-      <div class="lottie-container" id="lottie-scene2"></div>
       <div class="outlook-wrapper">
         <div class="outlook-header">
           <h2>Inbox</h2>
@@ -179,20 +162,44 @@
           </div>
         </div>
       </div>
-      <!-- Automated phishing reporting demo elements -->
-      <!-- Pointer used to illustrate where the simulated user is clicking.  -->
-      <div id="scene2Pointer" class="pointer" aria-hidden="true"></div>
-      <!-- Tooltip that appears when hovering over a suspicious link. -->
-      <div id="linkTooltip" class="link-tooltip" aria-hidden="true"></div>
-      <!-- Celebration overlay showing a brief animation after reporting. -->
-      <div id="celebrateOverlay" class="celebrate-overlay" aria-hidden="true">
-        <img src="celebrate.gif" alt="Celebration animation" />
+      <!-- Instruction callouts for scene 2 (hidden by default) -->
+      <div class="cta-popup" id="emailCta2">Open this email</div>
+      <div class="cta-popup" id="reportCta">Report as phishing using the flag icon</div>
+      <!-- Feedback overlays for success and danger outcomes -->
+      <div class="feedback-overlay success" id="successOverlay">
+        <div class="feedback-content">
+          <h2>Great job!</h2>
+          <p>You reported the phishing email.</p>
+        </div>
       </div>
-      <!-- Final safe overlay indicating that the phishing attempt has been stopped. -->
-      <div id="safeOverlay" class="safe-overlay" aria-hidden="true">
-        <div class="safe-content">
-          <h2>You’re safe!</h2>
-          <p>You successfully reported the phishing email.</p>
+      <div class="feedback-overlay danger" id="dangerOverlay">
+        <div class="feedback-content">
+          <h2>Oh no!</h2>
+          <p>Your credentials have been compromised.</p>
+        </div>
+      </div>
+
+      <!-- Decision overlay: prompts the viewer to decide what action to take.
+           This overlay appears after the message details are revealed. Two
+           options are presented without explicitly labelling one as correct
+           to encourage the learner to think critically. -->
+      <div class="decision-overlay" id="decisionOverlay">
+        <div class="decision-card">
+          <h3 class="decision-question">What would you do next?</h3>
+          <div class="decision-options">
+            <div class="decision-option" id="decision-open">
+              <!-- Neutral phrasing hints at following the email instructions without
+                   explicitly encouraging the behaviour. -->
+              <i class="fas fa-link"></i>
+              <p>Use the link to reset password</p>
+            </div>
+            <div class="decision-option" id="decision-report">
+              <!-- Present the alternative action of reporting the email.  This phrasing
+                   remains neutral and does not overtly hint that it is the safer choice. -->
+              <i class="fas fa-flag"></i>
+              <p>Report this email as phishing</p>
+            </div>
+          </div>
         </div>
       </div>
       <div class="nav-buttons">
@@ -203,15 +210,7 @@
 
     <!-- Scene 3: Social Engineering Techniques (automatic sequence) -->
     <div class="scene" id="scene3">
-      <!-- Background shapes for scene 3 -->
-      <div class="bg-shapes">
-        <div class="bg-shape shape1"></div>
-        <div class="bg-shape shape2"></div>
-        <div class="bg-shape shape3"></div>
-      </div>
       <h2 class="scene-title">Social engineering techniques</h2>
-      <!-- Lottie animation for scene3 (social engineering) -->
-      <div class="lottie-container" id="lottie-scene3"></div>
       <!-- Custom container to cycle through examples automatically -->
       <div class="se-container">
         <div class="se-slide" id="se-slide">
@@ -231,15 +230,7 @@
 
     <!-- Scene 4: Red Flags -->
     <div class="scene" id="scene4">
-      <!-- Background shapes for scene 4 -->
-      <div class="bg-shapes">
-        <div class="bg-shape shape1"></div>
-        <div class="bg-shape shape2"></div>
-        <div class="bg-shape shape3"></div>
-      </div>
       <h2 class="scene-title">Red flags in an email</h2>
-      <!-- Lottie animation for scene4 (red flags) -->
-      <div class="lottie-container" id="lottie-scene4"></div>
       <!-- Redesigned flags card: uses a vertical timeline with coloured bullets instead of a scanning bar -->
       <div class="flags-card">
         <ul class="flag-list">
@@ -258,15 +249,7 @@
 
     <!-- Scene 5: What to Do When It Feels Off -->
     <div class="scene" id="scene5">
-      <!-- Background shapes for scene 5 -->
-      <div class="bg-shapes">
-        <div class="bg-shape shape1"></div>
-        <div class="bg-shape shape2"></div>
-        <div class="bg-shape shape3"></div>
-      </div>
       <h2 class="scene-title">Steps to take when you’re unsure</h2>
-      <!-- Lottie animation for scene5 (what to do) -->
-      <div class="lottie-container" id="lottie-scene5"></div>
       <div class="mouse-area">
         <!-- Custom cursor -->
         <div class="custom-cursor"></div>
@@ -313,15 +296,7 @@
 
     <!-- Scene 6: BEC Scenario -->
     <div class="scene" id="scene6">
-      <!-- Background shapes for scene 6 -->
-      <div class="bg-shapes">
-        <div class="bg-shape shape1"></div>
-        <div class="bg-shape shape2"></div>
-        <div class="bg-shape shape3"></div>
-      </div>
       <h2 class="scene-title">Business Email Compromise (BEC)</h2>
-      <!-- Lottie animation for scene6 (BEC awareness) -->
-      <div class="lottie-container" id="lottie-scene6"></div>
       <div class="bec-container">
         <div class="bec-card" id="bec-card">
           <div class="card-face card-front">
@@ -347,15 +322,7 @@
 
     <!-- Scene 7: Social Engineering Examples -->
     <div class="scene" id="scene7">
-      <!-- Background shapes for scene 7 -->
-      <div class="bg-shapes">
-        <div class="bg-shape shape1"></div>
-        <div class="bg-shape shape2"></div>
-        <div class="bg-shape shape3"></div>
-      </div>
       <h2 class="scene-title">Common social engineering attacks</h2>
-      <!-- Lottie animation for scene7 (social engineering examples) -->
-      <div class="lottie-container" id="lottie-scene7"></div>
       <p class="scene7-note">Click each box to learn more about the attack.</p>
       <div class="tiles">
         <div class="tile" data-info="A fraudulent email requesting wire transfer." data-type="Financial Scam">
@@ -387,15 +354,7 @@
 
     <!-- Scene 8: Final Tips – Think, Check, Report -->
     <div class="scene" id="scene8">
-      <!-- Background shapes for scene 8 -->
-      <div class="bg-shapes">
-        <div class="bg-shape shape1"></div>
-        <div class="bg-shape shape2"></div>
-        <div class="bg-shape shape3"></div>
-      </div>
       <h2 class="scene-title">Final tips – Think, Check, Report</h2>
-      <!-- Lottie animation for scene8 (final tips) -->
-      <div class="lottie-container" id="lottie-scene8"></div>
       <!-- Redesigned checklist: custom checkmarks and larger typography -->
       <ul class="checklist">
         <li class="tip-item">
@@ -419,15 +378,7 @@
 
     <!-- Scene 9: Closing Scene -->
     <div class="scene" id="scene9">
-      <!-- Background shapes for scene 9 -->
-      <div class="bg-shapes">
-        <div class="bg-shape shape1"></div>
-        <div class="bg-shape shape2"></div>
-        <div class="bg-shape shape3"></div>
-      </div>
       <div class="closing-container">
-        <!-- Lottie animation for scene9 (closing) -->
-        <div class="lottie-container" id="lottie-scene9"></div>
         <!-- Morph wrapper containing mask and shield -->
         <div class="morph-wrapper">
           <!-- Mask SVG -->
@@ -460,12 +411,21 @@
   <!-- Include version query to bust cache whenever script changes -->
   <!-- Increment the version parameter whenever script.js changes so the browser
        fetches the latest code rather than a cached copy. -->
+  <!-- Custom cursor used for the automated inbox animation -->
+  <div id="customCursor" class="custom-cursor"></div>
+  <!-- Celebration overlay displayed briefly after reporting phishing -->
+  <div id="celebrateOverlay" class="celebrate-overlay" style="display:none;">
+    <img src="celebrate.gif" alt="Celebrate success" class="celebrate-gif" />
+  </div>
+  <!-- Full screen success overlay shown after celebration -->
+  <div id="successFullOverlay" class="success-full-overlay" style="display:none;">
+    <div class="success-message">
+      <h2>You are safe!</h2>
+      <p>You successfully stopped a phishing attempt.</p>
+    </div>
+  </div>
   <!-- Increment the version parameter whenever script.js changes so the browser
        reloads the updated file without caching. -->
-  <!-- Update version to bust cache after major animation changes -->
-  <!-- Increment the version parameter whenever script.js changes so the browser
-       doesn’t cache outdated code.  Version 12 includes extensive scene 2
-       improvements and design refinements. -->
-  <script src="script.js?v=12"></script>
+  <script src="script.js?v=11"></script>
 </body>
 </html>
