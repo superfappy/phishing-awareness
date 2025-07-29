@@ -55,6 +55,61 @@ body {
   overflow: hidden;
 }
 
+/* --------------------------------------------------------------------------
+   Dynamic background shapes
+
+   Each scene contains a .bg-shapes wrapper with three .bg-shape children.  These
+   organic blobs create depth and motion behind the main content.  We size and
+   position them differently across the viewport, then animate them via GSAP.
+*/
+.bg-shapes {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.bg-shape {
+  position: absolute;
+  border-radius: 50%;
+  /* Reduced opacity for background blobs so they don't overly tint the
+     underlying content.  A lighter setting enhances subtle motion while
+     preserving legibility. */
+  opacity: 0.15;
+  filter: blur(60px);
+}
+
+/* Shape variations.  The colours draw from the existing palette so they blend
+   seamlessly with the teal backgrounds.  You can adjust the sizes and
+   positions to suit each scene.  */
+.bg-shape.shape1 {
+  width: 280px;
+  height: 280px;
+  background: radial-gradient(circle at 50% 50%, var(--color-accent1), transparent);
+  top: -80px;
+  left: -80px;
+}
+
+.bg-shape.shape2 {
+  width: 220px;
+  height: 220px;
+  background: radial-gradient(circle at 50% 50%, var(--color-accent2), transparent);
+  top: 70%;
+  left: -60px;
+}
+
+.bg-shape.shape3 {
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(circle at 50% 50%, var(--color-primary), transparent);
+  top: 45%;
+  left: 68%;
+}
+
 /* Scenes */
 .scene {
   position: absolute;
@@ -574,8 +629,11 @@ body {
   cursor: pointer;
   transition: background 0.2s;
   color: var(--color-dark);
-  opacity: 0;
-  transform: translateY(20px);
+  /* Initially visible; we removed the fade/slide as the email list is static
+     in the automated demo. The pointer movement will draw attention to the
+     row instead of waiting for an animation to reveal it. */
+  opacity: 1;
+  transform: none;
 }
 
 #scene2 .outlook-email:hover {
@@ -1033,12 +1091,17 @@ body {
 /* Absolute pointer used in the demo. It follows a scripted path to illustrate clicks and hovers. */
 #scene2 .pointer {
   position: absolute;
-  width: 36px;
-  height: 56px;
-  z-index: 500;
+  /* Increase the pointer size to improve visibility during the slower demo.
+     A larger pointer makes movements more obvious and easier to follow. */
+  width: 64px;
+  height: 90px;
+  /* Raise the z-index so the pointer appears above all Outlook UI elements.
+     Without a high z-index it can be hidden behind message content. */
+  z-index: 1000;
   pointer-events: none;
   /* Initially hidden; JS will fade it in when the demo runs. */
   opacity: 0;
+  /* No background or border: the pointer image defines its appearance. */
   transform-origin: top left;
 }
 
@@ -1049,7 +1112,9 @@ body {
   width: 100%;
   height: 100%;
   /* Invert turns the white pointer glyph black; the drop shadow adds subtle depth. */
-  filter: invert(1) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  /* Invert the white pointer graphic to black so it contrasts against the
+     light teal card. A subtle drop shadow adds depth. */
+  filter: invert(1) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
 }
 
 /* Tooltip that appears when hovering over a suspicious link in the message body. */
