@@ -23,6 +23,12 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-yHn6pxzC9P3jqSbMnX/KSDMe6M9YHXPbfZNhNEZ3H/0cx43gXUdkIdFXLGVyx6M+7GR6og55fU+bM3Bxu3sM2Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
+    <div id="preloader">
+      <div class="loader">
+        <div class="progress-fill"></div>
+      </div>
+    </div>
+    <div id="tsparticles"></div>
   <div id="app" class="app-container">
     <!-- Scene 1: Narrative intro with dramatic animation -->
     <div class="scene" id="scene1">
@@ -418,7 +424,48 @@
     <img src="celebrate.gif" alt="Celebrate success" class="celebrate-gif" />
   </div>
   <!-- Full screen success overlay shown after celebration -->
-  <div id="successFullOverlay" class="success-full-overlay" style="display:none;">
+  <div 
+    <!-- Scene 10: Drag and drop micro challenge -->
+    <!-- Scene 10: Mini Challenge -->
+<div class="scene" id="scene10">
+  <div class="challenge-container">
+    <h2 class="challenge-title">Mini Challenge: Spot the Phish!</h2>
+    <p class="challenge-instructions">Drag and drop the suspicious email into the trash bin.</p>
+    <div class="cards">
+      <div class="email-card" draggable="true" data-type="suspicious">
+        <div class="email-sender">update@secure-portal.net</div>
+        <div class="email-subject">Urgent: Verify your credentials now!</div>
+        <div class="email-body">Your account is at risk. Click <span class="highlight">here</span> to secure it.</div>
+      </div>
+      <div class="email-card" draggable="true" data-type="legit">
+        <div class="email-sender">hr@kitopi.com</div>
+        <div class="email-subject">Company newsletter – July</div>
+        <div class="email-body">Here’s what’s new at Kitopi this month…</div>
+      </div>
+    </div>
+    <div class="trash-container">
+      <p class="trash-label">Drop suspicious emails here</p>
+      <div class="trash"></div>
+    </div>
+    <div class="challenge-feedback" id="challengeSuccess" style="display:none;">
+      <i class="fas fa-check-circle"></i>
+      <p>You caught the phish! Great job.</p>
+    </div>
+  </div>
+</div>
+                <div class="email-card suspicious" draggable="true" data-type="suspicious">
+                    <h3>Urgent: Verify Your Account</h3>
+                    <p>Your account will be closed if you don't verify.</p>
+                </div>
+            </div>
+            <div class="trash">Trash Bin</div>
+            <div id="scene10-success" class="scene10-success">Well done! You caught the phish!</div>
+            <div class="nav-buttons">
+                <button class="next-scene-btn" data-target="9"><span class="nav-icon"></span></button>
+            </div>
+        </div>
+    </div>
+id="successFullOverlay" class="success-full-overlay" style="display:none;">
     <div class="success-message">
       <h2>You are safe!</h2>
       <p>You successfully stopped a phishing attempt.</p>
@@ -426,6 +473,9 @@
   </div>
   <!-- Increment the version parameter whenever script.js changes so the browser
        reloads the updated file without caching. -->
-  <script src="script.js?v=11"></script>
+  
+<script src="https://cdn.jsdelivr.net/npm/tsparticles@2.11.0/tsparticles.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/velocity/2.0.6/velocity.min.js"></script>
+<script src="script.js?v=11"></script>
 </body>
 </html>
