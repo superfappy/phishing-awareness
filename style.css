@@ -4,21 +4,25 @@
 */
 
 :root {
-  /* Core Kitopi palette: teal primary with soft accents. */
-  --color-primary: #007782;
-  /* Kitopi teal, used for backgrounds */
-  --color-accent1: #96C78C;
-  /* Soft green accent for buttons and highlights */
-  --color-accent2: #B98ACF;
-  /* Muted purple accent for secondary highlights */
-  --color-light: #E4EBE8;
-  /* Near‑white hue for text and light cards */
-  --color-dark: #012D2F;
-  /* Rich dark teal for high contrast text */
-  /* Additional semantic colours */
+  /* Primary Kitopi brand colours restored. These values mirror the original
+     project palette built around rich teal and complementary purple accents.
+     The intention is to maintain brand consistency while still allowing
+     modern styling through glassmorphism effects. */
+  /* Deep primary hue used for backgrounds and panels */
+  --color-primary: #012E40;
+  /* Teal accent applied to highlights and secondary elements */
+  --color-accent1: #026873;
+  /* Contrasting purple‑pink accent used for call‑to‑action buttons */
+  --color-accent2: #A54ACB;
+  /* Light neutral shade for cards and text on dark surfaces */
+  --color-light: #F8F9FA;
+  /* Dark neutral shade for text on light surfaces */
+  --color-dark: #02161C;
+  /* Additional semantic colours remain the same */
   --color-success: #28a745;
   --color-danger: #e74c3c;
-  --font-body: 'Montserrat', sans-serif;
+  /* Use Poppins throughout for a clean modern aesthetic */
+  --font-body: 'Poppins', sans-serif;
 }
 
 /* When hide-cursor is applied to body, remove the default cursor from the app
@@ -48,66 +52,14 @@ body {
   position: relative;
   width: 600px;
   height: 600px;
-  /* Use our primary colour as the base of the container and soften the edges. */
-  background-color: var(--color-primary);
+  /* Apply a glassmorphic effect: the container is translucent with a slight
+     blur so the underlying gradient from the body subtly shows through. */
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
   border-radius: 20px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
   overflow: hidden;
-}
-
-/* --------------------------------------------------------------------------
-   Dynamic background shapes
-
-   Each scene contains a .bg-shapes wrapper with three .bg-shape children.  These
-   organic blobs create depth and motion behind the main content.  We size and
-   position them differently across the viewport, then animate them via GSAP.
-*/
-.bg-shapes {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  z-index: -1;
-  pointer-events: none;
-}
-
-.bg-shape {
-  position: absolute;
-  border-radius: 50%;
-  /* Reduced opacity for background blobs so they don't overly tint the
-     underlying content.  A lighter setting enhances subtle motion while
-     preserving legibility. */
-  opacity: 0.15;
-  filter: blur(60px);
-}
-
-/* Shape variations.  The colours draw from the existing palette so they blend
-   seamlessly with the teal backgrounds.  You can adjust the sizes and
-   positions to suit each scene.  */
-.bg-shape.shape1 {
-  width: 280px;
-  height: 280px;
-  background: radial-gradient(circle at 50% 50%, var(--color-accent1), transparent);
-  top: -80px;
-  left: -80px;
-}
-
-.bg-shape.shape2 {
-  width: 220px;
-  height: 220px;
-  background: radial-gradient(circle at 50% 50%, var(--color-accent2), transparent);
-  top: 70%;
-  left: -60px;
-}
-
-.bg-shape.shape3 {
-  width: 320px;
-  height: 320px;
-  background: radial-gradient(circle at 50% 50%, var(--color-primary), transparent);
-  top: 45%;
-  left: 68%;
 }
 
 /* Scenes */
@@ -135,53 +87,6 @@ body {
   color: var(--color-light);
   text-transform: uppercase;
 }
-
-/* Common style for Lottie containers on each scene. These containers hold
-   vector animations loaded via lottie-web. Position them in the top right
-   corner of each slide so they complement the heading without obscuring
-   primary content. */
-.lottie-container {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  width: 120px;
-  height: 120px;
-  z-index: 10;
-  pointer-events: none;
-  /* Apply colour tint on the entire Lottie container so nested SVG
-     elements adopt the teal palette.  By using a CSS filter here
-     instead of targeting the SVG directly, we ensure the filter
-     applies consistently regardless of how lottie-web structures
-     the injected markup. */
-  filter: hue-rotate(-50deg) saturate(1.4) brightness(0.85);
-}
-
-/* Tint all SVGs within Lottie containers to harmonise the icons with
-   Kitopi’s teal palette. A hue rotation brings purples toward green,
-   while increased saturation and slight brightness darken the tones for
-   improved legibility on the dark background. */
-.lottie-container svg {
-  /* The container applies the filter; additional filtering on SVG is
-     unnecessary.  We leave this rule here in case nested SVGs are
-     targeted by other styles. */
-  filter: none;
-}
-
-/* Slightly larger Lottie container for the closing scene to balance the
-   composition with larger elements like the morphing icons. */
-#scene9 .lottie-container {
-  width: 140px;
-  height: 140px;
-}
-
-/* Adjust the position of the scene2 animation so it floats outside the top
-   border of the Outlook card rather than overlapping the search bar.  The
-   translation places the centre of the animation slightly above and to
-   the right of the card corner. */
-/* Custom positioning for the Outlook scene has been removed.  By default,
-   the scene2 animation will appear in the top right corner within the
-   card, providing a subtle accent without obscuring essential UI.  If
-   further adjustments are necessary, they can be defined here. */
 
 /* Scene 1: The Hook */
 /*
@@ -306,11 +211,13 @@ body {
   left: 50%;
   transform: translate(-50%, -50%);
   width: 90%;
-  /* Use a light card colour so content stands out on the dark backdrop */
-  background: var(--color-light);
+  /* Employ glassmorphism for the email preview: translucent card with subtle
+     accent border on the left. */
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
   border-left: 4px solid var(--color-accent1);
   border-radius: 14px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
   padding: 24px 28px;
   opacity: 0;
   z-index: 2;
@@ -378,10 +285,12 @@ body {
   transform: translate(-50%, -50%);
   width: 85%;
   max-width: 400px;
-  background: var(--color-light);
+  /* Glass card for the domain warning with a red border. */
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(12px);
   border: 2px solid var(--color-danger);
   border-radius: 16px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
   padding: 24px 28px;
   text-align: center;
   color: var(--color-dark);
@@ -480,12 +389,15 @@ body {
 }
 
 .feedback-overlay.success {
-  background: rgba(56, 161, 105, 0.85);
+  /* Use semi‑transparent green and blur for success overlay to fit the glass aesthetic */
+  background: rgba(56, 161, 105, 0.7);
+  backdrop-filter: blur(8px);
   color: #ffffff;
 }
 
 .feedback-overlay.danger {
-  background: rgba(213, 63, 63, 0.85);
+  background: rgba(213, 63, 63, 0.7);
+  backdrop-filter: blur(8px);
   color: #ffffff;
 }
 
@@ -521,36 +433,41 @@ body {
 }
 
 .nav-buttons button {
-  width: 40px;
-  height: 40px;
-  background: var(--color-accent1);
+  /* Increase nav control size for easier tapping and a more luxurious feel */
+  width: 48px;
+  height: 48px;
   border: none;
   border-radius: 50%;
-  color: #ffffff;
+  /* Use a translucent accent for a subtle glass button. The blurred backdrop
+     ensures it blends nicely with the container while still standing out. */
+  background: rgba(165, 74, 203, 0.3);
+  backdrop-filter: blur(6px);
+  color: var(--color-light);
   font-size: 20px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-  transition: background 0.2s;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  transition: transform 0.2s;
 }
 
 /* Ensure chevron icons within navigation buttons are visible */
 .nav-buttons button i {
-  font-size: 14px;
-  color: #ffffff;
+  font-size: 16px;
+  color: var(--color-dark);
 }
 
 /* When using plain unicode arrows for navigation, ensure consistent sizing and colour */
 .nav-buttons .nav-icon {
-  font-size: 16px;
-  color: #ffffff;
+  font-size: 18px;
+  color: var(--color-dark);
   line-height: 1;
 }
 
 .nav-buttons button:hover {
-  background: var(--color-primary);
+  /* Subtle scale on hover to indicate interactivity */
+  transform: scale(1.05);
 }
 
 /* Scene 2: What is Phishing? */
@@ -572,8 +489,10 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 12px 16px;
-  background: var(--color-light);
-  border-bottom: 1px solid #e0e6e5;
+  /* Glass header: translucent with blur and accent border on bottom */
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 #scene2 .outlook-header h2 {
@@ -591,7 +510,10 @@ body {
 #scene2 .search-bar input {
   width: 200px;
   padding: 6px 8px;
-  border: 1px solid #ccdcdc;
+  /* Subtle glass input field */
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 4px;
   background: #f5f9fa;
   color: var(--color-dark);
@@ -615,9 +537,12 @@ body {
 
 #scene2 .outlook-list {
   width: 38%;
-  border-right: 1px solid #e0e6e5;
+  border-right: 1px solid rgba(255, 255, 255, 0.15);
   overflow-y: auto;
-  background: #ffffff;
+  /* Glass sidebar: translucent list area that allows the underlying body
+     gradient to be perceived. */
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
   padding: 8px;
 }
 
@@ -629,20 +554,18 @@ body {
   cursor: pointer;
   transition: background 0.2s;
   color: var(--color-dark);
-  /* Initially visible; we removed the fade/slide as the email list is static
-     in the automated demo. The pointer movement will draw attention to the
-     row instead of waiting for an animation to reveal it. */
-  opacity: 1;
-  transform: none;
+  opacity: 0;
+  transform: translateY(20px);
 }
 
 #scene2 .outlook-email:hover {
-  background: #f0f7f5;
+  /* Slightly brighten the row on hover */
+  background: rgba(255, 255, 255, 0.08);
 }
 
 #scene2 .outlook-email.active {
-  background: #e6f5f2;
-  border-left: 3px solid var(--color-primary);
+  background: rgba(255, 255, 255, 0.12);
+  border-left: 3px solid var(--color-accent1);
 }
 
 #scene2 .outlook-email .email-meta {
@@ -764,12 +687,14 @@ body {
   display: flex;
   align-items: center;
   gap: 6px;
-  background: #ffffff;
-  border: 1px solid #e0e6e5;
+  /* Use translucent backgrounds for attachments to mimic frosted glass. */
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 6px;
   padding: 6px 8px;
   font-size: 12px;
-  color: var(--color-dark);
+  color: var(--color-light);
 }
 
 #scene2 .attachment-item i {
@@ -788,10 +713,12 @@ body {
 #scene2 .message-actions button {
   width: 28px;
   height: 28px;
-  background: #ffffff;
-  border: 1px solid var(--color-primary);
+  /* Glass buttons for message actions: subtle translucent circles */
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 50%;
-  color: var(--color-primary);
+  color: var(--color-light);
   font-size: 12px;
   cursor: pointer;
   display: flex;
@@ -802,8 +729,8 @@ body {
 }
 
 #scene2 .message-actions button:hover {
-  background: var(--color-primary);
-  color: #ffffff;
+  background: rgba(255, 255, 255, 0.25);
+  color: var(--color-light);
 }
 
 /* Specialized styling for the report button using the secondary accent colour */
@@ -1084,119 +1011,6 @@ body {
   width: 16px;
   height: 16px;
   margin-right: 8px;
-}
-
-/* Automated phishing reporting demo styles for scene 2 */
-
-/* Absolute pointer used in the demo. It follows a scripted path to illustrate clicks and hovers. */
-#scene2 .pointer {
-  position: absolute;
-  /* Increase the pointer size to improve visibility during the slower demo.
-     A larger pointer makes movements more obvious and easier to follow. */
-  width: 64px;
-  height: 90px;
-  /* Raise the z-index so the pointer appears above all Outlook UI elements.
-     Without a high z-index it can be hidden behind message content. */
-  z-index: 1000;
-  pointer-events: none;
-  /* Initially hidden; JS will fade it in when the demo runs. */
-  opacity: 0;
-  /* No background or border: the pointer image defines its appearance. */
-  transform-origin: top left;
-}
-
-/* Ensure the pointer icon is visible against both light and dark backgrounds.
-   We invert the colour and add a subtle drop shadow to give it contrast on
-   the white reading pane and the teal slide background. */
-#scene2 .pointer img {
-  width: 100%;
-  height: 100%;
-  /* Invert turns the white pointer glyph black; the drop shadow adds subtle depth. */
-  /* Invert the white pointer graphic to black so it contrasts against the
-     light teal card. A subtle drop shadow adds depth. */
-  filter: invert(1) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
-}
-
-/* Tooltip that appears when hovering over a suspicious link in the message body. */
-#scene2 .link-tooltip {
-  position: absolute;
-  padding: 6px 10px;
-  border-radius: 6px;
-  background: rgba(1, 45, 47, 0.95);
-  color: #ffffff;
-  font-size: 12px;
-  white-space: nowrap;
-  opacity: 0;
-  pointer-events: none;
-  z-index: 450;
-}
-
-/* Within the tooltip, highlight the dangerous part of the domain in red. */
-#scene2 .link-tooltip .danger-domain {
-  color: var(--color-danger);
-  font-weight: 600;
-}
-
-/* Overlay covering the entire scene during celebration or safe messaging. Uses a slight blur on the backdrop. */
-#scene2 .celebrate-overlay,
-#scene2 .safe-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  backdrop-filter: blur(2px);
-  opacity: 0;
-  pointer-events: none;
-  z-index: 550;
-}
-
-/* Celebration overlay uses a semi-transparent dark backdrop to draw attention to the GIF. */
-#scene2 .celebrate-overlay {
-  background: rgba(0, 0, 0, 0.6);
-}
-
-#scene2 .celebrate-overlay img {
-  width: 140px;
-  height: 140px;
-}
-
-/* Safe overlay uses a translucent green tint to convey success. */
-#scene2 .safe-overlay {
-  background: rgba(40, 167, 69, 0.85);
-  color: #ffffff;
-}
-
-#scene2 .safe-overlay .safe-content {
-  text-align: center;
-  padding: 20px;
-}
-
-#scene2 .safe-overlay h2 {
-  margin: 0;
-  font-size: 24px;
-  font-weight: 700;
-}
-
-#scene2 .safe-overlay p {
-  margin-top: 6px;
-  font-size: 16px;
-}
-
-/* Highlight spans inside the phishing email body. A light red background and subtle border draws attention. */
-#scene2 .phish-highlight {
-  background: rgba(231, 76, 60, 0.25);
-  border-radius: 4px;
-  padding: 0 2px;
-}
-
-/* Class used to highlight suspicious domain in the link tooltip. This is identical to .danger-domain for clarity. */
-#scene2 .danger-domain {
-  color: var(--color-danger);
-  font-weight: 700;
 }
 
 /* Simple animation used for list items; reused across multiple scenes. */
@@ -1872,4 +1686,75 @@ body {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* ------------------------------------------------------------------- */
+/* Custom additions for the revamped experience                       */
+/* ------------------------------------------------------------------- */
+
+/* Custom cursor used across scenes. It's hidden by default and controlled via JS. */
+.custom-cursor {
+  position: fixed;
+  width: 36px;
+  height: 56px;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  background-repeat: no-repeat;
+  background-size: contain;
+  opacity: 0;
+}
+
+/* Overlay shown briefly with a celebration GIF when the phishing is reported */
+.celebrate-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+.celebrate-overlay .celebrate-gif {
+  width: 200px;
+  height: auto;
+}
+
+/* Full screen success overlay displayed after celebration */
+.success-full-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(50, 168, 82, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  text-align: center;
+  color: #ffffff;
+  font-family: var(--font-body);
+}
+.success-full-overlay .success-message h2 {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 700;
+}
+.success-full-overlay .success-message p {
+  margin-top: 8px;
+  font-size: 18px;
+  opacity: 0.9;
+}
+
+/* Highlight suspicious text within the phishing email. The red hue animates during playback. */
+.danger-highlight {
+  background-color: rgba(217, 48, 37, 0.35);
+  border-radius: 4px;
+  padding: 2px 4px;
+  display: inline-block;
 }
