@@ -4,19 +4,6 @@
 // the scene is visible.
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Initialize Lottie animations across all scenes.  We define the JSON
-  // paths for each scene below.  If a scene does not require an
-  // animation, simply omit its entry or leave the value null.  These
-  // animations run in loop mode to provide subtle motion in the corner
-  // of each slide.  See loadLottieAnimations() for details.
-  loadLottieAnimations();
-
-  // Initialise dynamic background animations.  These fluid shapes drift
-  // slowly in the background of every scene, adding depth and motion
-  // reminiscent of polished CodePen examples.  See initBackgroundAnimations()
-  // for details.  Always call this before scene initialisation to avoid
-  // interfering with content transforms.
-  initBackgroundAnimations();
   // Determine which scene to display based on the query parameter
   const scenes = Array.from(document.querySelectorAll('.scene'));
   const params = new URLSearchParams(window.location.search);
@@ -113,55 +100,6 @@ function sleep(ms) {
 }
 
 /*
- * Initialise background shape animations.  This helper selects all
- * .bg-shape elements across scenes and animates them with gentle
- * translations, rotations and scale changes using GSAP.  The values are
- * randomised for each shape to create organic, non‑repetitive motion.  This
- * function should be invoked once on page load to set animations in
- * motion.  Shapes continue animating in the background regardless of
- * scene transitions.
- */
-function initBackgroundAnimations() {
-  if (typeof gsap === 'undefined') return;
-  const shapes = document.querySelectorAll('.bg-shape');
-  shapes.forEach(shape => {
-    const duration = 20 + Math.random() * 10;
-    const dx = (Math.random() - 0.5) * 300;
-    const dy = (Math.random() - 0.5) * 300;
-    const scale = 0.8 + Math.random() * 0.4;
-    const rot = Math.random() * 360;
-    gsap.to(shape, {
-      x: dx,
-      y: dy,
-      scale: scale,
-      rotation: rot,
-      duration: duration,
-      repeat: -1,
-      yoyo: true,
-      ease: 'sine.inOut'
-    });
-  });
-}
-
-/*
- * Animate scene entrance for a polished reveal.  When a new scene
- * becomes active, fade it in and slide the title downward into view.
- * Additional elements can be targeted here for further refinement.
- */
-function animateSceneEnter(sceneId) {
-  if (typeof gsap === 'undefined') return;
-  const sceneEl = document.getElementById(`scene${sceneId}`);
-  if (!sceneEl) return;
-  // Fade in the scene
-  gsap.fromTo(sceneEl, { opacity: 0 }, { opacity: 1, duration: 0.8, ease: 'power2.out' });
-  // Slide in the title
-  const title = sceneEl.querySelector('.scene-title');
-  if (title) {
-    gsap.fromTo(title, { y: -40, opacity: 0 }, { y: 0, opacity: 1, duration: 1, ease: 'back.out(1.7)', delay: 0.2 });
-  }
-}
-
-/*
  * Audio setup: load voice-over files used throughout the scenes.  Each
  * file corresponds to a narration for a specific slide or action. We
  * preload the audio to avoid playback delays and disable looping to
@@ -184,64 +122,6 @@ Object.values(audioFiles).forEach(a => {
   a.loop = false;
   a.preload = 'auto';
 });
-
-// -----------------------------------------------------------------------------
-// Lottie animations configuration
-//
-// Each scene has an associated Lottie JSON file that illustrates a
-// metaphorical representation of the slide’s core message.  These files
-// reside on public CDNs and can be swapped out for any other Lottie asset.
-// The keys should correspond to lottie container IDs defined in the HTML
-// (e.g., lottie-scene1) minus the `lottie-` prefix.  Feel free to update
-// these paths with more specific animations when you have access to
-// additional JSON files.  The default animation used here depicts
-// protective shield imagery which suits most security topics.
-const lottieAnimationPaths = {
-  scene1: 'https://assets10.lottiefiles.com/packages/lf20_w51pcehl.json',
-  scene2: 'https://assets10.lottiefiles.com/packages/lf20_w51pcehl.json',
-  scene3: 'https://assets10.lottiefiles.com/packages/lf20_w51pcehl.json',
-  scene4: 'https://assets10.lottiefiles.com/packages/lf20_w51pcehl.json',
-  scene5: 'https://assets10.lottiefiles.com/packages/lf20_w51pcehl.json',
-  scene6: 'https://assets10.lottiefiles.com/packages/lf20_w51pcehl.json',
-  scene7: 'https://assets10.lottiefiles.com/packages/lf20_w51pcehl.json',
-  scene8: 'https://assets10.lottiefiles.com/packages/lf20_w51pcehl.json',
-  scene9: 'https://assets10.lottiefiles.com/packages/lf20_w51pcehl.json',
-};
-
-/**
- * Load all Lottie animations defined in the configuration.  This helper
- * iterates over lottieAnimationPaths and attaches a looping animation to
- * each matching container on the page.  If the lottie‑web library is not
- * loaded or if a container is missing, the entry is skipped.  Calling
- * this function before scene initialization ensures that animations are
- * ready by the time each scene becomes visible.
- */
-function loadLottieAnimations() {
-  // Ensure the lottie library is available
-  if (typeof lottie === 'undefined') {
-    console.warn('Lottie library not found; skipping Lottie animations');
-    return;
-  }
-  for (const key in lottieAnimationPaths) {
-    const path = lottieAnimationPaths[key];
-    if (!path) continue;
-    const container = document.getElementById(`lottie-${key}`);
-    if (container) {
-      try {
-        lottie.loadAnimation({
-          container: container,
-          renderer: 'svg',
-          loop: true,
-          autoplay: true,
-          path: path,
-          name: `${key}Animation`
-        });
-      } catch (e) {
-        console.warn('Failed to load Lottie animation for', key, e);
-      }
-    }
-  }
-}
 
 // Stop any currently playing audio and reset its playback position.
 function stopAllAudio() {
@@ -315,23 +195,6 @@ function initScene1() {
     introLogo.style.opacity = '1';
     introLogo.style.transform = 'translate(-50%, -50%) scale(0)';
     introLogo.style.display = 'block';
-  }
-
-  // Fade in the scene and animate the title for a polished reveal
-  animateSceneEnter(1);
-
-  // GSAP: fade in the entire scene and animate the Lottie icon.  By
-  // animating the opacity and scale, we create a polished reveal
-  // without interfering with existing Anime.js sequences.
-  if (typeof gsap !== 'undefined') {
-    const sceneEl = document.getElementById('scene1');
-    if (sceneEl) {
-      gsap.from(sceneEl, { opacity: 0, duration: 0.6, ease: 'power2.out' });
-    }
-    const lottieEl = document.getElementById('lottie-scene1');
-    if (lottieEl) {
-      gsap.from(lottieEl, { scale: 0, duration: 0.8, ease: 'back.out(1.7)' });
-    }
   }
 
   // Begin playing the welcoming narration immediately when the scene starts.
@@ -540,17 +403,143 @@ function initScene1() {
 }
 
 /* Scene 2: What is Phishing? */
-// Renamed the original interactive initScene2 to avoid conflicts with the
-// automated version.  The interactive implementation remains here for
-// reference but is no longer invoked.  This prevents duplicate function
-// definitions causing unpredictable behaviour.  The automated initScene2
-// defined later in the file will be used instead.
-function initScene2Interactive() {
+function initScene2() {
   // Play the narration for the Outlook slide when scene 2 begins.  This
-  // ensures the learner hears an explanation of the inbox interface
-  // before interacting. The helper stops any currently playing audio
-  // before starting the new clip.
+  // ensures the learner hears an explanation of the inbox interface.
   playAudio('slideOutlook');
+  // Automated cinematic animation replaces the original interactive logic.
+  (function() {
+    const scene = document.getElementById('scene2');
+    const emails = document.querySelectorAll('#scene2 .outlook-email');
+    const subjectEl = document.getElementById('message-subject');
+    const fromEl = document.getElementById('message-from');
+    const toEl = document.getElementById('message-to');
+    const dateEl = document.getElementById('message-date');
+    const bodyEl = document.getElementById('message-body');
+    const attachmentsEl = document.getElementById('attachments');
+    const actionsEl = document.getElementById('message-actions');
+    const reportDropdown = document.querySelector('#scene2 .report-dropdown');
+    const reportBtn = reportDropdown ? reportDropdown.querySelector('.report-btn') : null;
+    const reportMenu = reportDropdown ? reportDropdown.querySelector('.report-menu') : null;
+    const navContainer = document.querySelector('#scene2 .nav-buttons');
+    const customCursor = document.getElementById('customCursor');
+    const celebrateOverlay = document.getElementById('celebrateOverlay');
+    const successFullOverlay = document.getElementById('successFullOverlay');
+    const decisionOverlay = document.getElementById('decisionOverlay');
+    const successOverlay = document.getElementById('successOverlay');
+    const dangerOverlay = document.getElementById('dangerOverlay');
+    const emailCta = document.getElementById('emailCta2');
+    const reportCta = document.getElementById('reportCta');
+    // Hide unused interactive elements
+    if (decisionOverlay) decisionOverlay.style.display = 'none';
+    if (successOverlay) successOverlay.style.display = 'none';
+    if (dangerOverlay) dangerOverlay.style.display = 'none';
+    if (emailCta) emailCta.style.display = 'none';
+    if (reportCta) reportCta.style.display = 'none';
+    if (navContainer) {
+      navContainer.style.opacity = 0;
+      navContainer.style.pointerEvents = 'none';
+    }
+    // Reset email list and message panel
+    emails.forEach(e => {
+      e.style.opacity = 0;
+      e.style.transform = 'translateY(20px)';
+    });
+    subjectEl.textContent = '';
+    fromEl.textContent = '';
+    toEl.textContent = '';
+    dateEl.textContent = '';
+    bodyEl.innerHTML = '';
+    attachmentsEl.innerHTML = '';
+    actionsEl.style.display = 'flex';
+    actionsEl.style.opacity = 0;
+    // Build the suspicious email content with highlights
+    const suspiciousMessage = `
+      Dear Employee,<br/><br/>
+      We have detected <span class="danger-highlight">unusual activity</span> on your account. To maintain security, you must <span class="danger-highlight">reset your password immediately</span>.<br/><br/>
+      Please click the link below to update your password:<br/>
+      <a href="#" class="phish-link">https://kitopi-reset.com/update</a><br/><br/>
+      If you think you received this message in error, please report it to the security team.
+    `;
+    // Pointer SVGs: reference the uploaded icons directly. Using relative
+    // URLs simplifies the code and avoids embedding large inline SVG
+    // definitions. These files are located in the project root and will
+    // automatically be served by the browser.
+    const normalURI = 'mousepointer-01.svg';
+    const clickURI  = 'mousepointerclick-01.svg';
+    const handURI   = 'handpointer-01.svg';
+    // Reveal the single email row with a gentle float
+    gsap.to(emails[0], { opacity: 1, y: 0, duration: 0.6, delay: 0.2 });
+    // Populate message header and body
+    subjectEl.textContent = 'Important: Update your password';
+    fromEl.textContent = 'From: IT Security <security@kitopi.com>';
+    toEl.textContent   = 'To: You <you@kitopi.com>';
+    dateEl.textContent = 'Mon 10:15 AM';
+    bodyEl.innerHTML   = suspiciousMessage;
+    gsap.set(actionsEl, { opacity: 0 });
+    // Wait for layout to compute positions
+    setTimeout(() => {
+      const containerRect = document.querySelector('.app-container').getBoundingClientRect();
+      const emailRect = emails[0].getBoundingClientRect();
+      const linkEl = bodyEl.querySelector('a.phish-link');
+      const linkRect = linkEl.getBoundingClientRect();
+      const reportBtnRect = reportBtn ? reportBtn.getBoundingClientRect() : { left: 0, top: 0, width: 0, height: 0 };
+      if (reportMenu) { reportMenu.style.display = 'block'; reportMenu.style.opacity = '1'; }
+      const phishingItem = reportMenu ? reportMenu.querySelector('li[data-action="phishing"]') : null;
+      const phishingRect = phishingItem ? phishingItem.getBoundingClientRect() : { left: 0, top: 0, width: 0, height: 0 };
+      if (reportMenu) { reportMenu.style.display = 'none'; reportMenu.style.opacity = '0'; }
+      const startX = containerRect.left + 40;
+      const startY = containerRect.top + containerRect.height - 60;
+      const emailX = emailRect.left + emailRect.width - 30;
+      const emailY = emailRect.top + emailRect.height / 2;
+      const linkX  = linkRect.left + linkRect.width - 5;
+      const linkY  = linkRect.top + linkRect.height / 2;
+      const reportX = reportBtnRect.left + reportBtnRect.width / 2;
+      const reportY = reportBtnRect.top + reportBtnRect.height / 2;
+      const phishX  = phishingRect.left + phishingRect.width / 2;
+      const phishY  = phishingRect.top + phishingRect.height / 2;
+      const tl = gsap.timeline({ defaults: { ease: 'power1.inOut' } });
+      tl.set(customCursor, { left: startX, top: startY, opacity: 1, backgroundImage: `url(${normalURI})` });
+      tl.to(actionsEl, { opacity: 1, duration: 0.6 }, 0.2);
+      tl.to(customCursor, { left: emailX, top: emailY, duration: 1.2, delay: 0.3 });
+      tl.call(() => { customCursor.style.backgroundImage = `url(${clickURI})`; });
+      tl.to(customCursor, { duration: 0.2 });
+      tl.call(() => { customCursor.style.backgroundImage = `url(${normalURI})`; });
+      tl.to([subjectEl, fromEl, toEl, dateEl, bodyEl], { opacity: 1, stagger: 0.1, duration: 0.6 }, '-=0.8');
+      const highlights = Array.from(bodyEl.querySelectorAll('.danger-highlight'));
+      if (highlights.length > 0) {
+        tl.to(highlights, { backgroundColor: 'rgba(217,48,37,0.8)', repeat: 1, yoyo: true, duration: 0.6, stagger: 0.5 }, '+=0.3');
+      }
+      tl.call(() => { customCursor.style.backgroundImage = `url(${handURI})`; }, '+=0.1');
+      tl.to(customCursor, { left: linkX, top: linkY, duration: 1.3 });
+      tl.to(customCursor, { duration: 0.4 });
+      tl.call(() => { customCursor.style.backgroundImage = `url(${normalURI})`; });
+      // Move to the report button, click and release. We omit the drop‑down
+      // navigation to simplify the timeline and avoid potential layout issues.
+      tl.to(customCursor, { left: reportX, top: reportY, duration: 1.2 });
+      tl.call(() => { customCursor.style.backgroundImage = `url(${clickURI})`; });
+      tl.to(customCursor, { duration: 0.2 });
+      tl.call(() => { customCursor.style.backgroundImage = `url(${normalURI})`; });
+      // Show celebration overlay: set display at the start and fade in
+      tl.call(() => { if (celebrateOverlay) { celebrateOverlay.style.display = 'flex'; } });
+      tl.to(celebrateOverlay, { opacity: 1, duration: 0.5 });
+      // Hold the celebration on screen for a moment
+      tl.to({}, { duration: 1.0 });
+      // Fade out and hide celebration overlay
+      tl.to(celebrateOverlay, { opacity: 0, duration: 0.5, onComplete: () => { celebrateOverlay.style.display = 'none'; } });
+      // Show success overlay: set display and fade in
+      tl.call(() => { if (successFullOverlay) { successFullOverlay.style.display = 'flex'; } });
+      tl.to(successFullOverlay, { opacity: 1, duration: 0.5 });
+      // Keep success overlay on screen briefly
+      tl.to({}, { duration: 1.2 });
+      // Fade out and hide success overlay
+      tl.to(successFullOverlay, { opacity: 0, duration: 0.5, onComplete: () => { successFullOverlay.style.display = 'none'; } });
+      tl.to(navContainer, { opacity: 1, duration: 0.6, onComplete: () => { if (navContainer) navContainer.style.pointerEvents = 'auto'; } });
+      tl.to(customCursor, { opacity: 0, duration: 0.4 });
+    }, 100);
+  })();
+  // Prevent original scene2 logic from executing
+  return;
 
   // Grab email rows and message display elements
   const emails = document.querySelectorAll('#scene2 .outlook-email');
@@ -923,18 +912,6 @@ function initScene3() {
   // This audio explains how social engineering works before the slideshow begins.
   playAudio('cardsDetails');
 
-  // Trigger the general entrance animation for scene 3.  This helper
-  // fades the scene in and slides down its title.  Individual elements
-  // like the Lottie accent are animated separately below for extra polish.
-  animateSceneEnter(3);
-  // Scale in the Lottie accent for scene 3.
-  if (typeof gsap !== 'undefined') {
-    const lottieEl = document.getElementById('lottie-scene3');
-    if (lottieEl) {
-      gsap.from(lottieEl, { scale: 0, duration: 0.8, ease: 'back.out(1.7)' });
-    }
-  }
-
   // Automatically cycle through social engineering examples. We avoid
   // user‑controlled sliders here to ensure a guided demonstration.
   const data = [
@@ -1015,18 +992,6 @@ function initScene4() {
   // the context for the sequential animations below.
   playAudio('redFlags');
 
-  // Trigger the general entrance animation for scene 4.  This helper
-  // handles the fade and title slide uniformly.  We animate the Lottie
-  // accent separately below.
-  animateSceneEnter(4);
-  // Scale in the Lottie accent for scene 4.
-  if (typeof gsap !== 'undefined') {
-    const lottieEl = document.getElementById('lottie-scene4');
-    if (lottieEl) {
-      gsap.from(lottieEl, { scale: 0, duration: 0.8, ease: 'back.out(1.7)' });
-    }
-  }
-
   // Animate each red flag sequentially. Each item slides in and its text
   // is typed using the typewriter helper. This new implementation
   // targets .flag-item and .flag-text instead of email lines.
@@ -1061,17 +1026,6 @@ function initScene5() {
   // Play the narration explaining what to do when something feels off.  It
   // accompanies the animated demonstration of hovering over a suspicious link.
   playAudio('hoverOver');
-
-  // Use shared helper to animate the scene entrance.  Fade and slide
-  // effects are applied consistently across all scenes.  After
-  // initiating the helper, individually animate the Lottie accent.
-  animateSceneEnter(5);
-  if (typeof gsap !== 'undefined') {
-    const lottieEl = document.getElementById('lottie-scene5');
-    if (lottieEl) {
-      gsap.from(lottieEl, { scale: 0, duration: 0.8, ease: 'back.out(1.7)' });
-    }
-  }
 
   // Scene 5 demonstrates what to do when you encounter a suspicious link.
   // We hide the real cursor and animate a fake cursor to hover over the link,
@@ -1144,16 +1098,6 @@ function initScene6() {
   // interacts with the flip card.
   playAudio('BEC');
 
-  // Animate the BEC slide using the shared entrance helper.  Then
-  // independently animate the Lottie accent.
-  animateSceneEnter(6);
-  if (typeof gsap !== 'undefined') {
-    const lottieEl = document.getElementById('lottie-scene6');
-    if (lottieEl) {
-      gsap.from(lottieEl, { scale: 0, duration: 0.8, ease: 'back.out(1.7)' });
-    }
-  }
-
   const card = document.getElementById('bec-card');
   const buttons = card.querySelectorAll('.flip-btn');
   // No automatic flipping – user must click the button to view headers.
@@ -1169,16 +1113,6 @@ function initScene7() {
   // Play the narration for the social engineering module.  This audio
   // introduces the different examples that appear in the grid below.
   playAudio('socialEngineering');
-
-  // Use the shared entrance helper for a consistent reveal, then
-  // animate the Lottie accent separately.
-  animateSceneEnter(7);
-  if (typeof gsap !== 'undefined') {
-    const lottieEl = document.getElementById('lottie-scene7');
-    if (lottieEl) {
-      gsap.from(lottieEl, { scale: 0, duration: 0.8, ease: 'back.out(1.7)' });
-    }
-  }
 
   const tiles = document.querySelectorAll('#scene7 .tile');
   const modal = document.getElementById('tile-modal');
@@ -1239,16 +1173,6 @@ function initScene8() {
   // accompanying audio reinforces the key takeaways as each tip appears.
   playAudio('finalTips');
 
-  // Use shared helper to reveal the final tips slide uniformly.  Then
-  // animate the Lottie accent individually.
-  animateSceneEnter(8);
-  if (typeof gsap !== 'undefined') {
-    const lottieEl = document.getElementById('lottie-scene8');
-    if (lottieEl) {
-      gsap.from(lottieEl, { scale: 0, duration: 0.8, ease: 'back.out(1.7)' });
-    }
-  }
-
   // Animate each tip item in the final checklist. Each tip slides in and
   // the text is typed; once finished, the checkmark is marked as checked.
   const items = document.querySelectorAll('#scene8 .tip-item');
@@ -1279,16 +1203,6 @@ function initScene9() {
   // Play the ending narration as the closing scene begins.  This final
   // audio thanks the learner and provides closing remarks.
   playAudio('ending');
-
-  // Apply the shared entrance animation for the closing scene.  Then
-  // animate the Lottie accent separately.
-  animateSceneEnter(9);
-  if (typeof gsap !== 'undefined') {
-    const lottieEl = document.getElementById('lottie-scene9');
-    if (lottieEl) {
-      gsap.from(lottieEl, { scale: 0, duration: 0.8, ease: 'back.out(1.7)' });
-    }
-  }
 
   // Animate mask to shield crossfade with a slight delay to allow viewers to notice the mask first
   const maskSvg = document.getElementById('maskSvg');
@@ -1329,377 +1243,4 @@ function initScene9() {
       typewriter(textEl, original, 35);
     }, 6000 + idx * 1400);
   });
-}
-
-/*
- * Automated Outlook demo for Scene 2
- *
- * The original interactive Scene 2 allowed viewers to decide whether to
- * open or report a suspicious message. To convert this into a fully
- * automated training, we override initScene2 with a new implementation.
- * When the scene loads it resets the message pane, hides navigation and
- * then runs a scripted sequence using Anime.js. A pointer icon moves
- * across the inbox, opens a phishing message, highlights red flags in
- * the body, hovers over the malicious link to reveal the domain, and
- * finally reports the email using the built‑in report dropdown. A
- * celebration GIF and green overlay reinforce that the user is now safe.
- */
-function initScene2() {
-  // Start the Outlook narration
-  playAudio('slideOutlook');
-
-  // Smoothly reveal the scene and header using a shared helper.  This
-  // enhances consistency across slides and reduces repetitive code.
-  animateSceneEnter(2);
-  // Individually animate the Lottie accent: scale it up from 0 to full size.
-  if (typeof gsap !== 'undefined') {
-    const lottieEl = document.getElementById('lottie-scene2');
-    if (lottieEl) {
-      gsap.from(lottieEl, { scale: 0, duration: 0.8, ease: 'back.out(1.7)' });
-    }
-  }
-
-  // Elements in the message pane
-  const subjectEl = document.getElementById('message-subject');
-  const fromEl = document.getElementById('message-from');
-  const toEl = document.getElementById('message-to');
-  const dateEl = document.getElementById('message-date');
-  const bodyEl = document.getElementById('message-body');
-  const actionsEl = document.getElementById('message-actions');
-  const externalBar = document.getElementById('external-bar');
-  const attachmentsEl = document.getElementById('attachments');
-
-  // Reset message details and hide action bar/external warning
-  if (subjectEl) subjectEl.textContent = 'Select an email to read';
-  if (fromEl) fromEl.textContent = '';
-  if (toEl) toEl.textContent = '';
-  if (dateEl) dateEl.textContent = '';
-  if (bodyEl) bodyEl.innerHTML = '';
-  if (attachmentsEl) attachmentsEl.innerHTML = '';
-  if (actionsEl) actionsEl.style.display = 'none';
-  if (externalBar) externalBar.style.display = 'none';
-
-  // Hide report menu if previously open
-  const reportMenu = document.querySelector('#scene2 .report-dropdown .report-menu');
-  const reportBtn = document.querySelector('#scene2 .report-dropdown .report-btn');
-  if (reportMenu) {
-    reportMenu.style.display = 'none';
-  }
-  if (reportBtn) {
-    reportBtn.setAttribute('aria-expanded', 'false');
-  }
-
-  // Hide overlays and pointer
-  const pointer = document.getElementById('scene2Pointer');
-  const linkTooltip = document.getElementById('linkTooltip');
-  const celebrateOverlay = document.getElementById('celebrateOverlay');
-  const safeOverlay = document.getElementById('safeOverlay');
-  if (pointer) {
-    pointer.style.opacity = 0;
-    pointer.style.transform = 'translate(0px, 0px)';
-  }
-  if (linkTooltip) {
-    linkTooltip.style.opacity = 0;
-  }
-  if (celebrateOverlay) {
-    celebrateOverlay.style.opacity = 0;
-  }
-  if (safeOverlay) {
-    safeOverlay.style.opacity = 0;
-  }
-
-  // Hide navigation buttons until the end of the demo
-  const nav = document.querySelector('#scene2 .nav-buttons');
-  if (nav) {
-    nav.style.opacity = 0;
-  }
-
-  // Run the automated demo after a brief pause to allow layout to settle
-  setTimeout(runScene2Demo, 600);
-}
-
-/* Helper constants: file names for the pointer states.
-   We reference separate SVG assets stored alongside this project
-   instead of embedding long inline SVG strings.  These files are
-   shipped with the project (mousepointer-01.svg, mousepointerclick-01.svg,
-   handpointer-01.svg) and are loaded at runtime using <img> tags. */
-const SCENE2_POINTER_IMG = 'mousepointer-01.svg';
-const SCENE2_POINTER_CLICK_IMG = 'mousepointerclick-01.svg';
-const SCENE2_HAND_IMG = 'handpointer-01.svg';
-
-/**
- * Executes a fully automatic demonstration on how to report a phishing email.
- * A pointer moves around the mock Outlook UI, opens a suspicious message,
- * highlights red flags in the content, hovers over the malicious link to
- * preview the domain and then reports the message through the report menu.
- * Once complete a celebration GIF briefly appears, followed by a green
- * overlay to reinforce that the threat has been neutralised.  Navigation
- * buttons are revealed only after the animation ends.
- */
-function runScene2Demo() {
-  const scene = document.getElementById('scene2');
-  const pointer = document.getElementById('scene2Pointer');
-  const linkTooltip = document.getElementById('linkTooltip');
-  const celebrateOverlay = document.getElementById('celebrateOverlay');
-  const safeOverlay = document.getElementById('safeOverlay');
-  const nav = scene.querySelector('.nav-buttons');
-  const subjectEl = document.getElementById('message-subject');
-  const fromEl = document.getElementById('message-from');
-  const toEl = document.getElementById('message-to');
-  const dateEl = document.getElementById('message-date');
-  const bodyEl = document.getElementById('message-body');
-  const actionsEl = document.getElementById('message-actions');
-  const externalBar = document.getElementById('external-bar');
-  const reportBtn = scene.querySelector('.report-dropdown .report-btn');
-  const reportMenu = scene.querySelector('.report-dropdown .report-menu');
-
-  // Grab the wrapper containing the inbox and message panes.  We
-  // animate this element to create gentle zooms during the demo.  If
-  // missing for any reason, fall back to the scene itself.
-  const wrapper = scene.querySelector('.outlook-wrapper') || scene;
-
-  // Ensure the pointer is visible and shows the default icon before
-  // starting the timeline.  Without this, the element may remain hidden
-  // due to initialization styles.  We explicitly set the opacity and
-  // pointer graphic here to guarantee visibility.
-  if (pointer) {
-    pointer.style.opacity = '1';
-    setPointer('normal');
-  }
-
-  // Helper to update the pointer graphic
-  const POINTERS = {
-    normal: SCENE2_POINTER_IMG,
-    click: SCENE2_POINTER_CLICK_IMG,
-    hand: SCENE2_HAND_IMG
-  };
-  function setPointer(state) {
-    const src = POINTERS[state] || POINTERS.normal;
-    pointer.innerHTML = `<img src="${src}" alt="" style="width:100%;height:100%" />`;
-  }
-
-  // Compose a realistic phishing message.  Suspicious phrases are wrapped
-  // in .phish-highlight spans and the malicious link uses the .phish-link class.
-  const phishingMessage = {
-    subject: 'Urgent: Update your credentials now!',
-    from: 'IT Security <security@fake-it-team.com>',
-    to: 'You',
-    date: 'Tue 7/29/2025 9:12 AM',
-    body: `Dear user,<br><br>Your account is about to expire. Please <span class="phish-highlight">update your credentials immediately</span> to continue uninterrupted access.<br><br>Failure to <span class="phish-highlight">confirm your account</span> may result in suspension. Please click the following link to proceed:<br><br><a href="http://security-alerts.example.com" class="phish-link">http://security-alerts.example.com</a><br><br>Thank you,<br>IT Security Team`,
-    domainOk: false
-  };
-
-  // Utility to compute translation coordinates relative to the scene
-  function getCoords(element, offsetX = 0, offsetY = 0) {
-    const sceneRect = scene.getBoundingClientRect();
-    const rect = element.getBoundingClientRect();
-    return {
-      x: rect.left - sceneRect.left + offsetX,
-      y: rect.top - sceneRect.top + offsetY
-    };
-  }
-
-  // Build the animation timeline using GSAP.  GSAP offers smoother and more
-  // professional animations compared to anime.js and is widely used in
-  // production websites.  Each step of the demonstration is sequenced on
-  // this timeline.  We rely on functions for the x/y properties so the
-  // coordinates are computed at the moment the animation runs.
-  const tl = gsap.timeline({ paused: true });
-
-  // Step 0: fade in the pointer more slowly and set to normal icon.
-  // A longer duration here emphasises the beginning of the demo and allows
-  // the viewer to clearly see the pointer before it moves.
-  tl.to(pointer, {
-    duration: 0.8,
-    opacity: 1,
-    ease: 'linear',
-    onStart: () => setPointer('normal')
-  });
-
-  // Step 1: move to the suspicious email in the inbox and click it
-  tl.to(pointer, {
-    // Slow down the pointer movement to the suspicious email so
-    // viewers can recognise the left panel before the click.  A longer
-    // duration also gives the eyes time to follow the motion.  We
-    // allocate three seconds for this travel.
-    duration: 3.0,
-    ease: 'power2.inOut',
-    x: () => {
-      // compute destination X for the first email row (or fallback option)
-      let row = scene.querySelector('.outlook-email');
-      if (!row) row = scene.querySelector('[role="option"]');
-      const rowRect = row.getBoundingClientRect();
-      const sceneRect = scene.getBoundingClientRect();
-      return rowRect.left - sceneRect.left + rowRect.width - 20;
-    },
-    y: () => {
-      let row = scene.querySelector('.outlook-email');
-      if (!row) row = scene.querySelector('[role="option"]');
-      const rowRect = row.getBoundingClientRect();
-      const sceneRect = scene.getBoundingClientRect();
-      return rowRect.top - sceneRect.top + rowRect.height / 2;
-    },
-    onComplete: () => {
-      // Show click effect and populate the message pane
-      setPointer('click');
-      setTimeout(() => setPointer('normal'), 200);
-      subjectEl.textContent = phishingMessage.subject;
-      fromEl.textContent = `From: ${phishingMessage.from}`;
-      toEl.textContent = `To: ${phishingMessage.to}`;
-      dateEl.textContent = phishingMessage.date;
-      bodyEl.innerHTML = phishingMessage.body;
-      actionsEl.style.display = 'flex';
-      externalBar.style.display = phishingMessage.domainOk ? 'none' : 'flex';
-    }
-  });
-
-  // Step 1a: concurrent zoom into the inbox while moving to the email.  We
-  // apply this to the wrapper so the viewer’s focus follows the pointer.
-  tl.to(wrapper, { scale: 1.08, duration: 3.0, ease: 'power2.inOut' }, '<');
-  // Step 1b: revert to normal scale once the message opens.
-  tl.to(wrapper, { scale: 1, duration: 1.0, ease: 'power2.inOut' });
-
-  // Step 2: briefly highlight suspicious phrases in the body using GSAP
-  tl.add(() => {
-    const spans = bodyEl.querySelectorAll('.phish-highlight');
-    spans.forEach((el, idx) => {
-      gsap.fromTo(el,
-        { backgroundColor: 'rgba(231,76,60,0.25)' },
-        {
-          backgroundColor: 'rgba(231,76,60,0.65)',
-          yoyo: true,
-          repeat: 1,
-          // Longer highlight duration and stagger to ensure viewers notice
-          // each suspicious phrase.  The delay between highlights is
-          // increased for clarity.
-          duration: 1.2,
-          delay: idx * 0.3,
-          ease: 'power1.inOut'
-        }
-      );
-    });
-  });
-
-  // Step 3: move pointer to the malicious link and show tooltip
-  tl.to(pointer, {
-    // Increase the travel time to the link for clearer demonstration.
-    duration: 3.0,
-    ease: 'power2.inOut',
-    x: () => {
-      const link = bodyEl.querySelector('.phish-link');
-      const linkRect = link.getBoundingClientRect();
-      const sceneRect = scene.getBoundingClientRect();
-      return linkRect.left - sceneRect.left + linkRect.width / 2;
-    },
-    y: () => {
-      const link = bodyEl.querySelector('.phish-link');
-      const linkRect = link.getBoundingClientRect();
-      const sceneRect = scene.getBoundingClientRect();
-      return linkRect.top - sceneRect.top + linkRect.height / 2;
-    },
-    onStart: () => setPointer('hand'),
-    onComplete: () => {
-      const link = bodyEl.querySelector('.phish-link');
-      // Position and populate tooltip
-      const tipX = link.getBoundingClientRect().left - scene.getBoundingClientRect().left + link.offsetWidth / 2;
-      const tipY = link.getBoundingClientRect().top - scene.getBoundingClientRect().top - 30;
-      linkTooltip.innerHTML = `http://<span class="danger-domain">security-alerts.example.com</span>`;
-      linkTooltip.style.left = `${tipX}px`;
-      linkTooltip.style.top = `${tipY}px`;
-      // Fade in tooltip then out
-      gsap.to(linkTooltip, { opacity: 1, duration: 0.4, ease: 'linear' });
-      gsap.to(linkTooltip, { opacity: 0, duration: 0.4, ease: 'linear', delay: 1.2 });
-    }
-  });
-
-  // Step 3a: zoom slightly into the message area during link hover for
-  // cinematic focus.  We align the zoom to start concurrently with the
-  // pointer movement to the link.  After highlighting, return to
-  // normal scale.
-  tl.to(wrapper, { scale: 1.08, duration: 3.0, ease: 'power2.inOut' }, '<');
-  tl.to(wrapper, { scale: 1, duration: 1.0, ease: 'power2.inOut' });
-
-  // Step 4: move pointer to the report button and open the dropdown
-  tl.to(pointer, {
-    // Slow down the pointer as it moves to the report button to
-    // emphasise the location of the reporting tools.  A three second
-    // duration aligns with the earlier movements.
-    duration: 3.0,
-    ease: 'power2.inOut',
-    x: () => {
-      const btnRect = reportBtn.getBoundingClientRect();
-      const sceneRect = scene.getBoundingClientRect();
-      return btnRect.left - sceneRect.left + btnRect.width / 2;
-    },
-    y: () => {
-      const btnRect = reportBtn.getBoundingClientRect();
-      const sceneRect = scene.getBoundingClientRect();
-      return btnRect.top - sceneRect.top + btnRect.height / 2;
-    },
-    onStart: () => setPointer('normal'),
-    onComplete: () => {
-      // Simulate click and open dropdown
-      setPointer('click');
-      setTimeout(() => setPointer('normal'), 200);
-      reportBtn.setAttribute('aria-expanded', 'true');
-      reportMenu.style.display = 'block';
-    }
-  });
-
-  // Step 5: move pointer to the phishing menu item, click and show overlays
-  tl.to(pointer, {
-    // Final movement slowed down to clearly show the phishing option
-    // selection before the celebration and safe overlays appear.  A
-    // slightly longer duration ensures the user sees the pointer
-    // settle on the phishing option.
-    duration: 2.6,
-    ease: 'power2.inOut',
-    x: () => {
-      const item = reportMenu.querySelector('li[data-action="phishing"]');
-      const itemRect = item.getBoundingClientRect();
-      const sceneRect = scene.getBoundingClientRect();
-      return itemRect.left - sceneRect.left + itemRect.width / 2;
-    },
-    y: () => {
-      const item = reportMenu.querySelector('li[data-action="phishing"]');
-      const itemRect = item.getBoundingClientRect();
-      const sceneRect = scene.getBoundingClientRect();
-      return itemRect.top - sceneRect.top + itemRect.height / 2;
-    },
-    onComplete: () => {
-      // Click the phishing option
-      setPointer('click');
-      setTimeout(() => setPointer('normal'), 200);
-      reportMenu.style.display = 'none';
-      reportBtn.setAttribute('aria-expanded', 'false');
-      // Celebration overlay: fade in quickly, then linger for 2.5s before
-      // fading out.  A longer display reinforces the celebratory mood.
-      gsap.to(celebrateOverlay, {
-        opacity: 1,
-        duration: 0.5,
-        ease: 'linear',
-        onComplete: () => {
-          // Fade out after 2.5 seconds
-          gsap.to(celebrateOverlay, { opacity: 0, duration: 0.5, ease: 'linear', delay: 2.5 });
-        }
-      });
-      // Safe overlay: show after the celebration fades.  Remain visible
-      // for 2.5 seconds before fading, ensuring the viewer recognises
-      // the success state.
-      gsap.to(safeOverlay, {
-        opacity: 1,
-        duration: 0.8,
-        ease: 'linear',
-        delay: 3.0,
-        onComplete: () => {
-          gsap.to(safeOverlay, { opacity: 0, duration: 0.8, ease: 'linear', delay: 2.5 });
-        }
-      });
-      // Reveal navigation buttons concurrently with the safe overlay
-      gsap.to(nav, { opacity: 1, duration: 0.8, ease: 'power1.out', delay: 3.0 });
-    }
-  });
-
-  // Start the timeline
-  tl.play();
 }
