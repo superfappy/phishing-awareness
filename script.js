@@ -4,6 +4,12 @@
 // the scene is visible.
 
 document.addEventListener('DOMContentLoaded', () => {
+  // Initialize Lottie animations across all scenes.  We define the JSON
+  // paths for each scene below.  If a scene does not require an
+  // animation, simply omit its entry or leave the value null.  These
+  // animations run in loop mode to provide subtle motion in the corner
+  // of each slide.  See loadLottieAnimations() for details.
+  loadLottieAnimations();
   // Determine which scene to display based on the query parameter
   const scenes = Array.from(document.querySelectorAll('.scene'));
   const params = new URLSearchParams(window.location.search);
@@ -123,6 +129,64 @@ Object.values(audioFiles).forEach(a => {
   a.preload = 'auto';
 });
 
+// -----------------------------------------------------------------------------
+// Lottie animations configuration
+//
+// Each scene has an associated Lottie JSON file that illustrates a
+// metaphorical representation of the slide’s core message.  These files
+// reside on public CDNs and can be swapped out for any other Lottie asset.
+// The keys should correspond to lottie container IDs defined in the HTML
+// (e.g., lottie-scene1) minus the `lottie-` prefix.  Feel free to update
+// these paths with more specific animations when you have access to
+// additional JSON files.  The default animation used here depicts
+// protective shield imagery which suits most security topics.
+const lottieAnimationPaths = {
+  scene1: 'https://assets10.lottiefiles.com/packages/lf20_w51pcehl.json',
+  scene2: 'https://assets10.lottiefiles.com/packages/lf20_w51pcehl.json',
+  scene3: 'https://assets10.lottiefiles.com/packages/lf20_w51pcehl.json',
+  scene4: 'https://assets10.lottiefiles.com/packages/lf20_w51pcehl.json',
+  scene5: 'https://assets10.lottiefiles.com/packages/lf20_w51pcehl.json',
+  scene6: 'https://assets10.lottiefiles.com/packages/lf20_w51pcehl.json',
+  scene7: 'https://assets10.lottiefiles.com/packages/lf20_w51pcehl.json',
+  scene8: 'https://assets10.lottiefiles.com/packages/lf20_w51pcehl.json',
+  scene9: 'https://assets10.lottiefiles.com/packages/lf20_w51pcehl.json',
+};
+
+/**
+ * Load all Lottie animations defined in the configuration.  This helper
+ * iterates over lottieAnimationPaths and attaches a looping animation to
+ * each matching container on the page.  If the lottie‑web library is not
+ * loaded or if a container is missing, the entry is skipped.  Calling
+ * this function before scene initialization ensures that animations are
+ * ready by the time each scene becomes visible.
+ */
+function loadLottieAnimations() {
+  // Ensure the lottie library is available
+  if (typeof lottie === 'undefined') {
+    console.warn('Lottie library not found; skipping Lottie animations');
+    return;
+  }
+  for (const key in lottieAnimationPaths) {
+    const path = lottieAnimationPaths[key];
+    if (!path) continue;
+    const container = document.getElementById(`lottie-${key}`);
+    if (container) {
+      try {
+        lottie.loadAnimation({
+          container: container,
+          renderer: 'svg',
+          loop: true,
+          autoplay: true,
+          path: path,
+          name: `${key}Animation`
+        });
+      } catch (e) {
+        console.warn('Failed to load Lottie animation for', key, e);
+      }
+    }
+  }
+}
+
 // Stop any currently playing audio and reset its playback position.
 function stopAllAudio() {
   Object.values(audioFiles).forEach(a => {
@@ -195,6 +259,20 @@ function initScene1() {
     introLogo.style.opacity = '1';
     introLogo.style.transform = 'translate(-50%, -50%) scale(0)';
     introLogo.style.display = 'block';
+  }
+
+  // GSAP: fade in the entire scene and animate the Lottie icon.  By
+  // animating the opacity and scale, we create a polished reveal
+  // without interfering with existing Anime.js sequences.
+  if (typeof gsap !== 'undefined') {
+    const sceneEl = document.getElementById('scene1');
+    if (sceneEl) {
+      gsap.from(sceneEl, { opacity: 0, duration: 0.6, ease: 'power2.out' });
+    }
+    const lottieEl = document.getElementById('lottie-scene1');
+    if (lottieEl) {
+      gsap.from(lottieEl, { scale: 0, duration: 0.8, ease: 'back.out(1.7)' });
+    }
   }
 
   // Begin playing the welcoming narration immediately when the scene starts.
@@ -781,6 +859,20 @@ function initScene3() {
   // This audio explains how social engineering works before the slideshow begins.
   playAudio('cardsDetails');
 
+  // GSAP: reveal the scene and its Lottie accent with smooth fades and
+  // scaling.  This runs immediately so the slide materialises in a
+  // professional manner before the typewriter animation begins.
+  if (typeof gsap !== 'undefined') {
+    const sceneEl = document.getElementById('scene3');
+    if (sceneEl) {
+      gsap.from(sceneEl, { opacity: 0, duration: 0.6, ease: 'power2.out' });
+    }
+    const lottieEl = document.getElementById('lottie-scene3');
+    if (lottieEl) {
+      gsap.from(lottieEl, { scale: 0, duration: 0.8, ease: 'back.out(1.7)' });
+    }
+  }
+
   // Automatically cycle through social engineering examples. We avoid
   // user‑controlled sliders here to ensure a guided demonstration.
   const data = [
@@ -861,6 +953,20 @@ function initScene4() {
   // the context for the sequential animations below.
   playAudio('redFlags');
 
+  // GSAP: fade in the red flags scene and scale in the accompanying
+  // animation. This ensures the slide appears gracefully before the
+  // list items animate in via Anime.js.
+  if (typeof gsap !== 'undefined') {
+    const sceneEl = document.getElementById('scene4');
+    if (sceneEl) {
+      gsap.from(sceneEl, { opacity: 0, duration: 0.6, ease: 'power2.out' });
+    }
+    const lottieEl = document.getElementById('lottie-scene4');
+    if (lottieEl) {
+      gsap.from(lottieEl, { scale: 0, duration: 0.8, ease: 'back.out(1.7)' });
+    }
+  }
+
   // Animate each red flag sequentially. Each item slides in and its text
   // is typed using the typewriter helper. This new implementation
   // targets .flag-item and .flag-text instead of email lines.
@@ -895,6 +1001,20 @@ function initScene5() {
   // Play the narration explaining what to do when something feels off.  It
   // accompanies the animated demonstration of hovering over a suspicious link.
   playAudio('hoverOver');
+
+  // GSAP: reveal the fifth scene and its Lottie element.  We animate
+  // opacity and scale to gently introduce the slide before the custom
+  // cursor demonstration begins.
+  if (typeof gsap !== 'undefined') {
+    const sceneEl = document.getElementById('scene5');
+    if (sceneEl) {
+      gsap.from(sceneEl, { opacity: 0, duration: 0.6, ease: 'power2.out' });
+    }
+    const lottieEl = document.getElementById('lottie-scene5');
+    if (lottieEl) {
+      gsap.from(lottieEl, { scale: 0, duration: 0.8, ease: 'back.out(1.7)' });
+    }
+  }
 
   // Scene 5 demonstrates what to do when you encounter a suspicious link.
   // We hide the real cursor and animate a fake cursor to hover over the link,
@@ -967,6 +1087,19 @@ function initScene6() {
   // interacts with the flip card.
   playAudio('BEC');
 
+  // GSAP: animate the BEC scene and its Lottie accent into view.  The
+  // flip card will remain ready for user interaction after the fade-in.
+  if (typeof gsap !== 'undefined') {
+    const sceneEl = document.getElementById('scene6');
+    if (sceneEl) {
+      gsap.from(sceneEl, { opacity: 0, duration: 0.6, ease: 'power2.out' });
+    }
+    const lottieEl = document.getElementById('lottie-scene6');
+    if (lottieEl) {
+      gsap.from(lottieEl, { scale: 0, duration: 0.8, ease: 'back.out(1.7)' });
+    }
+  }
+
   const card = document.getElementById('bec-card');
   const buttons = card.querySelectorAll('.flip-btn');
   // No automatic flipping – user must click the button to view headers.
@@ -982,6 +1115,20 @@ function initScene7() {
   // Play the narration for the social engineering module.  This audio
   // introduces the different examples that appear in the grid below.
   playAudio('socialEngineering');
+
+  // GSAP: bring the social engineering scene to life with a fade and
+  // scaling animation on the Lottie accent.  This plays before any tile
+  // animations begin.
+  if (typeof gsap !== 'undefined') {
+    const sceneEl = document.getElementById('scene7');
+    if (sceneEl) {
+      gsap.from(sceneEl, { opacity: 0, duration: 0.6, ease: 'power2.out' });
+    }
+    const lottieEl = document.getElementById('lottie-scene7');
+    if (lottieEl) {
+      gsap.from(lottieEl, { scale: 0, duration: 0.8, ease: 'back.out(1.7)' });
+    }
+  }
 
   const tiles = document.querySelectorAll('#scene7 .tile');
   const modal = document.getElementById('tile-modal');
@@ -1042,6 +1189,18 @@ function initScene8() {
   // accompanying audio reinforces the key takeaways as each tip appears.
   playAudio('finalTips');
 
+  // GSAP: reveal the final tips slide and its Lottie accent smoothly.
+  if (typeof gsap !== 'undefined') {
+    const sceneEl = document.getElementById('scene8');
+    if (sceneEl) {
+      gsap.from(sceneEl, { opacity: 0, duration: 0.6, ease: 'power2.out' });
+    }
+    const lottieEl = document.getElementById('lottie-scene8');
+    if (lottieEl) {
+      gsap.from(lottieEl, { scale: 0, duration: 0.8, ease: 'back.out(1.7)' });
+    }
+  }
+
   // Animate each tip item in the final checklist. Each tip slides in and
   // the text is typed; once finished, the checkmark is marked as checked.
   const items = document.querySelectorAll('#scene8 .tip-item');
@@ -1072,6 +1231,19 @@ function initScene9() {
   // Play the ending narration as the closing scene begins.  This final
   // audio thanks the learner and provides closing remarks.
   playAudio('ending');
+
+  // GSAP: reveal the closing slide and scale in its Lottie accent.  This
+  // ensures the morph animation begins within a fully visible context.
+  if (typeof gsap !== 'undefined') {
+    const sceneEl = document.getElementById('scene9');
+    if (sceneEl) {
+      gsap.from(sceneEl, { opacity: 0, duration: 0.6, ease: 'power2.out' });
+    }
+    const lottieEl = document.getElementById('lottie-scene9');
+    if (lottieEl) {
+      gsap.from(lottieEl, { scale: 0, duration: 0.8, ease: 'back.out(1.7)' });
+    }
+  }
 
   // Animate mask to shield crossfade with a slight delay to allow viewers to notice the mask first
   const maskSvg = document.getElementById('maskSvg');
@@ -1112,4 +1284,335 @@ function initScene9() {
       typewriter(textEl, original, 35);
     }, 6000 + idx * 1400);
   });
+}
+
+/*
+ * Automated Outlook demo for Scene 2
+ *
+ * The original interactive Scene 2 allowed viewers to decide whether to
+ * open or report a suspicious message. To convert this into a fully
+ * automated training, we override initScene2 with a new implementation.
+ * When the scene loads it resets the message pane, hides navigation and
+ * then runs a scripted sequence using Anime.js. A pointer icon moves
+ * across the inbox, opens a phishing message, highlights red flags in
+ * the body, hovers over the malicious link to reveal the domain, and
+ * finally reports the email using the built‑in report dropdown. A
+ * celebration GIF and green overlay reinforce that the user is now safe.
+ */
+function initScene2() {
+  // Start the Outlook narration
+  playAudio('slideOutlook');
+
+  // Use GSAP to softly fade in the entire Outlook scene and bring
+  // its Lottie accent to life.  This hook at the top ensures the
+  // animation plays as soon as the scene becomes active without
+  // interfering with the automated demo timeline.
+  if (typeof gsap !== 'undefined') {
+    const sceneEl = document.getElementById('scene2');
+    if (sceneEl) {
+      gsap.from(sceneEl, { opacity: 0, duration: 0.6, ease: 'power2.out' });
+    }
+    const lottieEl = document.getElementById('lottie-scene2');
+    if (lottieEl) {
+      gsap.from(lottieEl, { scale: 0, duration: 0.8, ease: 'back.out(1.7)' });
+    }
+  }
+
+  // Elements in the message pane
+  const subjectEl = document.getElementById('message-subject');
+  const fromEl = document.getElementById('message-from');
+  const toEl = document.getElementById('message-to');
+  const dateEl = document.getElementById('message-date');
+  const bodyEl = document.getElementById('message-body');
+  const actionsEl = document.getElementById('message-actions');
+  const externalBar = document.getElementById('external-bar');
+  const attachmentsEl = document.getElementById('attachments');
+
+  // Reset message details and hide action bar/external warning
+  if (subjectEl) subjectEl.textContent = 'Select an email to read';
+  if (fromEl) fromEl.textContent = '';
+  if (toEl) toEl.textContent = '';
+  if (dateEl) dateEl.textContent = '';
+  if (bodyEl) bodyEl.innerHTML = '';
+  if (attachmentsEl) attachmentsEl.innerHTML = '';
+  if (actionsEl) actionsEl.style.display = 'none';
+  if (externalBar) externalBar.style.display = 'none';
+
+  // Hide report menu if previously open
+  const reportMenu = document.querySelector('#scene2 .report-dropdown .report-menu');
+  const reportBtn = document.querySelector('#scene2 .report-dropdown .report-btn');
+  if (reportMenu) {
+    reportMenu.style.display = 'none';
+  }
+  if (reportBtn) {
+    reportBtn.setAttribute('aria-expanded', 'false');
+  }
+
+  // Hide overlays and pointer
+  const pointer = document.getElementById('scene2Pointer');
+  const linkTooltip = document.getElementById('linkTooltip');
+  const celebrateOverlay = document.getElementById('celebrateOverlay');
+  const safeOverlay = document.getElementById('safeOverlay');
+  if (pointer) {
+    pointer.style.opacity = 0;
+    pointer.style.transform = 'translate(0px, 0px)';
+  }
+  if (linkTooltip) {
+    linkTooltip.style.opacity = 0;
+  }
+  if (celebrateOverlay) {
+    celebrateOverlay.style.opacity = 0;
+  }
+  if (safeOverlay) {
+    safeOverlay.style.opacity = 0;
+  }
+
+  // Hide navigation buttons until the end of the demo
+  const nav = document.querySelector('#scene2 .nav-buttons');
+  if (nav) {
+    nav.style.opacity = 0;
+  }
+
+  // Run the automated demo after a brief pause to allow layout to settle
+  setTimeout(runScene2Demo, 600);
+}
+
+/* Helper constants: file names for the pointer states.
+   We reference separate SVG assets stored alongside this project
+   instead of embedding long inline SVG strings.  These files are
+   shipped with the project (mousepointer-01.svg, mousepointerclick-01.svg,
+   handpointer-01.svg) and are loaded at runtime using <img> tags. */
+const SCENE2_POINTER_IMG = 'mousepointer-01.svg';
+const SCENE2_POINTER_CLICK_IMG = 'mousepointerclick-01.svg';
+const SCENE2_HAND_IMG = 'handpointer-01.svg';
+
+/**
+ * Executes a fully automatic demonstration on how to report a phishing email.
+ * A pointer moves around the mock Outlook UI, opens a suspicious message,
+ * highlights red flags in the content, hovers over the malicious link to
+ * preview the domain and then reports the message through the report menu.
+ * Once complete a celebration GIF briefly appears, followed by a green
+ * overlay to reinforce that the threat has been neutralised.  Navigation
+ * buttons are revealed only after the animation ends.
+ */
+function runScene2Demo() {
+  const scene = document.getElementById('scene2');
+  const pointer = document.getElementById('scene2Pointer');
+  const linkTooltip = document.getElementById('linkTooltip');
+  const celebrateOverlay = document.getElementById('celebrateOverlay');
+  const safeOverlay = document.getElementById('safeOverlay');
+  const nav = scene.querySelector('.nav-buttons');
+  const subjectEl = document.getElementById('message-subject');
+  const fromEl = document.getElementById('message-from');
+  const toEl = document.getElementById('message-to');
+  const dateEl = document.getElementById('message-date');
+  const bodyEl = document.getElementById('message-body');
+  const actionsEl = document.getElementById('message-actions');
+  const externalBar = document.getElementById('external-bar');
+  const reportBtn = scene.querySelector('.report-dropdown .report-btn');
+  const reportMenu = scene.querySelector('.report-dropdown .report-menu');
+
+  // Helper to update the pointer graphic
+  const POINTERS = {
+    normal: SCENE2_POINTER_IMG,
+    click: SCENE2_POINTER_CLICK_IMG,
+    hand: SCENE2_HAND_IMG
+  };
+  function setPointer(state) {
+    const src = POINTERS[state] || POINTERS.normal;
+    pointer.innerHTML = `<img src="${src}" alt="" style="width:100%;height:100%" />`;
+  }
+
+  // Compose a realistic phishing message.  Suspicious phrases are wrapped
+  // in .phish-highlight spans and the malicious link uses the .phish-link class.
+  const phishingMessage = {
+    subject: 'Urgent: Update your credentials now!',
+    from: 'IT Security <security@fake-it-team.com>',
+    to: 'You',
+    date: 'Tue 7/29/2025 9:12 AM',
+    body: `Dear user,<br><br>Your account is about to expire. Please <span class="phish-highlight">update your credentials immediately</span> to continue uninterrupted access.<br><br>Failure to <span class="phish-highlight">confirm your account</span> may result in suspension. Please click the following link to proceed:<br><br><a href="http://security-alerts.example.com" class="phish-link">http://security-alerts.example.com</a><br><br>Thank you,<br>IT Security Team`,
+    domainOk: false
+  };
+
+  // Utility to compute translation coordinates relative to the scene
+  function getCoords(element, offsetX = 0, offsetY = 0) {
+    const sceneRect = scene.getBoundingClientRect();
+    const rect = element.getBoundingClientRect();
+    return {
+      x: rect.left - sceneRect.left + offsetX,
+      y: rect.top - sceneRect.top + offsetY
+    };
+  }
+
+  // Build the animation timeline using GSAP.  GSAP offers smoother and more
+  // professional animations compared to anime.js and is widely used in
+  // production websites.  Each step of the demonstration is sequenced on
+  // this timeline.  We rely on functions for the x/y properties so the
+  // coordinates are computed at the moment the animation runs.
+  const tl = gsap.timeline({ paused: true });
+
+  // Step 0: fade in the pointer and set to normal icon
+  tl.to(pointer, {
+    duration: 0.4,
+    opacity: 1,
+    ease: 'linear',
+    onStart: () => setPointer('normal')
+  });
+
+  // Step 1: move to the suspicious email in the inbox and click it
+  tl.to(pointer, {
+    duration: 0.8,
+    ease: 'power2.inOut',
+    x: () => {
+      // compute destination X for the first email row (or fallback option)
+      let row = scene.querySelector('.outlook-email');
+      if (!row) row = scene.querySelector('[role="option"]');
+      const rowRect = row.getBoundingClientRect();
+      const sceneRect = scene.getBoundingClientRect();
+      return rowRect.left - sceneRect.left + rowRect.width - 20;
+    },
+    y: () => {
+      let row = scene.querySelector('.outlook-email');
+      if (!row) row = scene.querySelector('[role="option"]');
+      const rowRect = row.getBoundingClientRect();
+      const sceneRect = scene.getBoundingClientRect();
+      return rowRect.top - sceneRect.top + rowRect.height / 2;
+    },
+    onComplete: () => {
+      // Show click effect and populate the message pane
+      setPointer('click');
+      setTimeout(() => setPointer('normal'), 200);
+      subjectEl.textContent = phishingMessage.subject;
+      fromEl.textContent = `From: ${phishingMessage.from}`;
+      toEl.textContent = `To: ${phishingMessage.to}`;
+      dateEl.textContent = phishingMessage.date;
+      bodyEl.innerHTML = phishingMessage.body;
+      actionsEl.style.display = 'flex';
+      externalBar.style.display = phishingMessage.domainOk ? 'none' : 'flex';
+    }
+  });
+
+  // Step 2: briefly highlight suspicious phrases in the body using GSAP
+  tl.add(() => {
+    const spans = bodyEl.querySelectorAll('.phish-highlight');
+    spans.forEach((el, idx) => {
+      gsap.fromTo(el,
+        { backgroundColor: 'rgba(231,76,60,0.25)' },
+        {
+          backgroundColor: 'rgba(231,76,60,0.65)',
+          yoyo: true,
+          repeat: 1,
+          duration: 0.5,
+          delay: idx * 0.2,
+          ease: 'power1.inOut'
+        }
+      );
+    });
+  });
+
+  // Step 3: move pointer to the malicious link and show tooltip
+  tl.to(pointer, {
+    duration: 0.8,
+    ease: 'power2.inOut',
+    x: () => {
+      const link = bodyEl.querySelector('.phish-link');
+      const linkRect = link.getBoundingClientRect();
+      const sceneRect = scene.getBoundingClientRect();
+      return linkRect.left - sceneRect.left + linkRect.width / 2;
+    },
+    y: () => {
+      const link = bodyEl.querySelector('.phish-link');
+      const linkRect = link.getBoundingClientRect();
+      const sceneRect = scene.getBoundingClientRect();
+      return linkRect.top - sceneRect.top + linkRect.height / 2;
+    },
+    onStart: () => setPointer('hand'),
+    onComplete: () => {
+      const link = bodyEl.querySelector('.phish-link');
+      // Position and populate tooltip
+      const tipX = link.getBoundingClientRect().left - scene.getBoundingClientRect().left + link.offsetWidth / 2;
+      const tipY = link.getBoundingClientRect().top - scene.getBoundingClientRect().top - 30;
+      linkTooltip.innerHTML = `http://<span class="danger-domain">security-alerts.example.com</span>`;
+      linkTooltip.style.left = `${tipX}px`;
+      linkTooltip.style.top = `${tipY}px`;
+      // Fade in tooltip then out
+      gsap.to(linkTooltip, { opacity: 1, duration: 0.4, ease: 'linear' });
+      gsap.to(linkTooltip, { opacity: 0, duration: 0.4, ease: 'linear', delay: 1.2 });
+    }
+  });
+
+  // Step 4: move pointer to the report button and open the dropdown
+  tl.to(pointer, {
+    duration: 0.8,
+    ease: 'power2.inOut',
+    x: () => {
+      const btnRect = reportBtn.getBoundingClientRect();
+      const sceneRect = scene.getBoundingClientRect();
+      return btnRect.left - sceneRect.left + btnRect.width / 2;
+    },
+    y: () => {
+      const btnRect = reportBtn.getBoundingClientRect();
+      const sceneRect = scene.getBoundingClientRect();
+      return btnRect.top - sceneRect.top + btnRect.height / 2;
+    },
+    onStart: () => setPointer('normal'),
+    onComplete: () => {
+      // Simulate click and open dropdown
+      setPointer('click');
+      setTimeout(() => setPointer('normal'), 200);
+      reportBtn.setAttribute('aria-expanded', 'true');
+      reportMenu.style.display = 'block';
+    }
+  });
+
+  // Step 5: move pointer to the phishing menu item, click and show overlays
+  tl.to(pointer, {
+    duration: 0.7,
+    ease: 'power2.inOut',
+    x: () => {
+      const item = reportMenu.querySelector('li[data-action="phishing"]');
+      const itemRect = item.getBoundingClientRect();
+      const sceneRect = scene.getBoundingClientRect();
+      return itemRect.left - sceneRect.left + itemRect.width / 2;
+    },
+    y: () => {
+      const item = reportMenu.querySelector('li[data-action="phishing"]');
+      const itemRect = item.getBoundingClientRect();
+      const sceneRect = scene.getBoundingClientRect();
+      return itemRect.top - sceneRect.top + itemRect.height / 2;
+    },
+    onComplete: () => {
+      // Click the phishing option
+      setPointer('click');
+      setTimeout(() => setPointer('normal'), 200);
+      reportMenu.style.display = 'none';
+      reportBtn.setAttribute('aria-expanded', 'false');
+      // Celebration overlay
+      gsap.to(celebrateOverlay, {
+        opacity: 1,
+        duration: 0.4,
+        ease: 'linear',
+        onComplete: () => {
+          // Fade out after 2s
+          gsap.to(celebrateOverlay, { opacity: 0, duration: 0.4, ease: 'linear', delay: 2 });
+        }
+      });
+      // Safe overlay after celebration fades
+      gsap.to(safeOverlay, {
+        opacity: 1,
+        duration: 0.6,
+        ease: 'linear',
+        delay: 2.4,
+        onComplete: () => {
+          // Fade out safe overlay after brief pause
+          gsap.to(safeOverlay, { opacity: 0, duration: 0.6, ease: 'linear', delay: 2 });
+        }
+      });
+      // Reveal navigation buttons concurrently with the safe overlay
+      gsap.to(nav, { opacity: 1, duration: 0.6, ease: 'power1.out', delay: 2.4 });
+    }
+  });
+
+  // Start the timeline
+  tl.play();
 }
