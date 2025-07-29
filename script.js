@@ -10,6 +10,13 @@ document.addEventListener('DOMContentLoaded', () => {
   // animations run in loop mode to provide subtle motion in the corner
   // of each slide.  See loadLottieAnimations() for details.
   loadLottieAnimations();
+
+  // Initialise dynamic background animations.  These fluid shapes drift
+  // slowly in the background of every scene, adding depth and motion
+  // reminiscent of polished CodePen examples.  See initBackgroundAnimations()
+  // for details.  Always call this before scene initialisation to avoid
+  // interfering with content transforms.
+  initBackgroundAnimations();
   // Determine which scene to display based on the query parameter
   const scenes = Array.from(document.querySelectorAll('.scene'));
   const params = new URLSearchParams(window.location.search);
@@ -103,6 +110,55 @@ function typewriter(el, text, speed = 35) {
 /* Simple sleep helper returning a promise */
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+/*
+ * Initialise background shape animations.  This helper selects all
+ * .bg-shape elements across scenes and animates them with gentle
+ * translations, rotations and scale changes using GSAP.  The values are
+ * randomised for each shape to create organic, non‑repetitive motion.  This
+ * function should be invoked once on page load to set animations in
+ * motion.  Shapes continue animating in the background regardless of
+ * scene transitions.
+ */
+function initBackgroundAnimations() {
+  if (typeof gsap === 'undefined') return;
+  const shapes = document.querySelectorAll('.bg-shape');
+  shapes.forEach(shape => {
+    const duration = 20 + Math.random() * 10;
+    const dx = (Math.random() - 0.5) * 300;
+    const dy = (Math.random() - 0.5) * 300;
+    const scale = 0.8 + Math.random() * 0.4;
+    const rot = Math.random() * 360;
+    gsap.to(shape, {
+      x: dx,
+      y: dy,
+      scale: scale,
+      rotation: rot,
+      duration: duration,
+      repeat: -1,
+      yoyo: true,
+      ease: 'sine.inOut'
+    });
+  });
+}
+
+/*
+ * Animate scene entrance for a polished reveal.  When a new scene
+ * becomes active, fade it in and slide the title downward into view.
+ * Additional elements can be targeted here for further refinement.
+ */
+function animateSceneEnter(sceneId) {
+  if (typeof gsap === 'undefined') return;
+  const sceneEl = document.getElementById(`scene${sceneId}`);
+  if (!sceneEl) return;
+  // Fade in the scene
+  gsap.fromTo(sceneEl, { opacity: 0 }, { opacity: 1, duration: 0.8, ease: 'power2.out' });
+  // Slide in the title
+  const title = sceneEl.querySelector('.scene-title');
+  if (title) {
+    gsap.fromTo(title, { y: -40, opacity: 0 }, { y: 0, opacity: 1, duration: 1, ease: 'back.out(1.7)', delay: 0.2 });
+  }
 }
 
 /*
@@ -260,6 +316,9 @@ function initScene1() {
     introLogo.style.transform = 'translate(-50%, -50%) scale(0)';
     introLogo.style.display = 'block';
   }
+
+  // Fade in the scene and animate the title for a polished reveal
+  animateSceneEnter(1);
 
   // GSAP: fade in the entire scene and animate the Lottie icon.  By
   // animating the opacity and scale, we create a polished reveal
@@ -481,7 +540,12 @@ function initScene1() {
 }
 
 /* Scene 2: What is Phishing? */
-function initScene2() {
+// Renamed the original interactive initScene2 to avoid conflicts with the
+// automated version.  The interactive implementation remains here for
+// reference but is no longer invoked.  This prevents duplicate function
+// definitions causing unpredictable behaviour.  The automated initScene2
+// defined later in the file will be used instead.
+function initScene2Interactive() {
   // Play the narration for the Outlook slide when scene 2 begins.  This
   // ensures the learner hears an explanation of the inbox interface
   // before interacting. The helper stops any currently playing audio
@@ -859,14 +923,12 @@ function initScene3() {
   // This audio explains how social engineering works before the slideshow begins.
   playAudio('cardsDetails');
 
-  // GSAP: reveal the scene and its Lottie accent with smooth fades and
-  // scaling.  This runs immediately so the slide materialises in a
-  // professional manner before the typewriter animation begins.
+  // Trigger the general entrance animation for scene 3.  This helper
+  // fades the scene in and slides down its title.  Individual elements
+  // like the Lottie accent are animated separately below for extra polish.
+  animateSceneEnter(3);
+  // Scale in the Lottie accent for scene 3.
   if (typeof gsap !== 'undefined') {
-    const sceneEl = document.getElementById('scene3');
-    if (sceneEl) {
-      gsap.from(sceneEl, { opacity: 0, duration: 0.6, ease: 'power2.out' });
-    }
     const lottieEl = document.getElementById('lottie-scene3');
     if (lottieEl) {
       gsap.from(lottieEl, { scale: 0, duration: 0.8, ease: 'back.out(1.7)' });
@@ -953,14 +1015,12 @@ function initScene4() {
   // the context for the sequential animations below.
   playAudio('redFlags');
 
-  // GSAP: fade in the red flags scene and scale in the accompanying
-  // animation. This ensures the slide appears gracefully before the
-  // list items animate in via Anime.js.
+  // Trigger the general entrance animation for scene 4.  This helper
+  // handles the fade and title slide uniformly.  We animate the Lottie
+  // accent separately below.
+  animateSceneEnter(4);
+  // Scale in the Lottie accent for scene 4.
   if (typeof gsap !== 'undefined') {
-    const sceneEl = document.getElementById('scene4');
-    if (sceneEl) {
-      gsap.from(sceneEl, { opacity: 0, duration: 0.6, ease: 'power2.out' });
-    }
     const lottieEl = document.getElementById('lottie-scene4');
     if (lottieEl) {
       gsap.from(lottieEl, { scale: 0, duration: 0.8, ease: 'back.out(1.7)' });
@@ -1002,14 +1062,11 @@ function initScene5() {
   // accompanies the animated demonstration of hovering over a suspicious link.
   playAudio('hoverOver');
 
-  // GSAP: reveal the fifth scene and its Lottie element.  We animate
-  // opacity and scale to gently introduce the slide before the custom
-  // cursor demonstration begins.
+  // Use shared helper to animate the scene entrance.  Fade and slide
+  // effects are applied consistently across all scenes.  After
+  // initiating the helper, individually animate the Lottie accent.
+  animateSceneEnter(5);
   if (typeof gsap !== 'undefined') {
-    const sceneEl = document.getElementById('scene5');
-    if (sceneEl) {
-      gsap.from(sceneEl, { opacity: 0, duration: 0.6, ease: 'power2.out' });
-    }
     const lottieEl = document.getElementById('lottie-scene5');
     if (lottieEl) {
       gsap.from(lottieEl, { scale: 0, duration: 0.8, ease: 'back.out(1.7)' });
@@ -1087,13 +1144,10 @@ function initScene6() {
   // interacts with the flip card.
   playAudio('BEC');
 
-  // GSAP: animate the BEC scene and its Lottie accent into view.  The
-  // flip card will remain ready for user interaction after the fade-in.
+  // Animate the BEC slide using the shared entrance helper.  Then
+  // independently animate the Lottie accent.
+  animateSceneEnter(6);
   if (typeof gsap !== 'undefined') {
-    const sceneEl = document.getElementById('scene6');
-    if (sceneEl) {
-      gsap.from(sceneEl, { opacity: 0, duration: 0.6, ease: 'power2.out' });
-    }
     const lottieEl = document.getElementById('lottie-scene6');
     if (lottieEl) {
       gsap.from(lottieEl, { scale: 0, duration: 0.8, ease: 'back.out(1.7)' });
@@ -1116,14 +1170,10 @@ function initScene7() {
   // introduces the different examples that appear in the grid below.
   playAudio('socialEngineering');
 
-  // GSAP: bring the social engineering scene to life with a fade and
-  // scaling animation on the Lottie accent.  This plays before any tile
-  // animations begin.
+  // Use the shared entrance helper for a consistent reveal, then
+  // animate the Lottie accent separately.
+  animateSceneEnter(7);
   if (typeof gsap !== 'undefined') {
-    const sceneEl = document.getElementById('scene7');
-    if (sceneEl) {
-      gsap.from(sceneEl, { opacity: 0, duration: 0.6, ease: 'power2.out' });
-    }
     const lottieEl = document.getElementById('lottie-scene7');
     if (lottieEl) {
       gsap.from(lottieEl, { scale: 0, duration: 0.8, ease: 'back.out(1.7)' });
@@ -1189,12 +1239,10 @@ function initScene8() {
   // accompanying audio reinforces the key takeaways as each tip appears.
   playAudio('finalTips');
 
-  // GSAP: reveal the final tips slide and its Lottie accent smoothly.
+  // Use shared helper to reveal the final tips slide uniformly.  Then
+  // animate the Lottie accent individually.
+  animateSceneEnter(8);
   if (typeof gsap !== 'undefined') {
-    const sceneEl = document.getElementById('scene8');
-    if (sceneEl) {
-      gsap.from(sceneEl, { opacity: 0, duration: 0.6, ease: 'power2.out' });
-    }
     const lottieEl = document.getElementById('lottie-scene8');
     if (lottieEl) {
       gsap.from(lottieEl, { scale: 0, duration: 0.8, ease: 'back.out(1.7)' });
@@ -1232,13 +1280,10 @@ function initScene9() {
   // audio thanks the learner and provides closing remarks.
   playAudio('ending');
 
-  // GSAP: reveal the closing slide and scale in its Lottie accent.  This
-  // ensures the morph animation begins within a fully visible context.
+  // Apply the shared entrance animation for the closing scene.  Then
+  // animate the Lottie accent separately.
+  animateSceneEnter(9);
   if (typeof gsap !== 'undefined') {
-    const sceneEl = document.getElementById('scene9');
-    if (sceneEl) {
-      gsap.from(sceneEl, { opacity: 0, duration: 0.6, ease: 'power2.out' });
-    }
     const lottieEl = document.getElementById('lottie-scene9');
     if (lottieEl) {
       gsap.from(lottieEl, { scale: 0, duration: 0.8, ease: 'back.out(1.7)' });
@@ -1303,15 +1348,11 @@ function initScene2() {
   // Start the Outlook narration
   playAudio('slideOutlook');
 
-  // Use GSAP to softly fade in the entire Outlook scene and bring
-  // its Lottie accent to life.  This hook at the top ensures the
-  // animation plays as soon as the scene becomes active without
-  // interfering with the automated demo timeline.
+  // Smoothly reveal the scene and header using a shared helper.  This
+  // enhances consistency across slides and reduces repetitive code.
+  animateSceneEnter(2);
+  // Individually animate the Lottie accent: scale it up from 0 to full size.
   if (typeof gsap !== 'undefined') {
-    const sceneEl = document.getElementById('scene2');
-    if (sceneEl) {
-      gsap.from(sceneEl, { opacity: 0, duration: 0.6, ease: 'power2.out' });
-    }
     const lottieEl = document.getElementById('lottie-scene2');
     if (lottieEl) {
       gsap.from(lottieEl, { scale: 0, duration: 0.8, ease: 'back.out(1.7)' });
@@ -1412,6 +1453,20 @@ function runScene2Demo() {
   const reportBtn = scene.querySelector('.report-dropdown .report-btn');
   const reportMenu = scene.querySelector('.report-dropdown .report-menu');
 
+  // Grab the wrapper containing the inbox and message panes.  We
+  // animate this element to create gentle zooms during the demo.  If
+  // missing for any reason, fall back to the scene itself.
+  const wrapper = scene.querySelector('.outlook-wrapper') || scene;
+
+  // Ensure the pointer is visible and shows the default icon before
+  // starting the timeline.  Without this, the element may remain hidden
+  // due to initialization styles.  We explicitly set the opacity and
+  // pointer graphic here to guarantee visibility.
+  if (pointer) {
+    pointer.style.opacity = '1';
+    setPointer('normal');
+  }
+
   // Helper to update the pointer graphic
   const POINTERS = {
     normal: SCENE2_POINTER_IMG,
@@ -1451,9 +1506,11 @@ function runScene2Demo() {
   // coordinates are computed at the moment the animation runs.
   const tl = gsap.timeline({ paused: true });
 
-  // Step 0: fade in the pointer and set to normal icon
+  // Step 0: fade in the pointer more slowly and set to normal icon.
+  // A longer duration here emphasises the beginning of the demo and allows
+  // the viewer to clearly see the pointer before it moves.
   tl.to(pointer, {
-    duration: 0.4,
+    duration: 0.8,
     opacity: 1,
     ease: 'linear',
     onStart: () => setPointer('normal')
@@ -1461,7 +1518,11 @@ function runScene2Demo() {
 
   // Step 1: move to the suspicious email in the inbox and click it
   tl.to(pointer, {
-    duration: 0.8,
+    // Slow down the pointer movement to the suspicious email so
+    // viewers can recognise the left panel before the click.  A longer
+    // duration also gives the eyes time to follow the motion.  We
+    // allocate three seconds for this travel.
+    duration: 3.0,
     ease: 'power2.inOut',
     x: () => {
       // compute destination X for the first email row (or fallback option)
@@ -1492,6 +1553,12 @@ function runScene2Demo() {
     }
   });
 
+  // Step 1a: concurrent zoom into the inbox while moving to the email.  We
+  // apply this to the wrapper so the viewer’s focus follows the pointer.
+  tl.to(wrapper, { scale: 1.08, duration: 3.0, ease: 'power2.inOut' }, '<');
+  // Step 1b: revert to normal scale once the message opens.
+  tl.to(wrapper, { scale: 1, duration: 1.0, ease: 'power2.inOut' });
+
   // Step 2: briefly highlight suspicious phrases in the body using GSAP
   tl.add(() => {
     const spans = bodyEl.querySelectorAll('.phish-highlight');
@@ -1502,8 +1569,11 @@ function runScene2Demo() {
           backgroundColor: 'rgba(231,76,60,0.65)',
           yoyo: true,
           repeat: 1,
-          duration: 0.5,
-          delay: idx * 0.2,
+          // Longer highlight duration and stagger to ensure viewers notice
+          // each suspicious phrase.  The delay between highlights is
+          // increased for clarity.
+          duration: 1.2,
+          delay: idx * 0.3,
           ease: 'power1.inOut'
         }
       );
@@ -1512,7 +1582,8 @@ function runScene2Demo() {
 
   // Step 3: move pointer to the malicious link and show tooltip
   tl.to(pointer, {
-    duration: 0.8,
+    // Increase the travel time to the link for clearer demonstration.
+    duration: 3.0,
     ease: 'power2.inOut',
     x: () => {
       const link = bodyEl.querySelector('.phish-link');
@@ -1541,9 +1612,19 @@ function runScene2Demo() {
     }
   });
 
+  // Step 3a: zoom slightly into the message area during link hover for
+  // cinematic focus.  We align the zoom to start concurrently with the
+  // pointer movement to the link.  After highlighting, return to
+  // normal scale.
+  tl.to(wrapper, { scale: 1.08, duration: 3.0, ease: 'power2.inOut' }, '<');
+  tl.to(wrapper, { scale: 1, duration: 1.0, ease: 'power2.inOut' });
+
   // Step 4: move pointer to the report button and open the dropdown
   tl.to(pointer, {
-    duration: 0.8,
+    // Slow down the pointer as it moves to the report button to
+    // emphasise the location of the reporting tools.  A three second
+    // duration aligns with the earlier movements.
+    duration: 3.0,
     ease: 'power2.inOut',
     x: () => {
       const btnRect = reportBtn.getBoundingClientRect();
@@ -1567,7 +1648,11 @@ function runScene2Demo() {
 
   // Step 5: move pointer to the phishing menu item, click and show overlays
   tl.to(pointer, {
-    duration: 0.7,
+    // Final movement slowed down to clearly show the phishing option
+    // selection before the celebration and safe overlays appear.  A
+    // slightly longer duration ensures the user sees the pointer
+    // settle on the phishing option.
+    duration: 2.6,
     ease: 'power2.inOut',
     x: () => {
       const item = reportMenu.querySelector('li[data-action="phishing"]');
@@ -1587,29 +1672,31 @@ function runScene2Demo() {
       setTimeout(() => setPointer('normal'), 200);
       reportMenu.style.display = 'none';
       reportBtn.setAttribute('aria-expanded', 'false');
-      // Celebration overlay
+      // Celebration overlay: fade in quickly, then linger for 2.5s before
+      // fading out.  A longer display reinforces the celebratory mood.
       gsap.to(celebrateOverlay, {
         opacity: 1,
-        duration: 0.4,
+        duration: 0.5,
         ease: 'linear',
         onComplete: () => {
-          // Fade out after 2s
-          gsap.to(celebrateOverlay, { opacity: 0, duration: 0.4, ease: 'linear', delay: 2 });
+          // Fade out after 2.5 seconds
+          gsap.to(celebrateOverlay, { opacity: 0, duration: 0.5, ease: 'linear', delay: 2.5 });
         }
       });
-      // Safe overlay after celebration fades
+      // Safe overlay: show after the celebration fades.  Remain visible
+      // for 2.5 seconds before fading, ensuring the viewer recognises
+      // the success state.
       gsap.to(safeOverlay, {
         opacity: 1,
-        duration: 0.6,
+        duration: 0.8,
         ease: 'linear',
-        delay: 2.4,
+        delay: 3.0,
         onComplete: () => {
-          // Fade out safe overlay after brief pause
-          gsap.to(safeOverlay, { opacity: 0, duration: 0.6, ease: 'linear', delay: 2 });
+          gsap.to(safeOverlay, { opacity: 0, duration: 0.8, ease: 'linear', delay: 2.5 });
         }
       });
       // Reveal navigation buttons concurrently with the safe overlay
-      gsap.to(nav, { opacity: 1, duration: 0.6, ease: 'power1.out', delay: 2.4 });
+      gsap.to(nav, { opacity: 1, duration: 0.8, ease: 'power1.out', delay: 3.0 });
     }
   });
 
