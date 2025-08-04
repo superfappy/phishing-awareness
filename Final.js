@@ -99,7 +99,7 @@ class CreateParticles {
 
             text: 'THANK\n  YOU',
             amount: 1500,
-            particleSize: 1,
+            particleSize: 0.5,
             particleColor: 0xffffff,
             /*
              * Reduce the text size to accommodate the 600×600 frame.  A
