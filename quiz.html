@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Phishing Awareness Quiz</title>
+    <!-- Modern, minimalist font for high‑end look -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="quizstyle.css" />
+  </head>
+  <body>
+    <!-- The header was removed in favour of a clean intro overlay. -->
+    <!-- The 600x600 frame container for our quiz -->
+    <div id="app">
+      <!-- Particle background canvas; loaded via tsParticles -->
+      <div id="particles"></div>
+
+      <!-- Intro overlay with title shown at the very beginning -->
+      <div id="introOverlay"><div class="intro-title">Phishing Remedial Awareness</div></div>
+      <!-- Scene containing the sliding cards of questions -->
+      <div id="scene"></div>
+      <!-- Progress indicator dots -->
+      <div id="progress"></div>
+      <!-- Results overlay; contents injected by JS -->
+      <div id="resultsOverlay"></div>
+      <!-- Wrong answers viewer overlay -->
+      <div id="wrongViewer"></div>
+    </div>
+    <!-- Libraries for particles and animation -->
+    <script src="libs/tsparticles.bundle.min.js"></script>
+    <script src="libs/gsap.min.js"></script>
+    <!-- Main quiz logic script -->
+    <script src="quiz.js"></script>
+  </body>
+</html>

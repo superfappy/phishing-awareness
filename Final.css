@@ -1,0 +1,126 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+/*
+ * Constrain the entire experience into a 600×600px frame.  The body is
+ * explicitly sized and centred by default; overflow is hidden to
+ * prevent scrollbars.  We also set a sensible base font and colour.
+ */
+html,
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: 'Roboto', sans-serif !important;
+  color: #ffffff;
+  font-size: 10px;
+  /* provide a dark backdrop so the WebGL particle animation is visible */
+  background-color: #000000;
+  /* centre the fixed-size frame horizontally and vertically */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+/*
+ * The three.js canvas lives inside the #magic container.  It fills
+ * the entire 600×600 area.  We avoid using 100vh to honour the fixed
+ * body height and ensure the canvas scales appropriately.
+ */
+#magic {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  /* ensure the particle canvas sits below the overlay but remains
+     visible (negative z-index hides it behind the body) */
+  z-index: 0;
+}
+
+/*
+ * The overlay containing the logo and text sits on top of the
+ * particle animation.  It fills the frame and aligns its children
+ * (logo and text) to the bottom centre.
+ */
+.playground {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+
+  /* bring the overlay above the particle canvas */
+  z-index: 1;
+}
+.bottomPosition {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  /* smaller margin to fit into 600×600 frame */
+  margin-bottom: 24px;
+}
+
+/*
+ * The secondary line under the heading is small and spaced out.  A
+ * reduced font size prevents crowding within the constrained frame.
+ */
+.minText {
+  font-size: 10px;
+}
+
+
+/* anchor styles (present if any links are added) */
+a {
+  color: #ffffff;
+  font-size: 12px;
+  text-decoration: none;
+}
+
+
+/*
+ * Constrain the logo within the frame.  A slightly larger size is
+ * chosen to stand out without overwhelming the text.  Transforms
+ * are enabled for the interactive effect.
+ */
+.logo {
+  width: 56px;
+  height: 56px;
+  display: inline-block;
+  transition: transform 0.3s ease-out;
+  transform-style: preserve-3d;
+}
+
+/*
+ * The outer wrapper that constrains the entire experience to a 600×600
+ * area.  It is positioned relative so that absolutely positioned
+ * children (the particle canvas and overlay) align correctly.
+ */
+#frame {
+  width: 600px;
+  height: 600px;
+  position: relative;
+  overflow: hidden;
+  /* enable perspective for 3D transforms applied to children */
+  perspective: 800px;
+}
+
+/*
+ * Heading styling: reduce font size to fit within 600×600 and enable
+ * transforms for the interactive cursor tracking effect.  The
+ * line-height helps create balance with the logo.
+ */
+.special {
+  margin: 8px 0 0;
+  font-size: 14px;
+  line-height: 1.2;
+  display: inline-block;
+  transition: transform 0.3s ease-out;
+  transform-style: preserve-3d;
+  /* The transform is controlled dynamically via JavaScript; do not set here */
+}

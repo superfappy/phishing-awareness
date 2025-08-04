@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Phishing Awareness</title>
+    <!-- Modern font for a polished look -->
+    <link
+      rel="preconnect"
+      href="https://fonts.googleapis.com"
+    />
+    <link
+      rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Base styles -->
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- Pre‑intro overlay: displays a cinematic K secure boot sequence before the welcome screen.  This section
+         sits on top of the main application container and fades out once authorization is granted. -->
+    <div id="preIntro" class="pre-intro">
+      <div class="pre-inner">
+        <!-- 3D flip container for the K logo.  The inner element rotates on the Y axis to reveal the back face. -->
+        <div class="k-wrapper">
+          <div class="k-inner">
+            <!-- Front face: the unlit K logo.  Use the white version for contrast on the dark background. -->
+            <div class="k-face k-front">
+              <img src="Images/WhiteK-02.svg" alt="K logo" class="k-logo" />
+            </div>
+            <!-- Back face: access granted details.  This text appears after the flip. -->
+            <div class="k-face k-back">
+              <div class="access-granted">
+                <div class="access-title">✔ ACCESS GRANTED</div>
+                <div class="access-level">USER LEVEL: ELEVATED</div>
+                <div class="user-id">USER VERIFIED: KITOPIAN007@KITOPI.COM</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Terminal‑style prompt and status messages.  Text is typed out character by character via JS. -->
+        <div class="pre-subtext"><span id="preTyped"></span><span class="pre-cursor">_</span></div>
+      </div>
+    </div>
+
+    <!-- Container holding the entire experience -->
+    <div class="app-container">
+      <!-- Particle background for depth -->
+      <div id="tsparticles"></div>
+      <!-- Scenes overlayed above the particles -->
+      <!-- Scene 1: Welcome screen with new dynamic intro -->
+      <section class="scene" id="scene1">
+        <!-- A custom background for the welcome page is drawn via CSS.  The animated
+             gradient sets the tone with Kitopi colours. -->
+        <div class="welcome-content">
+          <h1 class="main-title">PHISHING&nbsp;REMEDIAL<br>AWARENESS</h1>
+          <div class="links">
+            <span class="link-text think">THINK</span>
+            <span class="link-text check">CHECK</span>
+            <span class="link-text report">REPORT</span>
+          </div>
+          <!-- Start button triggers navigation to the first slide.  It shares the same
+               class as other next buttons so the existing click handler works. -->
+          <button class="start-btn next-btn" aria-label="Start"><span>Start</span></button>
+        </div>
+      </section>
+
+
+      <!-- Scene 2: Email typing and domain mismatch flip -->
+      <section class="scene" id="scene2">
+        <!-- Wrapper added to center the email card within the scene.  This
+             container provides a flex context so the card remains centred
+             vertically and horizontally regardless of its internal height.
+             It also carries the id referenced by the tilt logic in
+             script.js. -->
+        <div class="email-card-wrapper" id="emailCardWrapper">
+          <!-- Card container with front and back faces.  The card now uses a
+               glassy bioluminescent design inspired by the “FireFlies”
+               experiment.  Both faces share the same decorative layer of
+               animated fireflies.  A CSS class on the container controls
+               the 3D flip. -->
+          <div class="email-card firefly-card" id="emailCard">
+            <!--
+              Wrap the front and back faces in a dedicated inner container.
+              This inner wrapper is the element we rotate in 3D.  Keeping
+              the perspective on the outer card while rotating the inner
+              prevents inline GSAP transforms (scale, opacity) from
+              conflicting with our flip animation.  Without this wrapper
+              the back face can disappear after the flip because the
+              rotation is overridden by other transforms.  The wrapper
+              also provides a common origin for the firefly decoration on
+              both faces.
+            -->
+            <div class="card-inner">
+              <!-- Front face: typed email content with scribble highlight.  The
+                   details container uses a blurred, translucent panel to
+                   ensure the text remains legible over the moving fireflies. -->
+              <div class="card-face card-front">
+                <div class="firefly-card-details email-card-details" id="emailContent">
+                  <p id="emailTyped"></p>
+                  <svg id="emailScribble" class="email-scribble"></svg>
+                </div>
+                <div class="firefly-card-design">
+                  <div class="firefly firefly1"></div>
+                  <div class="firefly firefly2"></div>
+                  <div class="firefly firefly3"></div>
+                  <div class="firefly firefly4"></div>
+                </div>
+              </div>
+              <!-- Back face: domain mismatch details.  This panel reuses the
+                   same firefly decoration to maintain consistency. -->
+              <div class="card-face card-back">
+                <div class="firefly-card-details mismatch-details">
+                  <h3>Link domain mismatch!</h3>
+                  <p><strong>Expected:</strong> kitopi.com</p>
+                  <p><strong>Actual:</strong> <span class="actual-domain">kitopi.work</span></p>
+                  <p class="mismatch-note">Always Inspect any Received Domain.</p>
+                </div>
+                <div class="firefly-card-design">
+                  <div class="firefly firefly1"></div>
+                  <div class="firefly firefly2"></div>
+                  <div class="firefly firefly3"></div>
+                  <div class="firefly firefly4"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button class="prev-btn" aria-label="Previous"><span>Back</span></button>
+        <button class="next-btn" aria-label="Next"><span>Next</span></button>
+      </section>
+
+      <!-- Scene 3: Phishing examples (fake emails) -->
+      <section class="scene" id="scene3">
+        <h2 class="scene-heading">Phishing Examples</h2>
+        <div class="phish-samples" id="phishSamples">
+          <!-- Samples inserted via script -->
+        </div>
+        <button class="prev-btn" aria-label="Previous"><span>Back</span></button>
+        <button class="next-btn" aria-label="Next"><span>Next</span></button>
+      </section>
+
+      <!-- Scene 4: Social Engineering Tactics (carousel) -->
+      <section class="scene" id="scene4">
+        <h2 class="scene-heading">Social Engineering Tactics</h2>
+        <!-- Custom blog-style slider for social engineering examples -->
+        <div class="blog-slider" id="seBlogSlider">
+          <div class="blog-slider__wrp">
+            <!-- Slide 1: Social engineering overview -->
+            <div class="blog-slider__item">
+              <div class="blog-slider__img">
+                <img src="Images/se1-02.png" alt="Social engineering overview" />
+              </div>
+              <div class="blog-slider__content">
+                <div class="blog-slider__title">Beyond Phishing</div>
+                <div class="blog-slider__text">Phishing is just one part of social engineering — a larger scheme to manipulate people using psychology.</div>
+              </div>
+            </div>
+            <!-- Slide 2: Impersonating IT or HR -->
+            <div class="blog-slider__item">
+              <div class="blog-slider__img">
+                <img src="Images/se2-02.png" alt="Impersonating IT or HR" />
+              </div>
+              <div class="blog-slider__content">
+                <div class="blog-slider__title">Impersonating IT or HR</div>
+                <div class="blog-slider__text">Attackers may call pretending to be IT support or message about payroll changes and performance reviews.</div>
+              </div>
+            </div>
+            <!-- Slide 3: Physical & Digital Deception -->
+            <div class="blog-slider__item">
+              <div class="blog-slider__img">
+                <img src="Images/se3-02.png" alt="Physical and digital deception" />
+              </div>
+              <div class="blog-slider__content">
+                <div class="blog-slider__title">Physical & Digital Deception</div>
+                <div class="blog-slider__text">They may show up pretending to deliver a package or hack via USB, or send emails pushing your buttons.</div>
+              </div>
+            </div>
+            <!-- Slide 4: Tricky Messages -->
+            <div class="blog-slider__item">
+              <div class="blog-slider__img">
+                <img src="Images/se_slide3-02.png" alt="Tricky messages" />
+              </div>
+              <div class="blog-slider__content">
+                <div class="blog-slider__title">Tricky Messages</div>
+                <div class="blog-slider__text">Emails like “New org chart – see who’s moving where!”, “Security update: verify credentials now”, or “You’re being offboarded – click for details” are designed to make you react without thinking.</div>
+              </div>
+            </div>
+          </div>
+          <div class="blog-slider__pagination"></div>
+        </div>
+        <button class="prev-btn" aria-label="Previous"><span>Back</span></button>
+        <button class="next-btn" aria-label="Next"><span>Next</span></button>
+      </section>
+
+      <!-- Scene 5b: Common Red Flags -->
+      <section class="scene" id="scene5b">
+        <h2 class="scene-heading">Common Red Flags</h2>
+        <div class="red-flags-container" id="redFlagsContainer">
+          <!-- Red flags will be populated via script -->
+        </div>
+        <button class="prev-btn" aria-label="Previous"><span>Back</span></button>
+        <button class="next-btn" aria-label="Next"><span>Next</span></button>
+      </section>
+
+      <!-- Scene 5: What To Do When It Feels Off -->
+      <section class="scene" id="scene5">
+        <h2 class="scene-heading">When Something Feels Off</h2>
+        <div class="steps-container" id="stepsContainer">
+          <!-- Steps populated via script -->
+        </div>
+        <button class="prev-btn" aria-label="Previous"><span>Back</span></button>
+        <button class="next-btn" aria-label="Next"><span>Next</span></button>
+      </section>
+
+      <!-- Scene 6: Business Email Compromise (BEC) scenario -->
+      <section class="scene" id="scene6">
+        <h2 class="scene-heading">Business Email Compromise</h2>
+        <div class="bec-container" id="becContainer">
+          <!-- BEC animation will be created in script -->
+        </div>
+        <button class="prev-btn" aria-label="Previous"><span>Back</span></button>
+        <button class="next-btn" aria-label="Next"><span>Next</span></button>
+      </section>
+
+      <!-- Scene 7: Social Engineering Examples – HR, IT, Delivery, Vendor impersonation -->
+      <section class="scene" id="scene7">
+        <h2 class="scene-heading">More Social Engineering Examples</h2>
+        <div class="examples-container" id="examplesContainer">
+          <!-- Icons and text inserted via script -->
+        </div>
+        <button class="prev-btn" aria-label="Previous"><span>Back</span></button>
+        <button class="next-btn" aria-label="Next"><span>Next</span></button>
+      </section>
+
+      <!-- Scene 8: Final Tips – Think, Check, Report -->
+      <section class="scene" id="scene8">
+        <h2 class="scene-heading">Final Tips</h2>
+        <div class="tips-container" id="tipsContainer">
+          <!-- Final tips inserted via script -->
+        </div>
+        <button class="prev-btn" aria-label="Previous"><span>Back</span></button>
+        <button class="next-btn" aria-label="Next"><span>Next</span></button>
+      </section>
+
+      <!-- Scene 9: Closing Scene – Empowered employee -->
+      <section class="scene" id="scene9">
+        <h2 class="scene-heading">Together, We’re Secure</h2>
+        <div class="closing-container" id="closingContainer">
+          <!-- Closing content and morph animation inserted via script -->
+        </div>
+        <button class="prev-btn" aria-label="Previous"><span>Back</span></button>
+        <button class="next-btn" aria-label="End"><span>Finish</span></button>
+      </section>
+    </div>
+    <!-- Libraries for advanced animation -->
+    <script src="libs/gsap.min.js"></script>
+    <script src="libs/anime.min.js"></script>
+    <script src="libs/typed.umd.min.js"></script>
+    <script src="libs/flubber.min.js"></script>
+    <script src="libs/popmotion.min.js"></script>
+    <!-- Vanta effects: include multiple modules so we can choose the most
+         dynamic effect at runtime.  The original implementation only
+         loaded the waves module, which meant other effects like DOTS or
+         HALO were unavailable.  We now explicitly load DOTS and HALO as
+         well so that the background initialiser in script.js can pick
+         the best available effect.  These files are shipped in the
+         local libs directory so no external calls are made. -->
+    <script src="libs/vanta.dots.min.js"></script>
+    <script src="libs/vanta.halo.min.js"></script>
+    <script src="libs/vanta.waves.min.js"></script>
+    <!-- tsParticles remains loaded but is unused; kept for future extensibility -->
+    <script src="libs/tsparticles.bundle.min.js"></script>
+    <script src="libs/rough.js"></script>
+    <!-- Main application logic -->
+    <script src="script.js"></script>
+
+    <!-- SVG filters for glowing borders on tip items and other elements.  Inspired
+         by advanced border effects, these filters dilate and blur the stroke of
+         an element to create a soft glow around it.  The filter names are
+         unique to avoid collisions and the colours inherit from the element
+         via the alpha tables. -->
+    <svg width="0" height="0" aria-hidden="true" style="position:absolute">
+      <filter id="border-glow-green" color-interpolation-filters="sRGB"
+              x="-50%" y="-50%" width="200%" height="200%">
+        <!-- Extract the alpha channel of the source graphic -->
+        <feComponentTransfer in="SourceGraphic" result="border">
+          <feFuncA type="table" tableValues="0 1 0" />
+        </feComponentTransfer>
+        <!-- Dilate the border to spread out the alpha -->
+        <feMorphology in="border" operator="dilate" radius="8" result="dilated" />
+        <!-- Blur the dilated border to create a soft glow -->
+        <feGaussianBlur in="dilated" stdDeviation="6" result="blur" />
+        <!-- Colourise the glow using the accent colour via flood and composite -->
+        <feFlood flood-color="#3bb273" flood-opacity="0.7" result="color" />
+        <feComposite in="color" in2="blur" operator="in" result="glow" />
+        <!-- Merge the glow with the original graphic -->
+        <feMerge>
+          <feMergeNode in="glow" />
+          <feMergeNode in="SourceGraphic" />
+        </feMerge>
+      </filter>
+    </svg>
+  </body>
+</html>
