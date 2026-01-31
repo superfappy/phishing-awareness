@@ -1,11 +1,3 @@
-/*
- * Styling for the advanced phishing awareness experience.  The layout
- * remains confined to a 600 × 600 pixel frame while employing
- * contemporary design touches: particle backgrounds, morphing
- * SVGs, and elegant typography.  Colours harmonise with the Kitopi
- * palette while allowing new visual depth through layered elements.
- */
-
 :root {
   --primary: #003d45;
   --secondary: #00565b;
@@ -14,26 +6,9 @@
   --danger: #e74c3c;
   --warning: #f39c12;
   --font-body: 'Montserrat', sans-serif;
-
-  /* Hues for neon glass panels used in the email demonstration.  These
-     hue values are tuned to Kitopi’s green palette: the first hue
-     drives the top glows while the second hue drives the bottom glows.
-     Adjusting these values will subtly alter the colour accents on
-     both faces of the email card. */
-  /* Adjust hue values to blend Kitopi’s green palette with a
-     complementary purple.  The first hue controls the purple glow,
-     while the second drives the green glow. */
-  --hue1: 220;
+      --hue1: 220;
   --hue2: 145;
 }
-
-/*
- * Retro terminal fonts for the reworked intro.  These @font-face
- * declarations load typefaces used by classic computers.  If the
- * fonts fail to download the browser will gracefully fall back to
- * monospace fonts.  We set font-display to swap so that text
- * remains visible during the download.
- */
 @font-face {
   font-family: 'apple1977';
   src: url('https://gnjo.github.io/apple1977.ttf?v=1') format('truetype');
@@ -49,7 +24,6 @@
   src: url('https://gnjo.github.io/PxPlus_IBM_BIOS.ttf') format('truetype');
   font-display: swap;
 }
-
 html, body {
   margin: 0;
   padding: 0;
@@ -62,8 +36,6 @@ html, body {
   font-family: var(--font-body);
   overflow: hidden;
 }
-
-/* Outer wrapper for the storyboard */
 .app-container {
   position: relative;
   width: 600px;
@@ -73,8 +45,6 @@ html, body {
   box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
   color: var(--light);
 }
-
-/* Particle canvas covers the entire container */
 #tsparticles {
   position: absolute;
   top: 0;
@@ -84,8 +54,6 @@ html, body {
   z-index: 0;
   pointer-events: none;
 }
-
-/* Scenes are layered on top of particles; hidden by default */
 .scene {
   position: absolute;
   top: 0;
@@ -96,65 +64,9 @@ html, body {
   box-sizing: border-box;
   display: none;
   z-index: 1;
-  /* Semi‑transparent backdrop to improve readability over the animated background */
-  background: rgba(0, 0, 0, 0.45);
+    background: rgba(0, 0, 0, 0.45);
   backdrop-filter: blur(8px) saturate(140%);
 }
-
-
-/*
- * Layout rules for Scene 2 (email demonstration)
- *
- * The email card wrapper is centred vertically between the
- * scene heading at the top and the navigation buttons at the
- * bottom.  To achieve this we make the entire scene a flex
- * container arranged in a column.  The wrapper takes up the
- * available space (flex: 1) and centres its contents both
- * horizontally and vertically.  Navigation controls remain at
- * their natural size at the bottom of the column.  Removing the
- * earlier `display:block` override prevents Scene 2 from being
- * permanently visible when inactive, which caused the welcome
- * screen to overlap.
- */
-/*
- * Position the email card wrapper roughly in the vertical centre of
- * Scene 2.  Using absolute positioning allows the card to float
- * independently of the heading and navigation buttons.  The wrapper
- * is anchored at 50% of the scene’s width and height, but it is
- * translated upwards slightly (−40% of its own height) so that the
- * card appears centred within the 600×600 frame when the heading and
- * buttons are also visible.  Horizontal centring is handled via the
- * left/translateX pairing.  Adjust the translateY percentage to
- * fine‑tune the vertical balance if design elements change.
- */
-/*
- * Centre the email card wrapper within Scene 2.  Absolute positioning
- * anchors the wrapper at the midpoint of the scene, while
- * translate(-50%, -50%) shifts it back by half of its own size in
- * both dimensions.  This ensures the card remains vertically
- * centred between the scene’s heading and navigation controls.
- * The wrapper stretches to the full width of the scene so that
- * child elements (the email card) can define their own width.
- */
-/*
- * Scene 2 adopts a flexbox layout only when it is active.  This
- * ensures the email demonstration is vertically centred between
- * the heading and the navigation buttons.  Using `!important` on
- * `display: flex` overrides the inline `display: block` that the
- * JavaScript applies when showing scenes.  The column direction
- * lets the header occupy its natural height at the top and the
- * buttons stay anchored at the bottom.
- */
-/*
- * Re-centre the email card using explicit positioning.  The wrapper
- * is given a minimum height matching that of the card’s back face
- * (260 px) so that its height never collapses to zero.  By
- * anchoring the wrapper at 50 % of the scene’s width and height and
- * translating it back by half of its own dimensions, the card stays
- * vertically centred even as its content grows.  This approach
- * bypasses reliance on flexbox, which cannot override inline
- * `display:block` styles applied by the JavaScript.
- */
 #scene2 .email-card-wrapper {
   position: absolute;
   top: 50%;
@@ -167,23 +79,12 @@ html, body {
   align-items: center;
   margin: 0;
 }
-
-/* Hide the THINK/CHECK/REPORT words when their scene is not active.  This
-   prevents large outline text from bleeding into subsequent scenes during
-   transitions. */
 .scene:not(.active) .link-text {
   display: none;
 }
-
 .scene.active {
   display: block;
 }
-
-/* === Welcome Scene (Scene 1) === */
-
-/* Add an animated gradient background for the welcome screen.  The
-   gradient slowly rotates and scales to evoke a futuristic, dynamic
-   ambience without distracting from the text. */
 #scene1::before {
   content: "";
   position: absolute;
@@ -196,7 +97,6 @@ html, body {
   animation: welcomeBg 20s ease-in-out infinite alternate;
   transform-origin: center;
 }
-
 @keyframes welcomeBg {
   0% {
     transform: scale(1) rotate(0deg);
@@ -208,8 +108,6 @@ html, body {
     transform: scale(1) rotate(-15deg);
   }
 }
-
-/* Layout for the new welcome content */
 #scene1 .welcome-content {
   display: flex;
   flex-direction: column;
@@ -219,8 +117,6 @@ html, body {
   width: 100%;
   text-align: center;
 }
-
-/* Large headline with accent colour and slight glow */
 .main-title {
   font-size: 42px;
   font-weight: 800;
@@ -231,13 +127,6 @@ html, body {
   -webkit-text-fill-color: transparent;
   text-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
 }
-
-/* Container for the THINK/CHECK/REPORT words */
-/* Words container for the welcome screen.  Following the original
-   design, the links container occupies nearly the full viewport
-   height so that the three large words fill the frame without
-   overflowing.  Flexbox centres the words horizontally and
-   spaces them evenly vertically. */
 .links {
   text-align: center;
   height: 98vh;
@@ -246,19 +135,9 @@ html, body {
   justify-content: center;
   align-items: center;
 }
-
-/* Individual THINK/CHECK/REPORT words.  The font size and line height
-   mirror the CSS from the original prototype: a large 275px typeface
-   with a 160px height.  The outline uses a 2px stroke for crisp
-   edges while the fill is the dark background colour so the letters
-   appear hollow.  On hover the fill changes to purple to match
-   the interactive accent. */
 .link-text {
   font-family: 'Raleway', sans-serif;
-  /* Use a consistent 130px font size with bold weight to match the
-     original design.  A 160px line height provides vertical
-     separation between the three words. */
-  font-size: 130px;
+    font-size: 130px;
   font-weight: 800;
   height: 160px;
   line-height: 160px;
@@ -272,8 +151,6 @@ html, body {
   color: #ffffff;
   cursor: pointer;
 }
-
-/* Start button in the welcome scene */
 .start-btn {
   margin-top: 10px;
   padding: 10px 20px;
@@ -290,8 +167,6 @@ html, body {
   background: #4bcf87;
   transform: translateY(-2px);
 }
-
-/* === Common Red Flags (new scene) === */
 .red-flags-container {
   display: flex;
   flex-direction: column;
@@ -314,34 +189,6 @@ html, body {
   margin-right: 14px;
   color: var(--danger);
 }
-
-
-/* Email card flip styles */
-/* Email card and wrapper
-   The previous implementation applied a large top margin on the
-   `.email-card` itself which forced the envelope to sit far down the
-   frame.  To better centre the card within the 600×600 scene the
-   `.email-card` is now wrapped in a flex container.  The wrapper
-   handles horizontal and vertical centring, while the card itself
-   simply defines its own width and 3D context. */
-/*
- * Base styles for the email card wrapper.  By default the wrapper
- * spans the full width of its container and centres its children.
- * Vertical centring and growth are handled within Scene 2 via a
- * more specific rule (#scene2 .email-card-wrapper).  Removing the
- * large top margin prevents the card from sitting too low when
- * absolute positioning isn’t used.
- */
-/*
- * Base styles for the email card wrapper.  The wrapper spans the
- * full width and centres its children.  A symmetric vertical
- * margin pushes the card away from the top and bottom edges of
- * Scene 2, helping it appear roughly centred within the 600×600
- * frame even without complex flex layouts.  Adjust these values
- * depending on the final height of the heading and navigation
- * controls.  Horizontal centring is handled by the automatic left
- * and right margins.
- */
 .email-card-wrapper {
   width: 100%;
   margin: 60px auto;
@@ -349,43 +196,20 @@ html, body {
   justify-content: center;
   align-items: center;
 }
-
 .email-card {
   position: relative;
   width: 85%;
   max-width: 500px;
-  /* Remove asymmetric margins – the wrapper now controls centring. */
-  margin: 0;
+    margin: 0;
   perspective: 1200px;
-  /* Ensure that children preserve their 3D positioning when the card
-     rotates.  Without this the back face may not become visible after
-     flipping, leaving the user staring at an upside‑down front. */
-  transform-style: preserve-3d;
-
-  /*
-   * Set a minimum height on the email card.  When the front face
-   * contains the typed email the content grows downward as each
-   * line is added, which can cause the card to appear anchored to
-   * the bottom of the scene.  Enforcing a baseline height keeps the
-   * card at a consistent size so that it can be centred reliably
-   * within the wrapper.  The value of 260px matches the height of
-   * the back face (domain mismatch card) and may be adjusted if
-   * future content changes.  Using `min-height` rather than
-   * `height` allows the card to expand if longer emails are ever
-   * introduced.
-   */
-  min-height: 260px;
+    transform-style: preserve-3d;
+    min-height: 260px;
 }
-
-/* Generic tilt class for cards that rotate based on CSS custom
-   properties --tilt-x and --tilt-y.  The transform is smoothly
-   interpolated to create a responsive parallax effect. */
 .tilt-card {
   transform-style: preserve-3d;
   transition: transform 0.4s ease-out;
   will-change: transform;
 }
-
 .card-face {
   position: absolute;
   width: 100%;
@@ -394,31 +218,19 @@ html, body {
   border-radius: 12px;
   overflow: hidden;
 }
-
 .card-front {
   background: transparent;
 }
-
 .card-back {
-  /* Display the back face normally without 3D rotation.  We remove
-     the Y‑axis rotation so that the back content can be faded in
-     without flipping the entire card container. */
-  transform: none;
+    transform: none;
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 24px;
-  /* Start hidden; the back card fades into view when the front
-     content has finished typing. */
-  opacity: 0;
+    opacity: 0;
 }
-
 .mismatch-card {
-  /* The mismatch card now adopts a neon glass look.  It uses a
-     layered gradient background, blur and subtle glow borders.
-     Colours are derived from custom CSS variables --hue1 and --hue2
-     defined on the root. */
-  position: relative;
+    position: relative;
   width: 100%;
   padding: 20px;
   text-align: center;
@@ -432,12 +244,6 @@ html, body {
   color: var(--light);
   overflow: hidden;
 }
-
-/* Glassy front card for the typed email.  Shares the neon glass
-   aesthetic with the mismatch card but uses the accent colour
-   instead of the danger hue.  The padding and border radius mirror
-   those of the mismatch card to ensure a cohesive look when the
-   card flips. */
 .email-card-content {
   position: relative;
   width: 100%;
@@ -453,15 +259,12 @@ html, body {
   box-shadow: 0 8px 16px rgba(0,0,0,0.5), 0 0 20px hsl(var(--hue1) 70% 50% / 0.4);
   overflow: hidden;
 }
-
 .mismatch-card h3 {
-  /* Use the danger colour to highlight the mismatch warning. */
-  color: var(--danger);
+    color: var(--danger);
   margin-bottom: 8px;
 }
 .mismatch-card .actual-domain {
-  /* Highlight the actual domain in danger red. */
-  color: var(--danger);
+    color: var(--danger);
   font-weight: 600;
 }
 .mismatch-note {
@@ -469,11 +272,6 @@ html, body {
   font-size: 12px;
   color: hsl(var(--hue2) 50% 70% / 0.8);
 }
-
-/* Add soft glow lines to the top and bottom of the mismatch card.
-   These pseudo-elements create a subtle neon highlight on the
-   horizontal edges, enhancing the futuristic feel without
-   distracting from the content. */
 .mismatch-card::before,
 .mismatch-card::after {
   content: "";
@@ -493,8 +291,6 @@ html, body {
 .mismatch-card::after {
   bottom: -4px;
 }
-
-/* Phishing samples */
 .phish-samples {
   display: flex;
   flex-direction: column;
@@ -532,8 +328,6 @@ html, body {
   margin-right: 16px;
   color: var(--danger);
 }
-
-/* Steps container (Scene 5) */
 .steps-container {
   display: flex;
   flex-direction: column;
@@ -556,8 +350,6 @@ html, body {
   color: var(--accent);
   font-size: 28px;
 }
-
-/* Examples container (Scene 7) */
 .examples-container {
   display: flex;
   flex-direction: column;
@@ -580,8 +372,6 @@ html, body {
   font-size: 28px;
   color: var(--warning);
 }
-
-/* Tips container (Scene 8) */
 .tips-container {
   display: flex;
   flex-direction: column;
@@ -599,8 +389,6 @@ html, body {
   gap: 16px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
-
-/* Icon and label within each tip card */
 .tip-icon {
   font-size: 28px;
   color: var(--accent);
@@ -610,23 +398,15 @@ html, body {
   font-size: 14px;
   color: var(--light);
 }
-
-/* Highlight class for suspicious words in BEC messages */
 .highlight {
   background: rgba(231, 76, 60, 0.15);
   padding: 2px 4px;
   border-radius: 3px;
 }
-
-/* Pointer used in the BEC scene – update to a stylised arrow.  The arrow is
-   drawn using the borders of a square rotated by 45 degrees.  A subtle
-   pulsing animation scales the arrow to draw the viewer’s eye. */
 .bec-pointer {
   width: 20px;
   height: 20px;
-  /* Draw a right‑angle arrow using borders – the bottom and right
-     borders are omitted so only the top and left sides remain. */
-  border-left: 4px solid #fff;
+    border-left: 4px solid #fff;
   border-top: 4px solid #fff;
   border-radius: 0;
   background: transparent;
@@ -639,9 +419,6 @@ html, body {
   z-index: 30;
   animation: cursorPulse 1.5s ease-in-out infinite;
 }
-
-/* Animated ring used to visualise clicks within the BEC scene.  Rings
-   originate at the pointer’s location and expand while fading out. */
 .click-ring {
   position: absolute;
   width: 30px;
@@ -654,7 +431,6 @@ html, body {
   pointer-events: none;
   z-index: 29;
 }
-
 @keyframes click-effect {
   0% {
     opacity: 1;
@@ -665,9 +441,6 @@ html, body {
     transform: scale(2);
   }
 }
-
-/* Pulsing animation for the arrow pointer.  The scale varies while
-   preserving the 45° rotation. */
 @keyframes cursorPulse {
   0%,
   100% {
@@ -677,33 +450,19 @@ html, body {
     transform: rotate(-45deg) scale(1.15);
   }
 }
-
-/* === Vortex‑style card container (Scene 2) === */
-/* The vortex card container wraps the email demonstration in swirling
-   elliptical lines.  It reacts to mouse movement by updating CSS
-   variables (--xv, --yv), which rotate the inner tilt element. */
 .vortex-card-container {
   position: relative;
   width: 90%;
   max-width: 520px;
-  /* Centre the container within the scene.  A smaller top margin
-     lifts the card closer to vertical centre. */
-  margin: 20px auto;
-  /* Default block layout; content will determine height.  Flex
-     centering was removed because it interfered with the internal
-     positioning of the envelope. */
-  display: block;
+    margin: 20px auto;
+    display: block;
   height: auto;
-  /* Custom properties for tilt rotation; updated via JS */
-  --xv: 0;
+    --xv: 0;
   --yv: 0;
   perspective: 1200px;
   transform-style: preserve-3d;
   z-index: 1;
 }
-
-/* Elliptical lines behind the card.  They inherit the accent colour
-   and are rendered at low opacity for subtlety. */
 .vortex-card-container .vortex {
   position: absolute;
   top: -10%;
@@ -712,9 +471,7 @@ html, body {
   height: 120%;
   pointer-events: none;
   z-index: 0;
-  /* Increase opacity of the elliptical lines so the pattern is
-     perceptible against the dark backdrop. */
-  opacity: 0.35;
+    opacity: 0.35;
 }
 .vortex-card-container .vortex .vortex-lines {
   width: 100%;
@@ -722,14 +479,8 @@ html, body {
   stroke: var(--accent);
   stroke-width: 1.6px;
   fill: none;
-  /* Softens the lines by reducing alpha */
-  stroke-opacity: 0.8;
+    stroke-opacity: 0.8;
 }
-
-/* Tilt wrapper that holds the actual email card.  This element
-   responds to mouse movement by rotating according to the CSS
-   variables set in JS.  A semi‑transparent background and soft
-   border integrate the card with the dark theme. */
 .vortex-card-container .tilt {
   position: relative;
   width: 100%;
@@ -744,14 +495,10 @@ html, body {
   transform: rotateX(calc(var(--xv) * 1deg)) rotateY(calc(var(--yv) * 1deg));
   z-index: 2;
 }
-
-/* Ensure the email card fills the tilt container without extra margins */
 .vortex-card-container .email-card {
   margin: 0;
   width: 100%;
 }
-
-/* Closing container (Scene 9) */
 .closing-container {
   display: flex;
   flex-direction: column;
@@ -762,23 +509,9 @@ html, body {
   gap: 20px;
   color: var(--light);
 }
-
-/* Hide the default scene heading on the closing scene.  The finale
-   includes its own narrative elements, so the generic heading is
-   removed to avoid duplication. */
 #scene9 .scene-heading {
   display: none;
 }
-
-/*
- * New styling for the Scene 9 finale.  The default closing container
- * remains for backward compatibility, but the fresh design uses
- * additional classes that are scoped to the updated runScene9
- * implementation.  These classes position and style the hero icon,
- * narrative lines, action buttons and closing slogan.  All colours
- * derive from CSS variables to remain in harmony with the Kitopi
- * palette.
- */
 .closing-new {
   display: flex;
   flex-direction: column;
@@ -789,28 +522,12 @@ html, body {
   gap: 18px;
   color: var(--light);
 }
-
-/* Hero icon container.  Use drop shadow to give the shield subtle
-   separation from the background. */
 .closing-icon svg {
   width: 120px;
   height: auto;
   fill: var(--accent);
   filter: drop-shadow(0 0 10px rgba(59, 178, 115, 0.5));
 }
-
-/* =======================
- * Scene 9 modern finale
- *
- * Additional classes to support the reimagined closing scene.  A
- * wrapper holds the hero and its clones, which are absolutely
- * positioned around the main icon.  Instructions (behaviour
- * reminders) are displayed as a row of emojis with optional
- * captions.  Sizes and spacing are tuned to retain visual
- * hierarchy and harmony with the existing closing styles.
- */
-/* Wrapper around the hero icon and its clones.  Relative positioning
-   allows clones to be placed absolutely inside. */
 .hero-wrapper {
   position: relative;
   display: flex;
@@ -820,30 +537,20 @@ html, body {
   margin-top: 16px;
   margin-bottom: 12px;
 }
-/* Position cloned icons absolutely within the hero wrapper so
-   translations via GSAP originate from the centre.  Use
-   transform to centre the SVG initially; subsequent GSAP
-   translations will move them outwards. */
 .clone-icon {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  /* Ensure clones do not intercept pointer events */
-  pointer-events: none;
-
-  /* Start clones hidden; GSAP will animate the opacity */
-  opacity: 0;
+    pointer-events: none;
+    opacity: 0;
 }
-/* Cloned hero icons that animate away from the centre.  Smaller
-   size differentiates them from the main hero. */
 .clone-icon svg {
   width: 90px;
   height: auto;
   fill: var(--accent);
   filter: drop-shadow(0 0 8px rgba(59, 178, 115, 0.4));
 }
-/* Instructions row containing behaviour emojis. */
 .instructions-row {
   display: flex;
   flex-direction: row;
@@ -867,19 +574,12 @@ html, body {
   margin-top: 4px;
   color: var(--light);
 }
-
-/* Narrative lines for the closing scene.  Larger font size and
-   increased line height improve readability without overwhelming the
-   viewer.  Initial opacity is controlled via GSAP. */
 .closing-line {
   font-size: 20px;
   line-height: 1.3;
   margin: 4px 0;
   color: var(--light);
 }
-
-/* Actions row.  Items are spaced evenly using flexbox.  Initial
-   opacity is zero and animated in via GSAP. */
 .closing-actions {
   display: flex;
   flex-direction: row;
@@ -902,8 +602,6 @@ html, body {
   margin-top: 6px;
   color: var(--light);
 }
-
-/* Final logo and slogan container. */
 .closing-final {
   display: flex;
   flex-direction: column;
@@ -920,20 +618,14 @@ html, body {
   margin: 0;
   line-height: 1.4;
 }
-
-/* Accent class to highlight the Kitopi name.  The accent colour
-   ties back to the defined CSS variable for consistency. */
 .accent {
   color: var(--accent);
 }
-
 .closing-container .closing-message {
   font-size: 18px;
   max-width: 90%;
   line-height: 1.5;
 }
-
-/* Reusable navigation buttons */
 .next-btn,
  .prev-btn {
   position: absolute;
@@ -947,9 +639,7 @@ html, body {
   cursor: pointer;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
   transition: background 0.3s;
-
-  /* Ensure navigation buttons remain on top of other content */
-  z-index: 10;
+    z-index: 10;
 }
 .next-btn:hover,
 .prev-btn:hover {
@@ -961,19 +651,6 @@ html, body {
 }
 .next-btn { right: 20px; }
 .prev-btn { left: 20px; }
-
-/* === Quiz button for the final scene === */
-/*
- * The "Start Quiz!" button replaces the back/finish controls on the
- * closing scene.  It sits centred along the bottom of the frame and
- * pulses gently to attract attention once the finale animation has
- * completed.  The button is initially hidden via opacity and is
- * revealed through a GSAP timeline in script.js.  The pulsing
- * animation is defined here using keyframes rather than GSAP so it
- * continues autonomously after being triggered.  The translateX(-50%)
- * built into the pulse animation ensures the button remains centred
- * even as it scales.
- */
 .quiz-btn {
   position: absolute;
   bottom: 16px;
@@ -991,11 +668,9 @@ html, body {
   opacity: 0;
   z-index: 10;
 }
-
 .quiz-btn.pulsing {
   animation: quizPulse 1.6s ease-in-out infinite;
 }
-
 @keyframes quizPulse {
   0% {
     transform: translateX(-50%) scale(1);
@@ -1007,7 +682,6 @@ html, body {
     transform: translateX(-50%) scale(1);
   }
 }
-/* Scene 1 styles */
 #scene1 {
   display: flex;
   flex-direction: column;
@@ -1015,15 +689,12 @@ html, body {
   align-items: center;
   text-align: center;
 }
-
 #scene1 .logo-intro {
   width: 100px;
   height: 100px;
   margin-bottom: 20px;
   opacity: 0;
 }
-
-/* Intro rings container holds multiple concentric circles that pulse outwards. */
 #scene1 .intro-rings {
   position: absolute;
   top: 50%;
@@ -1034,8 +705,6 @@ html, body {
   pointer-events: none;
   z-index: 0;
 }
-
-/* Individual rings are absolutely positioned and animated via Anime.js */
 #scene1 .intro-rings .ring {
   position: absolute;
   top: 50%;
@@ -1047,21 +716,17 @@ html, body {
   transform: translate(-50%, -50%) scale(0);
   opacity: 0;
 }
-
 #scene1 .intro-text-wrapper {
   max-width: 90%;
   z-index: 1;
 }
-
 #scene1 .intro-title {
-  /* Larger headline for a more dramatic welcome */
-  font-size: 42px;
+    font-size: 42px;
   font-weight: 800;
   margin: 0 0 12px;
   color: var(--accent);
   text-shadow: 0 3px 6px rgba(0,0,0,0.35);
 }
-
 #scene1 .intro-subtitle {
   font-size: 18px;
   line-height: 1.5;
@@ -1069,28 +734,18 @@ html, body {
   margin: 0 auto;
   color: var(--light);
 }
-
-/* Scene 2 styles */
 #scene2 .envelope {
   width: 80%;
   max-width: 420px;
-  /* Remove the large vertical margin.  The neon panel itself will
-     manage its internal padding.  Setting margin to 0 centres the
-     envelope within the card container. */
-  margin: 0 auto;
+    margin: 0 auto;
   perspective: 1000px;
 }
-
-/* === Blog Slider (Scene 4) === */
 .blog-slider {
   position: relative;
   width: 540px;
   height: 360px;
   margin: 40px auto 0;
-  /* Slightly enlarge the slider so that pagination dots remain visible.  Increasing
-     the maximum width and adding extra bottom padding prevents the bullets
-     from being clipped by the container’s overflow. */
-  max-width: 540px;
+    max-width: 540px;
   margin: 40px auto 0;
   padding: 24px -3px 48px;
   border-radius: 16px;
@@ -1101,10 +756,7 @@ html, body {
 .blog-slider__wrp {
   display: flex;
   width: 100%;
-  /* Increase the wrapper height so slides have room to breathe and the
-     pagination is not cut off.  This prevents the dots from being hidden
-     behind the navigation controls on smaller displays. */
-  height: 320px;
+    height: 320px;
   position: relative;
 }
 .blog-slider__item {
@@ -1127,9 +779,7 @@ html, body {
 .blog-slider__img {
   flex-shrink: 0;
   width: 46%;
-  /* Match the increased wrapper height with a taller image.  The aspect
-     ratio is preserved by object-fit on the inner img. */
-  height: 280px;
+    height: 280px;
   border-radius: 14px;
   overflow: hidden;
   background: linear-gradient(147deg, var(--secondary) 0%, var(--primary) 74%);
@@ -1162,10 +812,7 @@ html, body {
 }
 .blog-slider__pagination {
   position: absolute;
-  /* Bring pagination dots inside the container instead of spilling
-     out of bounds.  A positive bottom offset positions the bullets
-     within the padded area defined above. */
-  bottom: 10px;
+    bottom: 10px;
   left: 0;
   right: 0;
   text-align: center;
@@ -1186,13 +833,6 @@ html, body {
   background: var(--accent);
   transform: scale(1.4);
 }
-
-/* Intro tagline styling */
-
-/* New welcome container for the opening scene.  Two lines of text animate into
-   view sequentially while a coloured bar scans across them.  This gives
-   a contemporary "scan-line" introduction reminiscent of high-end motion
-   graphics.  The container is centred within the 600 × 600 frame. */
 #scene1 .welcome-container {
   position: relative;
   display: block;
@@ -1203,15 +843,13 @@ html, body {
 }
 #scene1 .welcome-container .txt1,
 #scene1 .welcome-container .txt2 {
-  /* Each line displays as a block so that long lines wrap within the container. */
-  display: block;
+    display: block;
   overflow: hidden;
   font-weight: 700;
   letter-spacing: 1px;
   line-height: 1.2;
   white-space: nowrap;
 }
-/* First line uses the light colour; second line uses the accent colour */
 #scene1 .welcome-container .txt1 {
   font-size: 28px;
   color: var(--light);
@@ -1221,16 +859,13 @@ html, body {
   font-size: 32px;
   color: var(--accent);
 }
-/* Scanning bar for the welcome animation */
 #scene1 .welcome-container .bar {
   position: absolute;
   top: 0;
   height: 38px;
   width: 3px;
   background: var(--accent);
-  opacity: 0; /* hidden until animation begins */
-}
-/* Tagline shown after the main text animation */
+  opacity: 0; }
 #scene1 .welcome-tagline {
   margin-top: 24px;
   font-size: 16px;
@@ -1242,31 +877,20 @@ html, body {
   position: relative;
   width: 100%;
   height: 0;
-  padding-bottom: 50%; /* maintain triangle proportion */
-  border-left: 50% solid transparent;
+  padding-bottom: 50%;   border-left: 50% solid transparent;
   border-right: 50% solid transparent;
-  /* Tint the envelope flap to match the neon palette.  The flap
-     inherits the same hues as the card backgrounds, resulting in a
-     cohesive gradient when the email is closed. */
-  border-bottom: 60px solid hsl(var(--hue2) 50% 10% / 0.8);
+    border-bottom: 60px solid hsl(var(--hue2) 50% 10% / 0.8);
   transform-origin: top;
   transform: rotateX(0deg);
   z-index: 2;
 }
-
 #scene2 .envelope-body {
-  /* Apply the neon glass effect to the email body.  This replaces
-     the plain white panel with a blurred, translucent card that
-     picks up subtle greens from the accent palette.  The border
-     radius matches the mismatch card for a consistent flip. */
-  position: relative;
+    position: relative;
   background: linear-gradient(235deg, hsl(var(--hue1) 50% 15% / 0.7), hsl(var(--hue1) 50% 8% / 0.6) 33%),
               linear-gradient(45deg , hsl(var(--hue2) 50% 15% / 0.7), hsl(var(--hue2) 50% 8% / 0.6) 33%),
               linear-gradient(hsl(220deg 25% 10% / 0.6));
   backdrop-filter: blur(14px) saturate(1.2);
-  /* Make all four corners rounded so that the front and back faces
-     have the same silhouette when flipping. */
-  border-radius: 22px;
+    border-radius: 22px;
   border: 1px solid hsl(var(--hue2) 40% 40% / 0.5);
   box-shadow: 0 8px 16px rgba(0,0,0,0.5), 0 0 20px hsl(var(--hue1) 70% 50% / 0.4);
   padding: 20px;
@@ -1276,9 +900,6 @@ html, body {
   color: var(--light);
   overflow: hidden;
 }
-
-/* Top and bottom glow accents for the email body panel.  These
-   pseudo-elements echo the glowing edges of the mismatch card. */
 #scene2 .envelope-body::before,
 #scene2 .envelope-body::after {
   content: "";
@@ -1298,20 +919,17 @@ html, body {
 #scene2 .envelope-body::after {
   bottom: -4px;
 }
-
 #scene2 .email-content {
   opacity: 0;
   transform: translateY(20px);
   transition: opacity 0.6s ease, transform 0.6s ease;
   position: relative;
 }
-
 #scene2 .email-content p {
   margin: 0;
   font-size: 14px;
   line-height: 1.4;
 }
-
 #scene2 .email-scribble {
   position: absolute;
   top: 0;
@@ -1319,22 +937,15 @@ html, body {
   width: 100%;
   height: 100%;
   pointer-events: none;
-  /* Position scribble above the email content to ensure visibility */
-  /* Place the scribble above the text and the fireflies so it remains
-     visible when the card tilts or flips. */
-  z-index: 2;
+      z-index: 2;
 }
-
-/* Scene 4 (Social Engineering Tactics) styles */
 #scene4 .carousel {
   position: relative;
   width: 100%;
   height: 320px;
   overflow: hidden;
-  /* Enable 3D perspective for flipping cards */
-  perspective: 800px;
+    perspective: 800px;
 }
-
 #scene4 .carousel-item {
   position: absolute;
   top: 0;
@@ -1353,24 +964,19 @@ html, body {
   align-items: center;
   text-align: center;
   color: var(--light);
-  /* Hide the back of the card when flipping */
-  backface-visibility: hidden;
+    backface-visibility: hidden;
   transform-style: preserve-3d;
 }
-
 #scene4 .carousel-item.active {
   opacity: 1;
   left: 0;
-  /* Reset rotation for the active card */
-  transform: scale(1) rotateY(0deg);
+    transform: scale(1) rotateY(0deg);
 }
-
 #scene4 .carousel-indicators {
   display: flex;
   justify-content: center;
   margin-top: 12px;
 }
-
 #scene4 .carousel-indicators .indicator {
   width: 10px;
   height: 10px;
@@ -1380,19 +986,15 @@ html, body {
   opacity: 0.4;
   transition: opacity 0.3s;
 }
-
 #scene4 .carousel-indicators .indicator.active {
   opacity: 1;
   background: var(--accent);
 }
-
-/* Scene 4 styles */
 #scene4 .flag-list {
   list-style: none;
   padding: 0;
   margin: 0;
 }
-
 #scene4 .flag-item {
   display: flex;
   align-items: flex-start;
@@ -1401,34 +1003,28 @@ html, body {
   transform: translateX(-40px);
   transition: opacity 0.6s ease, transform 0.6s ease;
 }
-
 #scene4 .flag-icon {
   width: 24px;
   height: 24px;
   margin-right: 12px;
 }
-
 #scene4 .flag-text {
   font-size: 14px;
   line-height: 1.4;
   color: var(--light);
   max-width: 80%;
 }
-
-/* Scene 5 styles */
 #scene5 .final-morph {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 60%;
 }
-
 #scene5 .final-svg {
   width: 200px;
   height: 200px;
   color: var(--accent);
 }
-
 #scene5 .final-tip {
   position: absolute;
   bottom: 20px;
@@ -1440,20 +1036,11 @@ html, body {
   color: var(--light);
   pointer-events: none;
 }
-
-/*
- * Highlight styling for suspicious domains within typed email content.  The
- * red underline immediately draws the viewer’s attention to a dangerous link
- * and is later complemented by a hand‑drawn scribble via Rough.js.  Bold
- * weight reinforces the severity of the threat.
- */
 .email-domain {
   color: var(--danger);
   font-weight: 600;
   text-decoration: underline;
 }
-
-/* Highlight class used in the BEC scenario to mark suspicious phrases */
 .highlight {
   color: var(--danger);
   font-weight: 700;
@@ -1461,13 +1048,6 @@ html, body {
   padding: 2px 4px;
   border-radius: 4px;
 }
-
-/*
- * Fine‑tune the glow intensity on the mismatch card glows.  By
- * redefining the background of the pseudo‑elements here, we
- * strengthen the top and bottom highlights without editing the
- * original declaration.  The last rule wins due to CSS cascade.
- */
 #scene2 .mismatch-card::before,
 #scene2 .mismatch-card::after {
   background: linear-gradient(
@@ -1477,7 +1057,6 @@ html, body {
     hsl(var(--hue2) 70% 65% / 0.6)
   );
 }
-
 #scene2 .envelope-body::before,
 #scene2 .envelope-body::after {
   background: linear-gradient(
@@ -1487,13 +1066,6 @@ html, body {
     hsl(var(--hue1) 70% 65% / 0.6)
   );
 }
-
-/* === Scene 6 Business Email Compromise custom styles === */
-/* The right-hand message panel is built dynamically in JS.  These
-   classes style the subject line, sender information, action icons,
-   date and body text to more closely resemble Outlook’s message view. */
-
-/* Wrapper for the BEC message panel */
 .bec-message {
   width: 100%;
   height: 100%;
@@ -1502,22 +1074,16 @@ html, body {
   box-sizing: border-box;
   overflow-y: auto;
 }
-
-/* Subject line at the very top */
 .bec-message .subject-line {
   font-size: 16px;
   font-weight: 600;
   color: #ffffff;
   margin-bottom: 6px;
   line-height: 1.3;
-  /* Keep the subject on a single line.  If the text is longer than
-     available width it will truncate gracefully with an ellipsis. */
-  white-space: nowrap;
+    white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-
-/* Row containing avatar, email details and action icons */
 .bec-message .sender-row {
   display: flex;
   align-items: center;
@@ -1525,15 +1091,11 @@ html, body {
   padding: 6px 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
-
-/* Container holding avatar and two lines of email information */
 .bec-message .sender-info {
   display: flex;
   align-items: center;
   gap: 8px;
 }
-
-/* Circular avatar placeholder.  The letter inside should be uppercase */
 .bec-message .avatar {
   width: 32px;
   height: 32px;
@@ -1547,8 +1109,6 @@ html, body {
   font-weight: 600;
   text-transform: uppercase;
 }
-
-/* Email address lines */
 .bec-message .email-details {
   display: flex;
   flex-direction: column;
@@ -1562,8 +1122,6 @@ html, body {
 .bec-message .email-details .to {
   color: rgba(255, 255, 255, 0.6);
 }
-
-/* Row of icons on the right side of the sender row */
 .bec-message .icons-row {
   display: flex;
   align-items: center;
@@ -1571,42 +1129,21 @@ html, body {
   font-size: 16px;
   color: #00aaff;
 }
-
-/* Ensure small icon images within the icons row appear at
-   consistent sizes.  Without this rule the report icon may
-   display at its native dimensions, causing misalignment. */
 .bec-message .icons-row img {
   width: 16px;
   height: 16px;
   object-fit: contain;
-  /* Tint all action icons except the report button.  The invert
-     filter recolours the emoji icons to match the blue accent in
-     dark mode.  The report button icon is overridden below to
-     preserve its original Outlook colours. */
-  filter: invert(77%) sepia(12%) saturate(1978%) hue-rotate(161deg) brightness(95%) contrast(92%);
+    filter: invert(77%) sepia(12%) saturate(1978%) hue-rotate(161deg) brightness(95%) contrast(92%);
 }
-
-/* Thin vertical divider between icon groups */
 .bec-message .icons-row .divider {
   width: 1px;
   height: 18px;
   background: rgba(255, 255, 255, 0.3);
   margin: 0 4px;
 }
-
-/*
- * The report button within the icon row uses the official
- * ReportMessage64.png asset provided by the client.  To make sure
- * the icon remains recognisable, do not apply the global invert
- * filter defined for other icons.  This rule targets any image
- * nested under .report-btn and resets the filter property.
- */
 .bec-message .report-btn img {
   filter: none !important;
 }
-
-/* Report button consisting of an icon and arrow.  It is treated
-   like a single inline element so the pointer can target it easily. */
 .bec-message .report-btn {
   display: flex;
   align-items: center;
@@ -1614,22 +1151,16 @@ html, body {
   cursor: pointer;
   color: #00aaff;
 }
-
-/* Date line beneath the sender row */
 .bec-message .date-row {
   font-size: 11px;
   color: rgba(255, 255, 255, 0.6);
   margin: 8px 0 14px 0;
 }
-
-/* Body of the email.  Suspicious phrases use the
-   highlight-target class defined below. */
 .bec-message .body {
   font-size: 14px;
   line-height: 1.6;
   color: rgba(255, 255, 255, 0.9);
 }
-
 .bec-message .body .highlight-target {
   background: rgba(231, 76, 60, 0.2);
   color: #e74c3c;
@@ -1637,8 +1168,6 @@ html, body {
   border-radius: 3px;
   padding: 0 2px;
 }
-
-/* Dropdown menu that appears when clicking the report button */
 .report-menu {
   position: absolute;
   background: rgba(0, 0, 0, 0.9);
@@ -1648,7 +1177,6 @@ html, body {
   z-index: 50;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
-
 .report-menu .menu-item {
   display: flex;
   align-items: center;
@@ -1668,8 +1196,6 @@ html, body {
 .report-menu .menu-item.highlight {
   background: rgba(231, 76, 60, 0.4);
 }
-
-/* Overlay displayed after reporting the email */
 .success-overlay {
   position: absolute;
   top: 0;
@@ -1692,48 +1218,20 @@ html, body {
   font-weight: 600;
   white-space: pre-wrap;
 }
-
-/* Custom pointer image for the BEC scene */
-/*
- * Custom pointer used in the Business Email Compromise (BEC) scene.
- * The pointer represents a mouse cursor that guides the viewer
- * through the fake Outlook interface.  Previously this element
- * included a drop‑shadow and a pulsing scale animation that caused
- * it to appear larger than intended.  The styling below reduces
- * the footprint of the pointer, removes the glow effect and
- * disables any scaling animation so that the pointer feels
- * anchored and precise.  Width and height are reduced to 24px to
- * better approximate the native cursor size.
- */
 .bec-pointer-img {
   width: 24px;
   height: 24px;
   pointer-events: none;
   position: absolute;
-  /* Raise the z-index above the report menu (z-index:50) so the
-     pointer remains visible when hovering over the dropdown.  A
-     higher stacking context prevents it from being obscured by
-     menus or other floating panels. */
-  z-index: 60;
+    z-index: 60;
   opacity: 1;
-  /* Remove the drop‑shadow so the arrow matches the native cursor look */
-  filter: none;
-  /* Disable the pulsing animation; the keyframes are retained
-     elsewhere for other elements but not applied here */
-  animation: none;
+    filter: none;
+    animation: none;
 }
-
-/* The keyframes for cursorPulseImg remain defined for backwards
-   compatibility, however they are not applied to the BEC pointer.
-   If other pointers in the experience wish to pulse they can
-   explicitly reference this animation. */
 @keyframes cursorPulseImg {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.15); }
 }
-
-/* === New styles for Business Email Compromise enhancements === */
-/* Center the placeholder when no message is selected */
 .no-message-container {
   width: 100%;
   height: 100%;
@@ -1743,7 +1241,6 @@ html, body {
   align-items: center;
   text-align: center;
 }
-
 .no-message-container img {
   width: 120px;
   opacity: 0.6;
@@ -1753,8 +1250,6 @@ html, body {
   color: rgba(255, 255, 255, 0.6);
   font-size: 14px;
 }
-
-/* Additional classes for the new no-message placeholder */
 .no-mail-img {
   width: 120px;
   opacity: 0.6;
@@ -1764,13 +1259,9 @@ html, body {
   color: rgba(255, 255, 255, 0.6);
   font-size: 14px;
 }
-
-/* When the suspicious email is selected, lighten its background */
 .bec-selected {
   background: rgba(255, 0, 0, 0.3) !important;
 }
-
-/* Success text styling for the check mark overlay */
 .success-text {
   margin-top: 0.8rem;
   font-size: 18px;
@@ -1780,13 +1271,10 @@ html, body {
   opacity: 0;
   animation: fadeInSuccessText 0.6s forwards 1.4s;
 }
-
 @keyframes fadeInSuccessText {
   from { opacity: 0; }
   to { opacity: 1; }
 }
-
-/* Command style typed message for success overlay */
 .success-cmd-text {
   margin-top: 0.8rem;
   font-family: 'Courier New', Courier, monospace;
@@ -1796,8 +1284,6 @@ html, body {
   white-space: pre-wrap;
   text-align: center;
 }
-
-/* Success check overlay with blur and animated check mark */
 .success-check-overlay {
   position: absolute;
   top: 0;
@@ -1805,17 +1291,14 @@ html, body {
   width: 100%;
   height: 100%;
   display: flex;
-  /* Stack children vertically so the text appears below the check mark */
-  flex-direction: column;
+    flex-direction: column;
   justify-content: center;
   align-items: center;
-  /* Blur and darken the backdrop so the success animation stands out. */
-  backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
   background: rgba(0, 0, 0, 0.45);
   z-index: 70;
   pointer-events: none;
 }
-
 .success-check-overlay .check-container {
   width: 6rem;
   height: 7rem;
@@ -1824,7 +1307,6 @@ html, body {
   align-items: center;
   justify-content: space-between;
 }
-
 .success-check-overlay .check-container .check-background {
   width: 100%;
   height: calc(100% - 1rem);
@@ -1836,7 +1318,6 @@ html, body {
   opacity: 0;
   animation: animateCheckContainer 0.75s ease-out forwards 0.75s;
 }
-
 .success-check-overlay .check-container .check-background svg {
   width: 60%;
   transform: translateY(0.25rem);
@@ -1844,7 +1325,6 @@ html, body {
   stroke-dashoffset: 80;
   animation: animateCheckPath 0.35s forwards 1.25s ease-out;
 }
-
 .success-check-overlay .check-container .check-shadow {
   position: relative;
   bottom: -15%;
@@ -1855,7 +1335,6 @@ html, body {
   opacity: 0;
   animation: animateCheckShadow 0.75s ease-out forwards 0.75s;
 }
-
 @keyframes animateCheckContainer {
   0% {
     opacity: 0;
@@ -1876,7 +1355,6 @@ html, body {
     transform: scale(1);
   }
 }
-
 @keyframes animateCheckPath {
   from {
     stroke-dashoffset: 80;
@@ -1885,7 +1363,6 @@ html, body {
     stroke-dashoffset: 0;
   }
 }
-
 @keyframes animateCheckShadow {
   0% {
     opacity: 0;
@@ -1906,50 +1383,15 @@ html, body {
     opacity: 0.25;
   }
 }
-
-/*
- * Firefly card design for Scene 2 (email demonstration)
- *
- * To elevate the “role affected” email scene we introduce a new
- * bioluminescent card inspired by the FireFlies experiment.  Each
- * face of the card contains a glassy panel for content and a
- * decorative layer of animated fireflies.  The card flips in 3D
- * when the `flipped` class is toggled, revealing the mismatch
- * message.  Fireflies animate along complex SVG paths defined
- * below, and constantly flicker to produce a living effect.  These
- * styles are appended at the end of the stylesheet to override
- * earlier email card rules.
- */
-
-/* Container for the firefly card.  Controls dimensions and 3D flip. */
-/*
- * Firefly card container.  This element defines the overall size and
- * perspective for the 3D flip.  We avoid applying any rotation or
- * transform here because GSAP sets inline transforms (for scaling and
- * fade‑in) on this element.  The perspective on the outer card
- * ensures the inner wrapper rotates in 3D space.  The width and
- * aspect ratio create a balanced card across different screen sizes.
- */
 .email-card.firefly-card {
   position: relative;
   width: 85%;
   max-width: 500px;
-  /* maintain pleasant aspect ratio; height relative to width */
-  aspect-ratio: 16 / 9;
+    aspect-ratio: 16 / 9;
   margin: 0 auto;
-  /* Provide depth for the inner wrapper’s rotation */
-  perspective: 1200px;
+    perspective: 1200px;
   min-height: unset;
 }
-
-/* Inner wrapper that actually flips.  It preserves its 3D children and
- * transitions the rotation.  We initialise rotation to 0 degrees.  The
- * flip will be triggered via GSAP rather than CSS classes, but we
- * include a `.flipped` modifier on the parent as a fallback for
- * situations where JS may be disabled.  Without this wrapper the
- * inline transforms set by GSAP (scale) would override the rotation,
- * causing the back face to disappear after the flip.
- */
 .email-card.firefly-card .card-inner {
   position: relative;
   width: 100%;
@@ -1958,20 +1400,9 @@ html, body {
   transition: transform 1s ease;
   transform: rotateY(0deg);
 }
-
-/* Apply rotation when the card container has the `flipped` class.
- * Because we rotate the inner wrapper, the outer card’s transform
- * (scale, translate) remains unaffected.  This ensures the back face
- * remains visible after the flip.  Using the parent’s modifier here
- * allows for graceful degradation if JS is unavailable. */
 .email-card.firefly-card.flipped .card-inner {
   transform: rotateY(180deg);
 }
-
-/* Faces of the flip card: absolutely positioned layers within the
- * inner wrapper.  Each face is hidden when rotated away from the
- * viewer.  We preserve the border radius and ensure content is
- * centred. */
 .email-card.firefly-card .card-face {
   position: absolute;
   top: 0;
@@ -1987,66 +1418,43 @@ html, body {
 }
 .email-card.firefly-card .card-back {
   transform: rotateY(180deg);
-  /* Override generic back face styles.  The generic .card-back rule in the
-     base stylesheet sets display: flex, padding and opacity 0 to
-     support a simple cross‑fade.  For our 3D flip design we want the
-     back face to mirror the front: it should be fully opaque and
-     occupy the full card without additional padding.  Explicitly
-     resetting these properties ensures the back face appears when
-     rotated into view. */
-  opacity: 1;
+    opacity: 1;
   display: flex;
   padding: 0;
 }
-
-/* Content panel with blurred glass effect and subtle glow */
 .firefly-card-details {
   position: relative;
   width: 100%;
   height: 100%;
   padding: 32px;
   box-sizing: border-box;
-  /* Use a dark teal translucent panel rather than pure black to better
-     integrate with the surrounding scene.  The blur and saturation
-     create a frosted glass effect. */
-  background: rgba(9, 28, 24, 0.6);
+    background: rgba(9, 28, 24, 0.6);
   backdrop-filter: blur(14px) saturate(140%);
   color: var(--light);
   border-radius: 16px;
-  /* Subtle inner glow with our accent colour; emphasises depth. */
-  box-shadow: 0 0 12px rgba(59, 178, 115, 0.35), 0 0 30px rgba(59, 178, 115, 0.55);
+    box-shadow: 0 0 12px rgba(59, 178, 115, 0.35), 0 0 30px rgba(59, 178, 115, 0.55);
   border: 1px solid rgba(255, 255, 255, 0.1);
   z-index: 2;
   overflow-y: auto;
 }
-
-/* Headings and note styles within the mismatch panel */
 .firefly-card-details h3 {
   margin-top: 0;
   margin-bottom: 0.5em;
   font-size: 1.4rem;
   color: var(--danger);
 }
-
 .firefly-card-details p {
   margin: 0.4em 0;
   line-height: 1.3;
 }
-
 .firefly-card-details .mismatch-note {
   font-size: 0.85rem;
   opacity: 0.75;
 }
-
-/* Highlight the actual domain in the mismatch details.  Use the
-   danger colour to draw attention to the malicious link. */
 .firefly-card-details .actual-domain {
   color: var(--danger);
   font-weight: 600;
 }
-
-/* Decorative layer that holds all fireflies.  Oversized to allow
-   movement outside the bounds of the content panel. */
 .firefly-card-design {
   pointer-events: none;
   position: absolute;
@@ -2057,25 +1465,16 @@ html, body {
   z-index: 1;
   overflow: visible;
 }
-
-/* Base styling for each firefly.  We use a radial gradient to
-   approximate a glowing particle.  The animation uses CSS Motion
-   Path (`offset-path`) and opacity flicker. */
 .firefly-card-design .firefly {
   position: absolute;
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  /* Golden‑orange glow reminiscent of bioluminescent fireflies. */
-  background: radial-gradient(circle, rgba(233, 143, 74, 1) 0%, rgba(233, 143, 74, 0) 70%);
+    background: radial-gradient(circle, rgba(233, 143, 74, 1) 0%, rgba(233, 143, 74, 0) 70%);
   opacity: 0.5;
   animation: firefly-path 18s linear infinite, firefly-blink 4s ease-in-out infinite;
   animation-play-state: running;
 }
-
-/* Path definitions for each firefly.  These curves mirror those
-   defined in the original FireFlies experiment but are scaled to fit
-   within the oversized design container. */
 .firefly-card-design .firefly1 {
   offset-path: path(
     "M174.861,470.63C163.013,463.216 44.417,389.007 117.567,305.587C138.726,281.457 282.417,231.552 297.887,123.297C313.953,10.877 88.48,93.758 151.219,171.357C169.159,193.546 234.197,227.148 318.28,155.317C333.743,142.107 432.687,36.277 502.872,96.506C562.662,147.814 528.177,288.09 391.786,250.647C183.799,193.548 316.925,-20.928 381.508,76.981C433.547,155.873 324.398,426.058 368.529,502.066C410.229,573.887 533.309,526.973 524.928,417.633C520.979,366.112 428.795,253.557 260.055,417.986C201.927,474.628 185.584,472.173 177.658,471.003"
@@ -2096,39 +1495,20 @@ html, body {
     "M332.139,314.317C496.415,457.594 620.642,501.16 589.017,560.51C576.623,583.772 530.745,593.206 493.437,542.624C466.567,506.195 445.771,468.547 400.781,517.091C396.99,521.181 345.261,593.834 282.964,586.293C245.222,581.725 201.614,540.408 173.455,515.89C163.896,507.567 126.982,448.417 79.44,478.427C12.9,520.429 63.142,625.106 165.126,545.076C220.059,501.968 268.813,404.345 190.028,358.641C156.69,339.302 52.743,349.152 71.38,271.723C85.433,213.341 208.82,160.974 232.198,285.188C244.669,351.45 201.047,462.873 105.704,393.341C46.563,350.21 32.48,276.155 78.88,277.52C120.631,278.748 128.39,356.376 96.463,408.446C76.296,441.336 36.78,477.637 122.216,536.345C202.722,591.665 248.433,547.474 272.348,524.797C292.699,505.498 411.924,353.462 455.697,292.586C500.278,230.587 619.208,107.969 570.741,64.929C525.625,24.865 412.659,57.889 456.187,124.712C489.164,175.336 594.871,139.024 595.225,209.446C595.351,234.375 535.132,283.463 439.869,177.56C432.097,168.919 328.075,22.229 250.996,101.266C208.4,144.944 266.103,195.784 370.913,266.013C416.679,296.679 418.889,292.527 464.89,323.1C541.73,374.169 581.265,356.887 579.237,431.409C578.381,462.872 555.143,552.831 399.984,489.149C359.883,472.69 228.836,421.238 226.068,319.038C225.587,301.255 247.046,257.137 294.589,290.779C308.738,300.791 308.048,301.533 323.357,309.549"
   );
 }
-
-/* Flickering animation for fireflies.  Opacity peaks and dips to
-   produce a realistic blinking pattern. */
 @keyframes firefly-blink {
   0%, 20%, 40%, 60%, 80%, 100% { opacity: 0.2; }
   10%, 30%, 50%, 70%, 90% { opacity: 1; }
 }
-
-/* The path animation simply moves the fireflies along their defined
-   motion paths.  They loop seamlessly. */
 @keyframes firefly-path {
   0% { offset-distance: 0%; }
   100% { offset-distance: 100%; }
 }
-
-/* Increase the z-index of the email scribble so it appears above the
-   glass panel and the moving fireflies. */
 .email-scribble {
   z-index: 3;
   position: relative;
 }
-
-/* === Pre‑Intro (Secure Boot Sequence) === */
-/* The pre‑intro overlay covers the app container until authorization is granted.
-   It uses a dark radial gradient background with subtle teal hints to evoke
-   a secure terminal.  Positioned absolutely at the centre of the viewport,
-   it inherits the 600×600 dimensions and rounded corners of the main
-   application container. */
 .pre-intro {
-  /* Position the boot sequence overlay dead‑centre over the entire application.  Absolute positioning
-     combined with a 50/50 offset and negative translation centres the 600×600 frame in the
-     viewport regardless of parent flex layouts. */
-  position: absolute;
+    position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -2136,66 +1516,31 @@ html, body {
   height: 600px;
   border-radius: 20px;
   overflow: hidden;
-  /* Reworked intro uses a retro cyber palette inspired by classic
-     terminals.  Swap the pure black for a deep teal and set the text
-     colour to a bright greenish cyan reminiscent of monochrome
-     phosphor displays. */
-  background: #002e33;
+    background: #002e33;
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 2;
-  /* Override the colour here instead of relying on CSS variables so
-     that other scenes remain unaffected. */
-  color: #14fdce;
-  /* Use the retro fonts defined above for the entire pre‑intro.
-     Fallback to monospace if custom fonts fail. */
-  font-family: 'apple1977', 'ibm1971', 'ibmbios', monospace;
-  /* Soft glow around the container ties into the accent colour. */
-  box-shadow: 0 0 30px rgba(20, 253, 206, 0.25);
-  /* Establish a new stacking context so that our pseudo‑elements
-     (scanlines, ripples) appear correctly relative to the content.  Rather than
-     resetting position, we isolate the element to create a new stacking context
-     without overriding the absolute positioning above. */
-  isolation: isolate;
-
-  /* Override the accent variable locally so nested elements (like the
-     K logo hover glow) pick up our retro accent colour via
-     var(--accent). */
-  --accent: #14fdce;
+    color: #14fdce;
+    font-family: 'apple1977', 'ibm1971', 'ibmbios', monospace;
+    box-shadow: 0 0 30px rgba(20, 253, 206, 0.25);
+    isolation: isolate;
+    --accent: #14fdce;
 }
-
-/* Container for the inner elements of the pre‑intro.  Uses flexbox to stack
-   the K logo above the prompt text. */
 .pre-inner {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 }
-
-/* Wrapper establishing a 3D context for the K logo.  The perspective
-   property allows the inner element to rotate in 3D space. */
 .k-wrapper {
   perspective: 800px;
-  /* Increase the logo container size so that the access panel on the back face feels more
-     substantial relative to the 600×600 frame.  A larger square also reduces the
-     amount of empty space when the panel flips to reveal text. */
-  width: 220px;
+    width: 220px;
   height: 220px;
   cursor: pointer;
-  /* Animate both opacity and transform so the element can scale on hover. */
-  transition: opacity 0.4s ease, transform 0.4s ease;
-
-  /* Provide a positioning context for the ripple pseudo‑element
-     defined below. */
-  position: relative;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    position: relative;
 }
-
-/* Decorative ripple emitted from the K logo when hovered.  This
-   pseudo‑element expands and fades out to create a pulse effect.
-   It uses the accent colour at low opacity to avoid overpowering
-   the logo itself. */
 .k-wrapper::before {
   content: '';
   position: absolute;
@@ -2203,30 +1548,21 @@ html, body {
   left: 50%;
   width: 240%;
   height: 240%;
-  /* Increase the starting opacity of the ripple so it is visible
-     against the dark backdrop. */
-  /* Use a simple box‑shadow based ring for the hover effect.  The
-     pseudo‑element matches the size of the K wrapper and expands
-     outward while fading. */
-  background: none;
+      background: none;
   width: 100%;
   height: 100%;
   border-radius: 50%;
   box-shadow: 0 0 25px 0 rgba(20, 253, 206, 0.8);
-  /* Start hidden so that the ring only appears on hover. */
-  opacity: 0;
+    opacity: 0;
   visibility: hidden;
   transform: translate(-50%, -50%) scale(1);
   pointer-events: none;
   z-index: 0;
 }
-
 .k-wrapper:hover::before {
-  /* Reveal and animate the ring on hover. */
-  visibility: visible;
+    visibility: visible;
   animation: kRipple 0.8s ease-out forwards;
 }
-
 @keyframes kRipple {
   0% {
     opacity: 0.8;
@@ -2237,48 +1573,28 @@ html, body {
     transform: translate(-50%, -50%) scale(1.8);
   }
 }
-
-/* The inner element holds the front and back faces.  Rotating this
-   element flips between the unlit logo and the access granted panel. */
 .k-inner {
   width: 100%;
   height: 100%;
   position: relative;
   transform-style: preserve-3d;
   transition: transform 0.8s ease-in-out;
-
-  /* Ensure the K faces appear above the ripple pseudo‑element. */
-  z-index: 1;
+    z-index: 1;
 }
-
-/* When the authorization sequence starts, immediately flip the inner
-   container to reveal the back face.  JS will add this class on
-   activation. */
 .k-inner.auth-flipped {
   transform: rotateY(180deg);
 }
-
-/* When the user hovers over the K wrapper, gently tilt the logo back
-   and forth as if scanning.  The tilt stops once the authorization
-   sequence starts (controlled via a class in JS). */
 .k-wrapper:hover .k-inner:not(.auth-flipped) {
   animation: kTilt 3s infinite alternate ease-in-out;
 }
-
-/* Scale the entire K wrapper slightly on hover to create a subtle
-   zoom effect.  This complements the tilt animation without
-   interfering with the flip when authentication starts. */
 .k-wrapper:hover {
   transform: scale(1.05);
 }
-
 @keyframes kTilt {
   0% { transform: rotateY(15deg); }
   50% { transform: rotateY(-15deg); }
   100% { transform: rotateY(15deg); }
 }
-
-/* Shared face styling for the front and back of the K container. */
 .k-face {
   position: absolute;
   top: 0;
@@ -2290,17 +1606,12 @@ html, body {
   justify-content: center;
   align-items: center;
 }
-
 .k-front {
   transform: rotateY(0deg);
 }
-
 .k-back {
   transform: rotateY(180deg);
-  /* Lighten the back face panel and add a subtle accent border.  The semi‑transparent
-     black allows the neon text to stand out without appearing too heavy.  A
-     glowing border ties the panel into the retro palette. */
-  background: rgba(0, 0, 0, 0.35);
+    background: rgba(0, 0, 0, 0.35);
   text-align: center;
   padding: 12px;
   box-sizing: border-box;
@@ -2308,8 +1619,6 @@ html, body {
   border: 1px solid rgba(20, 253, 206, 0.45);
   box-shadow: 0 0 12px rgba(20, 253, 206, 0.3);
 }
-
-/* Style the K SVG.  A subtle drop shadow hints at depth. */
 .k-logo {
   width: 100%;
   height: 100%;
@@ -2317,68 +1626,39 @@ html, body {
   filter: drop-shadow(0 0 6px #0f705a);
   transition: filter 0.3s ease;
 }
-
-/* On hover, intensify the glow around the logo. */
 .k-wrapper:hover .k-logo {
   filter: drop-shadow(0 0 20px var(--accent));
 }
-
-/* Override the default drop shadow for the K logo when it resides
-   within the reworked intro.  This ensures the baseline glow is
-   consistent with our accent colour even when not hovered. */
-/* Reduce the baseline glow on the K in the retro intro so that the
-   hover effect feels more pronounced. */
 .pre-intro .k-logo {
   filter: drop-shadow(0 0 4px rgba(20, 253, 206, 0.35));
 }
 .pre-intro .k-wrapper:hover .k-logo {
   filter: drop-shadow(0 0 20px #14fdce);
 }
-
-/* Terminal‑style prompt text displayed beneath the logo.  Uses a
-   monospaced font for authenticity. */
 .pre-subtext {
   margin-top: 28px;
   font-size: 0.9rem;
   letter-spacing: 0.08rem;
   color: var(--accent);
   font-family: 'Courier New', Courier, monospace;
-  /* Use flexbox for the initial prompt so the blinking cursor sits on
-     the same line as the typed characters.  When multiple lines
-     appear (e.g. after authentication) a helper class switches
-     the layout to a vertical stack via flex-direction: column. */
-  display: flex;
+    display: flex;
   align-items: center;
 }
-
-/* Adopt the retro font for the terminal prompt when inside the
-   reworked intro.  This ensures the typing animation uses the
-   same typeface as the rest of the intro. */
 .pre-intro .pre-subtext {
   font-family: 'apple1977', 'ibm1971', 'ibmbios', monospace;
 }
-
-/* When multiple status lines are shown in the pre‑intro (e.g. after
-   authentication completes), stack them vertically rather than laying
-   them out horizontally.  This class is toggled via JS. */
 .pre-subtext.multi {
   flex-direction: column;
   align-items: flex-start;
 }
-
-/* Blinking cursor that follows the typed text.  Animates between
-   opaque and transparent to simulate a terminal cursor. */
 .pre-cursor {
   margin-left: 4px;
   animation: blink 1s steps(2, start) infinite;
 }
-
 @keyframes blink {
   0%, 50% { opacity: 1; }
   50.01%, 100% { opacity: 0; }
 }
-
-/* Access granted panel typography. */
 .access-granted {
   font-family: 'Courier New', Courier, monospace;
 }
@@ -2392,8 +1672,6 @@ html, body {
   font-size: 0.8rem;
   color: var(--light);
 }
-
-/* Styling for text displayed during authentication. */
 .auth-text {
   color: var(--accent);
   margin-right: 0.35rem;
@@ -2401,13 +1679,9 @@ html, body {
   letter-spacing: 0.05rem;
   font-family: 'Courier New', Courier, monospace;
 }
-
-/* Shake animation used briefly when the K is activated.  Applies a
-   horizontal vibration to the pre‑intro container. */
 .pre-intro.shake {
   animation: shake 0.5s;
 }
-
 @keyframes shake {
   0% { transform: translate(-50%, -50%) translateX(0); }
   25% { transform: translate(-50%, -50%) translateX(-6px); }
@@ -2415,25 +1689,11 @@ html, body {
   75% { transform: translate(-50%, -50%) translateX(-6px); }
   100% { transform: translate(-50%, -50%) translateX(0); }
 }
-
-/* Glitch animation triggered before leaving the pre‑intro.  It jitters
-   the overlay briefly to simulate a digital glitch. */
 .pre-intro.glitch {
-  /* When glitching, jitter the overlay and apply line noise overlays via
-     pseudo‑elements.  The keyframes move the container itself for a
-     subtle shake while the pseudo‑elements provide horizontal scan
-     lines and colour channel offsets reminiscent of a corrupted
-     display. */
-  animation: glitchAnim 0.7s linear;
+    animation: glitchAnim 0.7s linear;
   position: relative;
   overflow: hidden;
 }
-
-/* Pseudo elements generate scan lines and colour channel shifts when
-   the pre‑intro is in glitch mode.  They are absolutely positioned
-   over the container and use repeating gradients to simulate static
-   interference.  `mix-blend-mode` ensures they interact with the
-   underlying colours to produce a convincing digital glitch. */
 .pre-intro.glitch::before,
 .pre-intro.glitch::after {
   content: '';
@@ -2444,8 +1704,6 @@ html, body {
   height: 100%;
   pointer-events: none;
 }
-
-/* Horizontal white scan lines that drift across the screen. */
 .pre-intro.glitch::before {
   background: repeating-linear-gradient(
     0deg,
@@ -2457,8 +1715,6 @@ html, body {
   mix-blend-mode: screen;
   animation: glitchLines 0.6s infinite;
 }
-
-/* Vertical green scan lines that complement the horizontal lines. */
 .pre-intro.glitch::after {
   background: repeating-linear-gradient(
     90deg,
@@ -2470,12 +1726,6 @@ html, body {
   mix-blend-mode: overlay;
   animation: glitchLines 0.6s infinite reverse;
 }
-
-/* Permanent scan line overlay for the retro intro.  This is separate
-   from the glitch effect and always visible on the pre‑intro.  A
-   repeating gradient produces thin horizontal lines which drift
-   slowly upwards.  The accent colour is used at low opacity to
-   maintain the nostalgic feel without overpowering the content. */
 .pre-intro::after {
   content: '';
   position: absolute;
@@ -2494,7 +1744,6 @@ html, body {
   mix-blend-mode: overlay;
   animation: scanShift 8s linear infinite;
 }
-
 @keyframes scanShift {
   0% {
     transform: translateY(0);
@@ -2503,7 +1752,6 @@ html, body {
     transform: translateY(-8px);
   }
 }
-
 @keyframes glitchLines {
   0% {
     transform: translate(0, 0);
@@ -2524,7 +1772,6 @@ html, body {
     transform: translate(0, 0);
   }
 }
-
 @keyframes glitchAnim {
   0% { transform: translate(-50%, -50%) translate(0, 0); }
   10% { transform: translate(-50%, -50%) translate(-3px, 2px); }
@@ -2538,3 +1785,192 @@ html, body {
   90% { transform: translate(-50%, -50%) translate(-1px, 2px); }
   100% { transform: translate(-50%, -50%) translate(0, 0); }
 }
+:root {
+  --primary: #003d45;
+  --secondary: #00565b;
+  --accent: #3bb273;
+  --light: #f5f5f5;
+  --danger: #e74c3c;
+  --warning: #f39c12;
+  --font-body: 'Montserrat', sans-serif;
+  --hue1: 220;
+  --hue2: 145;
+}
+@font-face {
+  font-family: 'apple1977';
+  src: url('https://gnjo.github.io/apple1977.ttf?v=1') format('truetype');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'ibm1971';
+  src: url('https://gnjo.github.io/ibm1971.ttf') format('truetype');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'ibmbios';
+  src: url('https://gnjo.github.io/PxPlus_IBM_BIOS.ttf') format('truetype');
+  font-display: swap;
+}
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--primary);
+  font-family: var(--font-body);
+  overflow: hidden;
+}
+.app-container {
+  position: relative;
+  width: 600px;
+  height: 600px;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+  color: var(--light);
+}
+#tsparticles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+.scene {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  padding: 32px;
+  box-sizing: border-box;
+  display: none;
+  z-index: 1;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(8px) saturate(140%);
+}
+.scene.active {
+  display: block;
+}
+#sceneXray {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.scene-instruction {
+  font-size: 16px;
+  margin-bottom: 40px;
+  color: rgba(255, 255, 255, 0.8);
+}
+.xray-container {
+  position: relative;
+  width: 320px;
+  height: 320px;
+    background: rgba(255,255,255,0.05); 
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.1);
+  overflow: hidden;   cursor: none; }
+.xray-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none; }
+.layer-safe {
+  background: transparent;
+  z-index: 1;
+}
+.layer-safe .icon-wrapper svg {
+  width: 100px;
+  height: 100px;
+  fill: #3498db;   filter: drop-shadow(0 0 10px rgba(52, 152, 219, 0.5));
+}
+.layer-danger {
+    background: rgba(50, 0, 0, 0.85);   z-index: 2;
+    clip-path: circle(0px at 50% 50%);
+}
+.layer-danger .icon-wrapper svg {
+  width: 100px;
+  height: 100px;
+  fill: #e74c3c;   filter: drop-shadow(0 0 15px rgba(231, 76, 60, 0.8));
+}
+.file-label {
+  margin-top: 15px;
+  font-family: 'Courier New', monospace;
+  font-size: 18px;
+  font-weight: 600;
+  background: rgba(0,0,0,0.5);
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+.label-danger {
+  color: #e74c3c;
+  border: 1px solid #e74c3c;
+}
+.ext-highlight {
+  background: #e74c3c;
+  color: white;
+  padding: 0 2px;
+}
+.xray-lens {
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  border: 2px solid #e74c3c;
+  border-radius: 50%;
+  box-shadow: 0 0 15px #e74c3c, inset 0 0 10px #e74c3c;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 10;
+  display: none; }
+.icon-placeholder {
+  width: 100px;
+  height: 120px;
+  border: 2px dashed rgba(52, 152, 219, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #3498db;
+  font-weight: bold;
+}
+.icon-placeholder.danger {
+  border-color: #e74c3c;
+  color: #e74c3c;
+}
+.scene-heading {
+  font-size: 24px;
+  margin-bottom: 20px;
+  text-align: center;
+  color: var(--accent);
+}
+.next-btn, .prev-btn {
+  position: absolute;
+  bottom: 16px;
+  background: var(--secondary);
+  color: var(--light);
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  transition: background 0.3s;
+  z-index: 10;
+}
+.next-btn:hover, .prev-btn:hover {
+  background: var(--accent);
+}
+.next-btn { right: 20px; }
+.prev-btn { left: 20px; }
